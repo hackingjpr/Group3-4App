@@ -113,11 +113,11 @@ comb.MRT.pd <- pData(comb.gmrSet)
 
 
 
-comb.SDb.mrt <- read.csv("./data/comb.SDb.mrt.v3.chun.csv", row.names = 1)
+comb.SDb.mrt <- read.csv("/home/cancer/mrt_survival/data/comb.SDb.mrt.v3.chun.csv", row.names = 1)
 
-comb.SDb.ecrt <- read.csv("./data/comb.SDb.ecrt.v3.chun.csv", row.names = 1)
+comb.SDb.ecrt <- read.csv("/home/cancer/mrt_survival/data/comb.SDb.ecrt.v3.chun.csv", row.names = 1)
 
-comb.SDb.atrt <- read.csv("./data/comb.SDb.atrt.v3.chun.csv", row.names = 1)
+comb.SDb.atrt <- read.csv("/home/cancer/mrt_survival/data/comb.SDb.atrt.v3.chun.csv", row.names = 1)
 
 
 
@@ -186,3 +186,4 @@ extract.metagene(as.character(all.meth.os.meta.n54.extract[[6]]$genes),
                  beta2m(comb.SDb.mrt),
                  
                  as.numeric(all.meth.os.meta.n54.extract[[7]])) -> all.meth.os.meta.n54.extract.meta
+
