@@ -1,50 +1,49 @@
-if(!require(data.table)){
-  install.packages("shiny")
-  library(shiny)
-}
-
-if(!require(minfiData)){
-  install.packages("minfiData")
-  library(minfiData)
-}
-
-if(!require(sva)){
-  install.packages("sva")
-  library(sva)
-}
-
-if(!require(devtools)){
-  install.packages("devtools")
-  library(devtools)
-}
-
-if(!require(bumphunter)){
-  install.packages("bumphunter")
-  library(bumphunter)
-}
-
-if(!require(lumi)){
-  install.packages("lumi")
-  library(lumi)
-}
-
-if(!require(fluidPage)){
-  install.packages("fluidPage")
-  library(fluidPage)
-}
-
+source("./source_functions.R")
 
 
 ui <- shiny::fluidPage( 
   tags$h1("NAME OF APP TO FOLLOW"),
-  fluidRow(fileInput("idatFile", "Upload idat file:", accept = ".idat")),
+  
+  setBackgroundColor(
+    color = c("#F7FBFF", "#FFA500"),
+    gradient = "radial",
+    direction = c("top", "left")
+  ),
+  
+  fluidRow(fileInput("idatFile", "Upload idat file:",multiple = TRUE, accept = ".idat"),
+           
+           column(3,actionBttn(
+             inputId = "bttn1",
+             label = "M value me!",
+             color = "royal",
+             style = "jelly"
+           )),
+           selectInput("metagenes", "Metagenes", c("ALL", "ATRT", "ECRT")),
+           # column(3, tags$h2("Download"),
+           #        radioButtons(inputId = "download", label = "Select file type", choices = c("png", "pdf")),
+           #        downloadButton("down", "Download the results"),
+                 # )),
+           fluidRow( textOutput(outputId = "Mval")),
   tags$footer("Author: James Hacking,
                              Date Created: ?-?-2022,
                              Copyright (c) James Hacking, 2022,
-              Email: james.hacking@ncl.ac.uk"))
+              Email: james.hacking@ncl.ac.uk")))
 
-server <- function(input, output)
+server <- function(input, output){
+  options(shiny.maxRequestSize=30*1024^2)
+  observeEvent(input$bttn1,{  
+    req(input$idatFile)
+    
 
+    
+  output$Mval <- renderText({ 
+    temp.base <- get_basenames(input$idatFile)
+    # temp.processed <- process_idats(temp.base)
+    # extract.metagene(as.character(atrt.meth.os.meta.n8.extract[[6]]$genes),
+    # as.numeric(atrt.meth.os.meta.n8.extract[[6]]$weights),
+    # beta2m(temp.processed$betas),
+    # as.numeric(atrt.meth.os.meta.n8.extract[[7]]) )
+  })})
 }
 
 shinyApp(server = server, ui = ui)
