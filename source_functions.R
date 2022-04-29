@@ -43,9 +43,12 @@ if(!require(shiny)){
   library(shiny)
 }
 
-load(file = "/home/njh264/Idat-Shiny/atrt.meth.os.meta.n8.extract.v3.abs.chun.Rdata")
-load(file = "/home/njh264/Idat-Shiny/ecrt.meth.os.meta.n20.extract.v3.abs.chun.Rdata")
-load(file = "/home/njh264/Idat-Shiny/all.meth.os.meta.n54.extract.v3.abs.chun.Rdata")
+load(file = "/home/njh264/Idat-Shiny/ATRT.v3.abs.chun.Rdata")
+
+load(file = "/home/njh264/Idat-Shiny/ECRT.v3.abs.chun.Rdata")
+
+load(file = "/home/njh264/Idat-Shiny/ALL.v3.abs.chun.Rdata")
+
 
 process_idats <- function(basenames){
   
@@ -110,5 +113,3 @@ extract.metagene <- function(index, weights, exp.matrix, scaling) {
   names(scaled.metagene) <- colnames(exp.matrix)
   return(scaled.metagene)
 }
-
-

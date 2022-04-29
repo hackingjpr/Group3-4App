@@ -45,3 +45,14 @@ final.metageneALL <- extract.metagene(
   beta2m(temp.processed$betas),
   as.numeric(all.meth.os.meta.n54.extract[[7]])
 ) 
+
+
+
+
+temp.base <- get_basenames("/home/njh264/Idats/Epic")
+temp.processed <- process_idats(temp.base)
+Mvals <- extract.metagene(as.character(atrt.meth.os.meta.n8.extract[[6]]$genes),
+                                  as.numeric(atrt.meth.os.meta.n8.extract[[6]]$weights),
+                                  beta2m(temp.processed$betas),
+                                  as.numeric(atrt.meth.os.meta.n8.extract[[7]]) )
+
