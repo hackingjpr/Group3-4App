@@ -101,11 +101,12 @@ server <- function(input, output) {
     
     
     withProgress(message = 'beep boop, doing basey things', value = 1, {
-      X <- read.table(input$idatFile$datapath, sep=",")
-      Y <- X$datapath
-      temp.base <- get_basenames(X)})
-    #   temp.base <- get_basenames("/home/njh264/Idats/idats_sdf_130213/")
-    # })
+      #CANT GET THIS PART TO WORK!!!!
+      # X <- read.table(input$idatFile$datapath, sep=",", skipNul = T)
+      # Y <- input$idatFile$datapath
+      # temp.base <- get_basenames(Y)})
+      temp.base <- get_basenames("/home/njh264/Idats/idats_sdf_130213/")
+    })
     withProgress(message = "beep boop, doing idat things, trust me it will finish I just haven't worked out how to link the loading bar to progress", value = 0, {
       # for (i in 1:150){
       # incProgress(amount = 1/150)
