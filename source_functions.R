@@ -43,12 +43,17 @@ if(!require(shiny)){
   library(shiny)
 }
 
+if(!require(DT)){
+  BiocManager::install("DT")
+  library(DT)
+}
+
 load(file = "/home/njh264/Idat-Shiny/ATRT.v3.abs.chun.Rdata")
-
+atrt.meth.os.meta.n8.extract -> ATRT
 load(file = "/home/njh264/Idat-Shiny/ECRT.v3.abs.chun.Rdata")
-
+ecrt.meth.os.meta.n20.extract -> ECRT
 load(file = "/home/njh264/Idat-Shiny/ALL.v3.abs.chun.Rdata")
-
+all.meth.os.meta.n54.extract -> ALL
 
 process_idats <- function(basenames){
   
@@ -111,5 +116,6 @@ extract.metagene <- function(index, weights, exp.matrix, scaling) {
   }) -> raw.metagene
   as.numeric(scale(raw.metagene, center = scaling[1], scale = scaling[2])) -> scaled.metagene
   names(scaled.metagene) <- colnames(exp.matrix)
-  return(scaled.metagene)
+  df <- as.data.frame(scaled.metagene)
+  return(df)
 }
