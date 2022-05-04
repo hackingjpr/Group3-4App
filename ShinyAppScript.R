@@ -5,7 +5,8 @@ ui <- shiny::fluidPage(
   tags$h1("NAME OF APP TO FOLLOW"),
   
   setBackgroundColor(
-    color = c("#F7FBFF", "#1E90FF"),
+    #color = c("#F7FBFF", "#1E90FF"),
+    color = c("#FFFFFF", "#6897bb"),
     gradient = "radial",
     direction = c("top", "left")
   ),
