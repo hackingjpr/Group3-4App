@@ -48,6 +48,11 @@ if(!require(DT)){
   library(DT)
 }
 
+if(!require(shinyWidgets)){
+  BiocManager::install("shinyWidgets")
+  library(shinyWidgets)
+}
+
 load(file = "/home/njh264/Idat-Shiny/ATRT.v3.abs.chun.Rdata")
 atrt.meth.os.meta.n8.extract -> ATRT
 load(file = "/home/njh264/Idat-Shiny/ECRT.v3.abs.chun.Rdata")
