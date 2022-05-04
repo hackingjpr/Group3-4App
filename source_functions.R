@@ -53,11 +53,11 @@ if(!require(shinyWidgets)){
   library(shinyWidgets)
 }
 
-load(file = "/home/njh264/Idat-Shiny/ATRT.v3.abs.chun.Rdata")
+load(file = "./ATRT.v3.abs.chun.Rdata")
 atrt.meth.os.meta.n8.extract -> ATRT
-load(file = "/home/njh264/Idat-Shiny/ECRT.v3.abs.chun.Rdata")
+load(file = "./ECRT.v3.abs.chun.Rdata")
 ecrt.meth.os.meta.n20.extract -> ECRT
-load(file = "/home/njh264/Idat-Shiny/ALL.v3.abs.chun.Rdata")
+load(file = "./ALL.v3.abs.chun.Rdata")
 all.meth.os.meta.n54.extract -> ALL
 
 process_idats <- function(basenames){
