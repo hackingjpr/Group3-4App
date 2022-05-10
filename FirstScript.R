@@ -20,7 +20,7 @@
 #                       row.names = 1)
 
 source("./source_functions.R")
-temp.base <- get_basenames("/home/njh264/Idats/Epic")
+temp.base <- get_basenames("/home/njh264/Idats/Mix")
 
 temp.processed <- process_idats(temp.base)
 
@@ -31,6 +31,8 @@ final.metageneATRT <- extract.metagene(
   beta2m(temp.processed$betas),
   as.numeric(atrt.meth.os.meta.n8.extract[[7]])
 ) 
+round(final.metageneATRT, digits = 2)
+
 
 final.metageneECRT <- extract.metagene(
   as.character(ecrt.meth.os.meta.n20.extract[[6]]$genes),

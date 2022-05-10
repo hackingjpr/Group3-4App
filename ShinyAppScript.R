@@ -25,20 +25,18 @@ ui <- shiny::fluidPage(
             label = "M value me!",
             color = "primary",
             style = "fill"
-          )
-        )
-        # column(
-        #   3,
-        #   actionBttn(
-        #     inputId = "bttn2",
-        #     label = "RESULTS?!",
-        #     color = "success",
-        #     style = "stretch"
-        #   )
-        # ),
+          ),
 
+           fluidRow( actionBttn(
+             inputId = "bttn2",
+             label = "RESULTS?!",
+             color = "success",
+             style = "stretch"
+           )
+         )),
+# ),
       
-    ,
+    
   mainPanel(
   tabsetPanel(
     tabPanel(
@@ -56,6 +54,7 @@ ui <- shiny::fluidPage(
                      dataTableOutput('Mval')))
             ))))),
   
+  
   # column(3, tags$h2("Download"),
   #        radioButtons(inputId = "download", label = "Select file type", choices = c("png", "pdf")),
   #        downloadButton("down", "Download the results"),
@@ -68,15 +67,24 @@ ui <- shiny::fluidPage(
               Email: james.hacking@ncl.ac.uk"
     
   )
+
 )
 
+digits = 0:9
+createRandString<- function() {
+  v = c(sample(LETTERS, 5, replace = TRUE),
+        sample(digits, 4, replace = TRUE),
+        sample(LETTERS, 1, replace = TRUE))
+  return(paste0(v,collapse = ""))
+}
 
-server <- function(input, output) {
+server <- function(session, input, output) {
   options(shiny.maxRequestSize = 30 * 1024 ^ 2)
   observeEvent(input$bttn1, {
     req(input$idatFile)
     require(R.utils)
-    tempdir() -> tempDIR
+    fs::path(tempdir(),createRandString()) -> tempDIR
+    dir.create(tempDIR)
     
     withProgress(message = 'beep boop, doing basey things', value = 1, {
       input$idatFile$datapath -> in.files
@@ -141,11 +149,13 @@ server <- function(input, output) {
     )
     output$time <- renderText({proc.time() - ptm})
   })
-  # observeEvent(input$bttn2, {
-  #   output$Mval <- renderPrint({
-  #     Mvals
-  #   })
-  # })
+  observeEvent(input$bttn2, {
+    #unlink(tempDIR, recursive = T)
+  session$reload()
+  # return()
+  print("session reload not working")
+  
+})
 }
 
 shinyApp(server = server, ui = ui)

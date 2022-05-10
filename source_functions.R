@@ -53,6 +53,43 @@ if(!require(shinyWidgets)){
   library(shinyWidgets)
 }
 
+if(!require(shinydashboard)){
+  BiocManager::install("shinydashboard")
+  library(shinydashboard)
+}
+
+if(!require(ggplot2)){
+  install.packages("ggplot2")
+  library(ggplot2)
+}
+
+if(!require(ggpubr)){
+  install.packages("ggpubr")
+  library(ggpubr)
+}
+
+if(!require(ggnewscale)){
+  install.packages("ggnewscale")
+  library(ggnewscale)
+}
+
+if(!require(foreach)){
+  install.packages("foreach")
+  library(foreach)
+}
+
+if(!require(ggrepel)){
+  install.packages("ggrepel")
+  library(ggrepel)
+}
+
+if(!require(pheatmap)){
+  install.packages("pheatmap")
+  library(pheatmap)
+}
+
+
+
 load(file = "./ATRT.v3.abs.chun.Rdata")
 atrt.meth.os.meta.n8.extract -> ATRT
 load(file = "./ECRT.v3.abs.chun.Rdata")
@@ -113,14 +150,72 @@ get_basenames <- function(dir){
   return(gsub("_Red.idat","", temp.files))
 }
 
-
 extract.metagene <- function(index, weights, exp.matrix, scaling) {
   exp.matrix[index, ] -> temp.exp
   apply(temp.exp, 2, function(x) {
     mean(x * weights)
   }) -> raw.metagene
+  round(raw.metagene, digits = 3)
   as.numeric(scale(raw.metagene, center = scaling[1], scale = scaling[2])) -> scaled.metagene
+  round(scaled.metagene, digits = 3)
   names(scaled.metagene) <- colnames(exp.matrix)
   df <- as.data.frame(scaled.metagene)
   return(df)
 }
+
+digits = 0:9
+createRandString<- function() {
+  v = c(sample(LETTERS, 5, replace = TRUE),
+        sample(digits, 4, replace = TRUE),
+        sample(LETTERS, 1, replace = TRUE))
+  return(paste0(v,collapse = ""))
+}
+
+
+generate_figure <- function(new.sample.meta.score){
+  temp.df <- readRDS(file = "~/Idat-Shiny/temp.df.rds")
+  df.cat.atrt <- readRDS(file = "~/Idat-Shiny/df.cat.atrt.rds")
+  comb.SDb.atrt <- readRDS(file = "~/Idat-Shiny/comb.SDb.atrt.rds")
+  ggplot(aes(x=1:nrow(temp.df),y=atrt8), data = temp.df) +
+    geom_line() +
+    scale_shape_manual(values=c(1, 4,  3)) +
+    scale_color_manual(values=c('#E69F00','#999999',"white")) +
+    ylab("ATRT-8") +
+    theme_minimal() +
+    theme(axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank()) -> b
+  
+  df.lines.hor <-foreach(i = 1:length(new.sample.meta.score), .combine = rbind)%do%{
+    data.frame(x=0,
+               xend=max(which(temp.df$atrt8 <new.sample.meta.score[i])),
+               y=new.sample.meta.score[i],
+               yend=new.sample.meta.score[i])}
+  df.lines.hor$labels <- names(new.sample.meta.score)
+  
+  df.lines.ver <-foreach(i = 1:length(new.sample.meta.score), .combine = rbind)%do%{
+    data.frame(x=max(which(temp.df$atrt8 < new.sample.meta.score[i])),
+               xend=max(which(temp.df$atrt8 < new.sample.meta.score[i])),
+               y=new.sample.meta.score[i],
+               yend=min(temp.df$atrt8))}
+  df.lines.ver$perc <- paste0(round(df.lines.ver$xend/ length(temp.df$atrt8)*100),"th")
+  b<- b + 
+    geom_segment(aes(x = x, y = y, xend = xend, yend = yend), colour = "red", linetype = "dashed", data = df.lines.hor) +
+    geom_segment(aes(x = x, y = y, xend = xend, yend = yend), colour = "red", linetype = "dashed", data = df.lines.ver) +
+    #geom_text_repel(aes(x = x+10, y = y+0.1, label = labels), direction = "y", data = df.lines.hor)
+    geom_text(aes(x = x+10, y = y+0.1, label = labels), data = df.lines.hor) 
+  
+  df <- data.frame()
+  c <- ggplot() + theme_void()
+  
+  
+  #ggarrange(a,a2,ggarrange(
+   # c,b, ncol = 2, nrow = 1, widths = c(0.015,1)),ncol=1,nrow=3)
+  ggarrange(
+    c,b, ncol = 2, nrow = 1, widths = c(0.015,1))
+  #return(data.frame(perc = df.lines.ver[,5], row.names=rownames(df.lines.ver)))
+}
+
+
+
+
