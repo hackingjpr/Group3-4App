@@ -3,7 +3,7 @@ source("./source_functions.R")
 
 ui <- shiny::fluidPage(
   # tags$h1("NAME OF APP TO FOLLOW"),
-  # 
+  useAttendant(),
   dashboardPage(dashboardHeader(title= "Name of App", dropdownMenuOutput("messageMenu")), 
                 dashboardSidebar(
                   (img(src='Free_Sample_By_Wix.jpg', align = "center")),
@@ -22,6 +22,7 @@ ui <- shiny::fluidPage(
       style = "fill"
     ),
     
+    
     # fluidRow( 
     actionBttn(
       inputId = "bttn2",
@@ -30,6 +31,7 @@ ui <- shiny::fluidPage(
       style = "fill",
       size = "sm"
     ),
+    attendantBar("progress-bar"),
     hr(),
     tags$footer( HTML(
       paste(
@@ -54,7 +56,8 @@ ui <- shiny::fluidPage(
                    textOutput("metagenes"),
                    column(12,
                           DTOutput('Mval')))),
-                  (fluidRow(plotOutput("figure"))),
+                  # (fluidRow(plotOutput("figure")%>% withSpinner(color="#0dc5c1"))),
+                 (fluidRow(plotOutput("figure"))),
                   textOutput("time")
                  ),
         
@@ -78,10 +81,28 @@ ui <- shiny::fluidPage(
   
 server <- function(session, input, output) {
   options(shiny.maxRequestSize = 30 * 1024 ^ 2)
+  
+  # w <- Waiter$new(
+  #   color = "white",
+  #   html = attendantBar(
+  #     "progress-bar", 
+  #     width = 200, # MUST be set with waiter
+  #     text = "loading stuff"
+  #   )
+  # )
+  
+  att <- Attendant$new("progress-bar")
+  
   Mvals <-
     observeEvent(input$bttn1, {
+      att$set(10, text = "Loading") # start at 80%
+      att$auto() # automatically increment
+
+      
       req(input$idatFile)
       require(R.utils)
+      # w = Waiter$new()
+      # w$show()
       fs::path(tempdir(),createRandString()) -> tempDIR
       dir.create(tempDIR)
       
@@ -103,7 +124,11 @@ server <- function(session, input, output) {
         # incProgress(amount = 1/150)
         #   Sys.sleep(1)}
         temp.processed <- process_idats(temp.base)
+        on.exit({
+          att$done() # after 4 seconds
+        })
       })
+      # w$hide()
       output$Mval <- renderDT (({
         if (input$metagenes == "ALL") {
           ALL -> meta
@@ -130,6 +155,10 @@ server <- function(session, input, output) {
           processing=FALSE),
           #selection = list(target = 'row+column'),
           selection = "single")
+      
+      att$done(text = "Complete")
+      
+      indexRow <- input$tableId_row_last_clicked
         # test <- input$Mval_rows_selected
         
 

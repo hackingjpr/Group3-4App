@@ -88,7 +88,20 @@ if(!require(pheatmap)){
   library(pheatmap)
 }
 
+if(!require(shinycssloaders)){
+  install.packages("shinycssloaders")
+  library(shinycssloaders)
+}
 
+if(!require(shinybusy)){
+  install.packages("shinybusy")
+  library(shinybusy)
+}
+
+if(!require(waiter)){
+  install.packages("waiter")
+  library(waiter)
+}
 
 load(file = "./ATRT.v3.abs.chun.Rdata")
 atrt.meth.os.meta.n8.extract -> ATRT
@@ -262,6 +275,108 @@ generate_figure <- function(new.sample.meta.score) {
   #return(data.frame(perc = df.lines.ver[,5], row.names=rownames(df.lines.ver)))
 }
 
+
+generate_figure_highlight <- function(new.sample.meta.score, indexRow) {
+  temp.df <- readRDS(file = "./temp.df.rds")
+  df.cat.atrt <- readRDS(file = "./df.cat.atrt.rds")
+  comb.SDb.atrt <- readRDS(file = "./comb.SDb.atrt.rds")
+  ggplot(aes(x = 1:nrow(temp.df), y = atrt8), data = temp.df) +
+    geom_line() +
+    scale_shape_manual(values = c(1, 4,  3)) +
+    scale_color_manual(values = c('#E69F00', '#999999', "white")) +
+    ylab("ATRT-8") +
+    theme_minimal() +
+    theme(
+      axis.title.x = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      legend.position = "none"
+    ) -> b
+  
+  df.lines.hor <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              data.frame(
+                x = 0,
+                xend = max(which(
+                  temp.df$atrt8 < new.sample.meta.score[i]
+                )),
+                y = new.sample.meta.score[i],
+                yend = new.sample.meta.score[i]
+              )
+            }
+  df.lines.hor$labels <- names(new.sample.meta.score)
+  
+  df.lines.ver <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              data.frame(
+                x = max(which(
+                  temp.df$atrt8 < new.sample.meta.score[i]
+                )),
+                xend = max(which(
+                  temp.df$atrt8 < new.sample.meta.score[i]
+                )),
+                y = new.sample.meta.score[i],
+                yend = min(temp.df$atrt8)
+              )
+            }
+  df.lines.ver$perc <-
+    paste0(round(df.lines.ver$xend / length(temp.df$atrt8) * 100), "th")
+  
+  df.lines.ver$colour <- factor(ifelse(1:nrow(df.lines.ver)==indexRow,"highlight","no.highlight"), levels = c("highlight","no.highlight"))
+  df.lines.hor$colour <- factor(ifelse(1:nrow(df.lines.hor)==indexRow,"highlight","no.highlight"), levels = c("highlight","no.highlight"))
+  
+  b <- b +
+    geom_segment(
+      aes(
+        x = x,
+        y = y,
+        xend = xend,
+        yend = yend,
+        colour = as.character(colour)
+      ),
+      #colour = "red",
+      linetype = "dashed",
+      data = df.lines.hor
+    ) +
+    geom_segment(
+      aes(
+        x = x,
+        y = y,
+        xend = xend,
+        yend = yend,
+        colour = colour
+      ),
+      #colour = "red",
+      linetype = "dashed",
+      data = df.lines.ver
+    ) +
+    #geom_text_repel(aes(x = x+10, y = y+0.1, label = labels), direction = "y", data = df.lines.hor)
+    geom_text(aes(
+      x = x + 10,
+      y = y + 0.1,
+      label = labels,
+      colour = colour
+    ), data = df.lines.hor) 
+  #scale_color_discrete("red", "lightgrey")
+  
+  df <- data.frame()
+  c <- ggplot() + theme_void()
+  
+  
+  #ggarrange(a,a2,ggarrange(
+  # c,b, ncol = 2, nrow = 1, widths = c(0.015,1)),ncol=1,nrow=3)
+  ggarrange(c,
+            b,
+            ncol = 2,
+            nrow = 1,
+            widths = c(0.015, 1))
+  #return(data.frame(perc = df.lines.ver[,5], row.names=rownames(df.lines.ver)))
+}
+
+
+#generate_figure_highlight(c("sampleA" = 0.2, "sampleB" = 0.3, "sampleC" = 0.7), 1)
 
 
 
