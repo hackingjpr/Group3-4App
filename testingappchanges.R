@@ -151,8 +151,8 @@ server <- function(session, input, output) {
                                     (c(#input$Mval_cells_selected,
                                        #"test$col" = test,
                                       #input$Mval_cell_clicked$value,
-                                      "hi" = 1,
-                                      "sup" = 0.4))
+                                      "1" = 1,
+                                      "0.4" = 0.4))
                                     # (c("patientA" = 0.1,
                                     #    test,
                                     #    "fljkfd" = 1))
