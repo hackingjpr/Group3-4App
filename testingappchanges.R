@@ -31,12 +31,13 @@ ui <- shiny::fluidPage(
       size = "sm"
     ),
     hr(),
-    tags$footer((
-      "Author: James Hacking,
-                             Date Created: 28-04-2022,
-                             Copyright (c) James Hacking, 2022,
-              Email: james.hacking@ncl.ac.uk")
-    )
+    tags$footer( HTML(
+      paste(
+      "Author: James Hacking,", "<br/>",  
+                             "Date Created: 28-04-2022,", "<br/>", 
+                             "Copyright (c) James Hacking, 2022,", "<br/>",
+              "Email: james.hacking@ncl.ac.uk"
+    )))
     ), dashboardBody((
       tabsetPanel(
         tabPanel(
@@ -52,7 +53,7 @@ ui <- shiny::fluidPage(
                  (fluidRow(
                    textOutput("metagenes"),
                    column(12,
-                          dataTableOutput('Mval')))),
+                          DTOutput('Mval')))),
                   (fluidRow(plotOutput("figure"))),
                   textOutput("time")
                  ),
@@ -103,7 +104,7 @@ server <- function(session, input, output) {
         #   Sys.sleep(1)}
         temp.processed <- process_idats(temp.base)
       })
-      output$Mval <- renderDataTable (({
+      output$Mval <- renderDT (({
         if (input$metagenes == "ALL") {
           ALL -> meta
         }
@@ -126,23 +127,30 @@ server <- function(session, input, output) {
         options = list(
           pageLength = 100,
           initComplete = I("function(settings, json) {alert('Done.');}"),
-          processing=FALSE,
-          selection = list(target = 'column')),
+          processing=FALSE),
+          #selection = list(target = 'row+column'),
+          selection = "single")
+        # test <- input$Mval_rows_selected
+        
 
 
-      )
+      
         output$time <- renderText({proc.time() - ptm})
-        # test <- input$Mval_cells_selected
-        test <- input$Mval_cell_clicked
-        s1 <- test$col
-        s2 <- test$value
-        output$figure <- 
+        # cat(test)
+        # test <- input$Mval_rows_all
+        # test <- input$Mval_cell_clicked
+        # s1 <- test$col
+        # s2 <- test$value
+        output$figure <-
           renderPlot(
+            # test <- input$Mval_rows_all,
+
             # https://rstudio.github.io/DT/shiny.html
-            # test <- input$Mval_cell_clicked,
+
             generate_figure
                                     (c(#input$Mval_cells_selected,
-                                       "test$col" = test$value,
+                                       #"test$col" = test,
+                                      #input$Mval_cell_clicked$value,
                                       "hi" = 1,
                                       "sup" = 0.4))
                                     # (c("patientA" = 0.1,
