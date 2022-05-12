@@ -2,6 +2,7 @@ source("./source_functions.R")
 
 
 ui <- shiny::fluidPage(
+  
   # tags$h1("NAME OF APP TO FOLLOW"),
   #Loading bar
   useAttendant(),
@@ -9,7 +10,7 @@ ui <- shiny::fluidPage(
   dashboardPage(dashboardHeader(title= "", dropdownMenuOutput("messageMenu")), 
                 dashboardSidebar(
                   #logo
-                  (img(src='Free_Sample_By_Wix.jpg', align = "center")),
+                  (img(src='Free_Sample_By_Wix (5).jpg', align = "center")),
                   #uploading idat
                   h2("Step 1"),
                   fileInput(
@@ -19,7 +20,7 @@ ui <- shiny::fluidPage(
     accept = ".idat"),
     #Step 2
     h2("Step 2"),
-    selectInput("metagenes", "Select Metagene Set", c("ALL", "ATRT", "ECRT")),
+    selectInput("metagenes", "Select Metagene Set", c("MRT (ATRT & ECRT)", "ATRT", "ECRT")),
     #set it away
     h2("Step 3"),
     actionBttn(
@@ -49,7 +50,7 @@ ui <- shiny::fluidPage(
               
     )))
     ), dashboardBody((
-      tabsetPanel(
+      tabsetPanel( id = "tabs",
         #Information Tab
         tabPanel(
           "Info",
@@ -66,13 +67,34 @@ ui <- shiny::fluidPage(
         #Results Tab
         tabPanel("Results Table",
                  (fluidRow(
-                   textOutput("metagenes"),
-                   column(12,
-                          DTOutput('Mval')))),
+                   # column(100,
+                          box(
+                            width = 12,
+                            title = "Risk Values",
+                            status = "info",
+                            solidHeader = TRUE,
+                            DTOutput('Mval')
+                         # )
+                   ))),
                   # (fluidRow(plotOutput("figure")%>% withSpinner(color="#0dc5c1"))),
-                 (fluidRow(plotOutput("figure"))),
-                  textOutput("time")
-                 ),
+                 (fluidRow(
+                   box(
+                     title = "Risk plot", 
+                     status = "warning", 
+                     solidHeader = TRUE,
+                     collapsible = FALSE,
+                     plotOutput("figure")),
+                  box(
+                    title = "Selections",
+                    status = "success",
+                    solidHeader = TRUE,
+                    "Metagene Set:",
+                    textOutput("metagenechoice"),
+                    "Sample Selected:",
+                    textOutput("sample")
+                  ))
+                  #textOutput("time")
+                 )),
         
         #Download Tab
         tabPanel("Download",
@@ -95,6 +117,10 @@ ui <- shiny::fluidPage(
   
 server <- function(session, input, output) {
   options(shiny.maxRequestSize = 30 * 1024 ^ 2)
+  hideTab(inputId = "tabs", target = "Results Table")
+  hideTab(inputId = "tabs", target = "Download")
+  
+  
   
   # w <- Waiter$new(
   #   color = "white",
@@ -120,7 +146,7 @@ server <- function(session, input, output) {
       fs::path(tempdir(),createRandString()) -> tempDIR
       dir.create(tempDIR)
       
-      withProgress(message = 'beep boop, doing basey things', value = 1, {
+      # withProgress(message = 'beep boop, doing basey things', value = 1, {
         input$idatFile$datapath -> in.files
         message(in.files)
         paste0(tempDIR,"/", input$idatFile$name) -> out.files
@@ -129,8 +155,9 @@ server <- function(session, input, output) {
         copied <- file.copy(in.files, out.files)
 
         
-        temp.base <- get_basenames(tempDIR)})
-      withProgress(message = "beep boop, doing idat things, trust me it will finish I just haven't worked out how to link the loading bar to progress", value = 0, {
+        temp.base <- get_basenames(tempDIR)
+        # })
+      # withProgress(message = "beep boop, doing idat things, trust me it will finish I just haven't worked out how to link the loading bar to progress", value = 0, {
         
         cat("Timing start\n")
         ptm <- proc.time()
@@ -139,9 +166,9 @@ server <- function(session, input, output) {
         on.exit({
           att$done()
         })
-      })
+      # })
       output$Mval <- renderDT (({
-        if (input$metagenes == "ALL") {
+        if (input$metagenes == "MRT (ATRT & ECRT)") {
           ALL -> meta
         }
         if (input$metagenes == "ATRT") {
@@ -151,7 +178,7 @@ server <- function(session, input, output) {
           ECRT -> meta
         }
 
-        withProgress(message = 'beep boop, doing extraction things', value = 1, {
+        # withProgress(message = 'beep boop, doing extraction things', value = 1, {
           test <- extract.metagene(
             as.character(meta[[6]]$genes),
             as.numeric(meta[[6]]$weights),
@@ -159,13 +186,16 @@ server <- function(session, input, output) {
             as.numeric(meta[[7]])
           )
           round(test, digits = 3)
-        })}),
+        # })
+        }),
         options = list(
           pageLength = 100,
           initComplete = I("function(settings, json) {alert('Done.');}"),
           processing=FALSE),
           #selection = list(target = 'row+column'),
-          selection = "single")
+          # selection = "single")
+        # target = "row+column",
+        selection = list(selected = c(1)))
       
       att$done(text = "Complete")
       
@@ -180,22 +210,39 @@ server <- function(session, input, output) {
         # test <- input$Mval_cell_clicked
         # s1 <- test$col
         # s2 <- test$value
+        rowSelect <- reactive({input$Mval_row_last_clicked})
         output$figure <-
           renderPlot(
             # test <- input$Mval_rows_all,
 
             # https://rstudio.github.io/DT/shiny.html
 
-            generate_figure
-                                    (c(#input$Mval_cells_selected,
+            generate_figure(
+                                      c(#input$Mval_cells_selected,
                                        #"test$col" = test,
                                       #input$Mval_cell_clicked$value,
                                       "1" = 1,
-                                      "0.4" = 0.4))
+                                      "0.4" = 0.4)
+                                      ,rowSelect)
                                     # (c("patientA" = 0.1,
                                     #    test,
                                     #    "fljkfd" = 1))
         )
+      output$metagenechoice <- renderText({input$metagenes})
+      showTab(inputId = "tabs", target = "Results Table", select = TRUE)
+      showTab(inputId = "tabs", target = "Download")
+      
+      #For displaying currently selected sample
+      # output$sample <- renderText({
+      # s = input$Mval_cell_clicked$value
+      # if (length(s)) {
+      #   cat('These Samples were selected:\n\n')
+      #   cat(s, sep = ', ')
+      # }})
+      
+      output$sample <- renderText(input$Mval_cell_clicked$value) 
+      
+      #Message popup
       from <- "Server"
       message <- "Processing complete!"
       messageData <- data.frame(from, message)

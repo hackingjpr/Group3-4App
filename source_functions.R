@@ -276,7 +276,7 @@ generate_figure <- function(new.sample.meta.score) {
 }
 
 
-generate_figure_highlight <- function(new.sample.meta.score, indexRow) {
+generate_figure_highlight <- function(new.sample.meta.score, indexRow = NA) {
   temp.df <- readRDS(file = "./temp.df.rds")
   df.cat.atrt <- readRDS(file = "./df.cat.atrt.rds")
   comb.SDb.atrt <- readRDS(file = "./comb.SDb.atrt.rds")
