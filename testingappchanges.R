@@ -3,27 +3,33 @@ source("./source_functions.R")
 
 ui <- shiny::fluidPage(
   # tags$h1("NAME OF APP TO FOLLOW"),
+  #Loading bar
   useAttendant(),
-  dashboardPage(dashboardHeader(title= "Name of App", dropdownMenuOutput("messageMenu")), 
+  #Dashboard looks etc
+  dashboardPage(dashboardHeader(title= "", dropdownMenuOutput("messageMenu")), 
                 dashboardSidebar(
+                  #logo
                   (img(src='Free_Sample_By_Wix.jpg', align = "center")),
+                  #uploading idat
+                  h2("Step 1"),
                   fileInput(
     "idatFile",
     "Upload idat file:",
     multiple = TRUE,
     accept = ".idat"),
-    selectInput("metagenes", "Metagenes", c("ALL", "ATRT", "ECRT")),
-    # column(
-    #   3,
+    #Step 2
+    h2("Step 2"),
+    selectInput("metagenes", "Select Metagene Set", c("ALL", "ATRT", "ECRT")),
+    #set it away
+    h2("Step 3"),
     actionBttn(
       inputId = "bttn1",
-      label = "Generate M Values",
+      label = "Generate Risk Values",
       color = "primary",
       style = "fill"
     ),
     
-    
-    # fluidRow( 
+    #Reset button
     actionBttn(
       inputId = "bttn2",
       label = "Reset",
@@ -31,6 +37,7 @@ ui <- shiny::fluidPage(
       style = "fill",
       size = "sm"
     ),
+    #Loading Bar
     attendantBar("progress-bar"),
     hr(),
     tags$footer( HTML(
@@ -38,10 +45,12 @@ ui <- shiny::fluidPage(
       "Author: James Hacking,", "<br/>",  
                              "Date Created: 28-04-2022,", "<br/>", 
                              "Copyright (c) James Hacking, 2022,", "<br/>",
-              "Email: james.hacking@ncl.ac.uk"
+      h5(a("Email: james.hacking@ncl.ac.uk", href="mailto:james.hacking@ncl.ac.uk"))
+              
     )))
     ), dashboardBody((
       tabsetPanel(
+        #Information Tab
         tabPanel(
           "Info",
           (fluidRow(
@@ -51,6 +60,10 @@ ui <- shiny::fluidPage(
           )
           )
         ),
+        #Tutorial Tab
+        tabPanel("Tutorial",
+                 fluidRow("Tutorial here")),
+        #Results Tab
         tabPanel("Results Table",
                  (fluidRow(
                    textOutput("metagenes"),
@@ -61,7 +74,7 @@ ui <- shiny::fluidPage(
                   textOutput("time")
                  ),
         
-        
+        #Download Tab
         tabPanel("Download",
                  textInput("filename", "Please insert desired filename", "M-values"),
                  radioButtons(inputId = "download", label = "Select file type", choices = c("csv", "pdf")),
@@ -69,14 +82,15 @@ ui <- shiny::fluidPage(
         )
       )
     )),
-                tags$head(tags$style(HTML('* {font-family: "Courier New"};')))),
+    #Font Selection            
+    tags$head(tags$style(HTML('* {font-family: "Courier New"};')))),
   
-  setBackgroundColor(
-    #color = c("#F7FBFF", "#1E90FF"),
-    color = c("#FFFFFF", "#FFFFFF"),
-    gradient = "radial",
-    direction = c("top", "left")
-  ),
+  # setBackgroundColor(
+  #   #color = c("#F7FBFF", "#1E90FF"),
+  #   color = c("#FFFFFF", "#FFFFFF"),
+  #   gradient = "radial",
+  #   direction = c("top", "left")
+  # ),
     )
   
 server <- function(session, input, output) {
@@ -120,15 +134,12 @@ server <- function(session, input, output) {
         
         cat("Timing start\n")
         ptm <- proc.time()
-        # for (i in 1:150){
-        # incProgress(amount = 1/150)
-        #   Sys.sleep(1)}
+        
         temp.processed <- process_idats(temp.base)
         on.exit({
-          att$done() # after 4 seconds
+          att$done()
         })
       })
-      # w$hide()
       output$Mval <- renderDT (({
         if (input$metagenes == "ALL") {
           ALL -> meta
@@ -159,8 +170,7 @@ server <- function(session, input, output) {
       att$done(text = "Complete")
       
       indexRow <- input$tableId_row_last_clicked
-        # test <- input$Mval_rows_selected
-        
+
 
 
       
