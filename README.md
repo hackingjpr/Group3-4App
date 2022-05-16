@@ -53,6 +53,8 @@ Once you have your results you can either reset the app by pressing the reset bu
 Or download your data as a CSV file (data table results), or as a PDF (data table and graph).  
 **Download functionality is not currently supported but will be by the time the paper is published.**
 
+#System requirements
+##Hardware Requirements
 
 
 ## **Disclaimer : This app is exclusively for research purposes and strictly not for diagnostic use.**
