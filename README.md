@@ -29,3 +29,7 @@ This will start the process of generating risk values.
 
 Once the calculation has been completed you should be brought to the Results tab. This tab will show a data table at the top which displays your sample names on the left and their risk vaules on the right. 
 ![Risk Values](https://github.com/hackingjpr/Idat-Shiny/blob/main/Tutorial/Risk_values.png?raw=true)
+It will also show a graph (as shown below), the details of this graph and what it shows can be found in the corresponding paper (link)  
+(insert graph example)  
+There will also be a green box in the bottom right which will inform you of the currently selected sample (which will be highlighted in orange on the graph), and the selected metagene set.  
+![Selections](https://github.com/hackingjpr/Idat-Shiny/blob/main/Tutorial/Selections.png?raw=true)  
