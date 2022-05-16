@@ -12,7 +12,7 @@ This risk score can be measured using ATRT, ECRT, or MRT (ATRT & ECRT) metagenes
 ## Step One
 Upload your idat files (for now unzipped idat files only), including both red and green files.  
 <p align="center">
-![Upload](https://github.com/hackingjpr/Idat-Shiny/blob/main/Tutorial/upload.png?raw=true)  
+<img src="https://github.com/hackingjpr/Idat-Shiny/blob/main/Tutorial/upload.png?raw=true"  
 </p>
 Upload a minimum of two samples. Increasing the number of samples will of course increase the length of time for the upcoming processes so we recommend ~10 sample batches. This will make looking through the results easier and will speed up the process.
 
