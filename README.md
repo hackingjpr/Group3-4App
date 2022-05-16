@@ -18,8 +18,8 @@ Select your desired metagene set, this depends on wether you want your risk scor
 
 ## Step Three
 
-Press this button: 
-![Generate Risk Values](https://github.com/hackingjpr/Idat-Shiny/blob/main/Tutorial/generate_risk_values.png?raw=true)
+Press this button:/n
+![Generate Risk Values](https://github.com/hackingjpr/Idat-Shiny/blob/main/Tutorial/generate_risk_values.png?raw=true)/n
 This will start the process of generating risk values.
 
 ## Step Four
