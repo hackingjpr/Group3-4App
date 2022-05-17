@@ -13,7 +13,8 @@
 
 # Overview
 This script "app.R" encodes a shiny app that upon uploading idat files, will give a relative risk score for patient samples. 
-This risk score can be measured using ATRT, ECRT, or MRT (ATRT & ECRT) metagenes.
+This risk score can be measured using ATRT, ECRT, or MRT (ATRT & ECRT) metagenes.  
+This app can either be run on **INSERT LINK HERE** or the repository can be cloned onto your own machine.
 
 # Tutorial
 ## Step One - Uploading Data
