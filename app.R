@@ -3,7 +3,6 @@ source("./source_functions.R")
 
 ui <- shiny::fluidPage(
   
-  # tags$h1("NAME OF APP TO FOLLOW"),
   #Loading bar
   useAttendant(),
   #Dashboard looks etc
@@ -56,12 +55,8 @@ ui <- shiny::fluidPage(
                                tabPanel(
                                  "Info",
                                  (fluidRow(
-                                   
-                                   # "Here is where I will talk about what you can do and what it is all about etc.",
-                                   # h1("THIS IS FOR RESEARCH PURPOSES ONLY, DO NOT USE FOR DIAGNOSTICS"),
                                    includeMarkdown("./introduction.md")
-                                   
-                                 )
+                                  )
                                  )
                                ),
                                #Tutorial Tab
@@ -71,16 +66,13 @@ ui <- shiny::fluidPage(
                                #Results Tab
                                tabPanel("Results Table",
                                         (fluidRow(
-                                          # column(100,
                                           box(
                                             width = 12,
                                             title = "Risk Values",
                                             status = "info",
                                             solidHeader = TRUE,
                                             DTOutput('Mval')
-                                            # )
                                           ))),
-                                        # (fluidRow(plotOutput("figure")%>% withSpinner(color="#0dc5c1"))),
                                         (fluidRow(
                                           box(
                                             title = "Risk plot", 
@@ -99,7 +91,6 @@ ui <- shiny::fluidPage(
                                             h3("Patient's Risk Percentile:"),
                                             textOutput("percentages")
                                           ))
-                                         #textOutput("time")
                                         )),
                                
                                #Download Tab
@@ -113,12 +104,6 @@ ui <- shiny::fluidPage(
                 #Font Selection            
                 tags$head(tags$style(HTML('* {font-family: "Courier New"};')))),
   
-  # setBackgroundColor(
-  #   #color = c("#F7FBFF", "#1E90FF"),
-  #   color = c("#FFFFFF", "#FFFFFF"),
-  #   gradient = "radial",
-  #   direction = c("top", "left")
-  # ),
 )
 
 server <- function(session, input, output) {
@@ -192,12 +177,8 @@ server <- function(session, input, output) {
       }),
       options = list(
         pageLength = 10,
-        # initComplete = I("function(settings, json) {alert('Done.');}"),
         processing=FALSE),
-      #selection = list(target = 'row+column'),
       selection = "single"
-      # target = "row+column",
-      #selection = list(selected = c(1))
       )
       
       print(test.res)
@@ -206,24 +187,15 @@ server <- function(session, input, output) {
       print(figure.input)
       
       att$done(text = "Complete")
-      
-      #indexRow <- reactive({input$Mval_row_last_clicked})
-      #print(input$Mval_row_last_clicked)
-      
+
       
       
       output$time <- renderText({proc.time() - ptm})
-      # cat(test)
-      # test <- input$Mval_rows_all
-      # test <- input$Mval_cell_clicked
-      # s1 <- test$col
-      # s2 <- test$value
       rowSelect <- reactive({input$Mval_rows_selected})
       
       output$figure <-
         renderPlot(
-          # test <- input$Mval_rows_all,
-          
+
           # https://rstudio.github.io/DT/shiny.html
           
           
@@ -242,38 +214,10 @@ server <- function(session, input, output) {
       showTab(inputId = "tabs", target = "Download")
       
       #For displaying currently selected sample
-      # output$sample <- renderText({
-      # s = input$Mval_cell_clicked$value
-      # if (length(s)) {
-      #   cat('These Samples were selected:\n\n')
-      #   cat(s, sep = ', ')
-      # }})
-      
+
       output$sample <- renderText(input$Mval_cell_clicked$value) 
-      #output$sample <- renderText(input$Mval_row_last_clicked) 
-      
-      #Message popup
-      # from <- "Server"
-      # message <- "Processing complete!"
-      # messageData <- data.frame(from, message)
-      # output$messageMenu <- renderMenu({
-      #   # Code to generate each of the messageItems here, in a list. This assumes
-      #   # that messageData is a data frame with two columns, 'from' and 'message'.
-      #   msgs <- apply(messageData, 1, function(row) {
-      #     messageItem(from = row[["from"]], message = row[["message"]])
-      #   })
-      #   
-      #   # This is equivalent to calling:
-      #   #   dropdownMenu(type="messages", msgs[[1]], msgs[[2]], ...)
-      #   dropdownMenu(type = "messages", badgeStatus = "success", .list = msgs)
-      # })
+
     })
-  # output$figure <- renderPlot(generate_figure
-  #                             #(input$input$tableId_row_last_clicked)
-  #                             (c("patientA" = 0.1,
-  #                                input$input$tableId_row_last_clicked,
-  #                                "fljkfd" = 1))
-  # )
   #Reset session and delete tempDIR
   observeEvent(input$bttn2, {
     unlink(tempDIR, recursive = T)

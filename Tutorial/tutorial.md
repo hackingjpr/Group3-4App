@@ -30,7 +30,7 @@ It will also show a graph (as shown below), the details of this graph and what i
 (insert graph example)  
 There will also be a green box in the bottom right which will inform you of the currently selected sample (which will be highlighted in orange on the graph), and the selected metagene set.  
 
-![Selections](Selections.png)  
+![Selections](selections.png)  
 
 
 # Step Five - Export Data and Reset
