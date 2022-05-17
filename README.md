@@ -1,4 +1,4 @@
-# Idat-Shiny
+# MRT Risk Calculator App
 
 
 - [Overview](#overview)
