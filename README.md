@@ -54,8 +54,12 @@ Or download your data as a CSV file (data table results), or as a PDF (data tabl
 **Download functionality is not currently supported but will be by the time the paper is published.**
 
 # System requirements
-
 ## Hardware Requirements
+Functions provided here are compatible with any standard computer with enough RAM to support the in-memory operations.
+
+## Software Requirements
+Functions provided import and depend on a number of R packages. Functionality has been tested on *R 4.0.4* with *Ubuntu 20.04.2 LTS*
 
 
-## **Disclaimer : This app is exclusively for research purposes and strictly not for diagnostic use.**
+
+# **Disclaimer : This app is exclusively for research purposes and strictly not for diagnostic use.**
