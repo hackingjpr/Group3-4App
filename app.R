@@ -126,7 +126,7 @@ server <- function(session, input, output) {
   Mvals <-
     observeEvent(input$bttn1, {
       att$set(10, text = "Loading") #Start at 10% 
-      att$auto() # automatically increment
+      att$auto(ms = 1600, value = 0.01) # automatically increment
       
       #need idat file to run
       req(input$idatFile)
