@@ -57,15 +57,17 @@ ui <- shiny::fluidPage(
                                  "Info",
                                  (fluidRow(
                                    
-                                   "Here is where I will talk about what you can do and what it is all about etc.",
-                                   h1("THIS IS FOR RESEARCH PURPOSES ONLY, DO NOT USE FOR DIAGNOSTICS")
+                                   # "Here is where I will talk about what you can do and what it is all about etc.",
+                                   # h1("THIS IS FOR RESEARCH PURPOSES ONLY, DO NOT USE FOR DIAGNOSTICS"),
+                                   includeMarkdown("./introduction.md")
                                    
                                  )
                                  )
                                ),
                                #Tutorial Tab
                                tabPanel("Tutorial",
-                                        fluidRow("Tutorial here")),
+                                        includeMarkdown("./Tutorial/tutorial.md")
+                                          ),
                                #Results Tab
                                tabPanel("Results Table",
                                         (fluidRow(
@@ -90,10 +92,12 @@ ui <- shiny::fluidPage(
                                             title = "Selections",
                                             status = "success",
                                             solidHeader = TRUE,
-                                            "Metagene Set:",
+                                            h3("Metagene Set:"),
                                             textOutput("metagenechoice"),
-                                            "Sample Selected:",
-                                            textOutput("sample")
+                                            h3("Sample Selected:"),
+                                            textOutput("sample"),
+                                            h3("Patient's Risk Percentile:"),
+                                            textOutput("percentages")
                                           ))
                                          #textOutput("time")
                                         )),
@@ -126,7 +130,7 @@ server <- function(session, input, output) {
   
   #Loading bar
   att <- Attendant$new("progress-bar")
-  
+  unlink("./temp/", recursive = T)
   if(!dir.exists("./temp")){
     dir.create("./temp")
   }
@@ -225,18 +229,15 @@ server <- function(session, input, output) {
           
           
           generate_figure_highlight(
-            # c(#input$Mval_cells_selected,
-            #  #"test$col" = test,
-            # #input$Mval_cell_clicked$value,
-            # "1" = 1,
-            # "0.4" = 0.4)
+
             figure.input
             ,input$Mval_row_last_clicked)
-          # (c("patientA" = 0.1,
-          #    test,
-          #    "fljkfd" = 1))
+
         )
+      output$percentages <- renderText ({generate_figure_percentage(figure.input, input$Mval_row_last_clicked)})
+      
       output$metagenechoice <- renderText({input$metagenes})
+      
       showTab(inputId = "tabs", target = "Results Table", select = TRUE)
       showTab(inputId = "tabs", target = "Download")
       

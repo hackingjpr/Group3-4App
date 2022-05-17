@@ -338,5 +338,64 @@ generate_figure_highlight <- function(new.sample.meta.score, indexRow) {
 
 #generate_figure_highlight(c("sampleA" = 0.2, "sampleB" = 0.3, "sampleC" = 0.7), 1)
 
+generate_figure_percentage <- function(new.sample.meta.score, indexRow){
+  temp.df <- readRDS(file =  "./temp.df.rds")
+  df.cat.atrt <- readRDS(file = "./df.cat.atrt.rds")
+  comb.SDb.atrt <- readRDS(file = "./comb.SDb.atrt.rds")
+  
+  ggplot(aes(x=1:nrow(temp.df)), data = temp.df) +
+    geom_point(aes(y=time.os, color = factor(status.os), shape = factor(status.os)), size = 2, show.legend = FALSE) +
+    scale_shape_manual(values=c(1, 4,  3)) +
+    scale_color_manual(values=c('#E69F00','#999999',"white")) +
+    ylab("Time in days") +
+    # new_scale_color() +
+    # geom_point(aes(y=time.fruh*30, color = factor(status.fruh), shape = factor(status.fruh)), size = 4, show.legend = FALSE) +
+    # scale_color_manual(values=c('red','blue',"white")) +
+    theme_minimal() +
+    theme(axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank()) -> a
+  
+  ggplot(aes(x=1:nrow(temp.df)), data = temp.df) +
+    # geom_point(aes(y=time.os, color = factor(status.os), shape = factor(status.os)), size = 4, show.legend = FALSE) +
+    # scale_shape_manual(values=c(1, 4,  3)) +
+    # scale_color_manual(values=c('#E69F00','#999999',"white")) +
+    # new_scale_color() +
+    geom_point(aes(y=time.fruh*30, color = factor(status.fruh), shape = factor(status.fruh)), size = 2, show.legend = FALSE) +
+    scale_color_manual(values=c('#E69F00','#999999',"white")) +
+    scale_shape_manual(values=c(1, 4,  3)) +
+    ylab("Time in days") +
+    theme_minimal() +
+    theme(axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank()) -> a2
+  
+  ggplot(aes(x=1:nrow(temp.df),y=atrt8), data = temp.df) +
+    geom_line() +
+    scale_shape_manual(values=c(1, 4,  3)) +
+    scale_color_manual(values=c('#E69F00','#999999',"white")) +
+    ylab("ATRT-8") +
+    theme_minimal() +
+    theme(axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank()) -> b
+  
+  df.lines.hor <-foreach(i = 1:length(new.sample.meta.score), .combine = rbind)%do%{
+    data.frame(x=0,
+               xend=max(which(temp.df$atrt8 <new.sample.meta.score[i])),
+               y=new.sample.meta.score[i],
+               yend=new.sample.meta.score[i])}
+  df.lines.hor$labels <- names(new.sample.meta.score)
+  
+  df.lines.ver <-foreach(i = 1:length(new.sample.meta.score), .combine = rbind)%do%{
+    data.frame(x=max(which(temp.df$atrt8 < new.sample.meta.score[i])),
+               xend=max(which(temp.df$atrt8 < new.sample.meta.score[i])),
+               y=new.sample.meta.score[i],
+               yend=min(temp.df$atrt8))}
+  df.lines.ver$perc <- paste0(round(df.lines.ver$xend/ length(temp.df$atrt8)*100),"th")
+  
+  return(df.lines.ver$perc[indexRow])
+}
+
 
 
