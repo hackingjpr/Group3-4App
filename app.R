@@ -162,7 +162,7 @@ server <- function(session, input, output) {
         att$done()
       })
       
-      metagene.react <- 
+      metagene.react <-  
         
         if (input$metagenes == "MRT (ATRT & ECRT)") {
           ALL -> meta
@@ -176,11 +176,12 @@ server <- function(session, input, output) {
       #this needs to be reactive
       # output$test.res <- reactive({extract.metagene(
       test.res <- extract.metagene(
-        as.character(meta[[6]]$genes),
-        as.numeric(meta[[6]]$weights),
+        as.character(meta[[1]]$genes),
+        as.numeric(meta[[1]]$weights),
         beta2m(temp.processed$betas),
-        as.numeric(meta[[7]])
+        as.numeric(meta[[2]])
       )
+    # )})
       round(test.res, digits = 3) -> test.res
       
       output$Mval <- renderDT (({test.res
@@ -190,7 +191,7 @@ server <- function(session, input, output) {
         # initComplete = I("function(settings, json) {alert('Done.');}"),
         processing=FALSE),
       #selection = list(target = 'row+column'),
-      # selection = "single")
+      selection = "single"
       # target = "row+column",
       #selection = list(selected = c(1))
       )
