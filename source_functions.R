@@ -232,14 +232,220 @@ createRandString<- function() {
   return(paste0(v,collapse = ""))
 }
 
-generate_figure_highlight <- function(new.sample.meta.score, indexRow) {
+generate_figure_highlight_mrt <- function(new.sample.meta.score, indexRow) {
   if(is.null(indexRow)){indexRow=1}
   #temp.df <- readRDS(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/temp.df.rds")
-   temp.df <- readRDS(file = "./temp.df.rds")
+   temp.df <- readRDS(file = "./mrt54.dist.rds")
   #df.cat.atrt <- readRDS(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/df.cat.atrt.rds")
-   df.cat.atrt <- readRDS(file = "./df.cat.atrt.rds")
+   # df.cat.atrt <- readRDS(file = "./df.cat.atrt.rds")
   #comb.SDb.atrt <- readRDS(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/comb.SDb.atrt.rds")
-   comb.SDb.atrt <- readRDS(file = "./comb.SDb.atrt.rds")
+   # comb.SDb.atrt <- readRDS(file = "./comb.SDb.atrt.rds")
+  ggplot(aes(x = 1:nrow(temp.df), y = mrt54), data = temp.df) +
+    geom_line() +
+    scale_shape_manual(values = c(1, 4,  3)) +
+    scale_color_manual(values = c('#E69F00', '#999999', "white")) +
+    ylab("MRT-54") +
+    theme_minimal() +
+    theme(
+      axis.title.x = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      legend.position = "none"
+    ) -> b
+  
+  df.lines.hor <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              data.frame(
+                x = 0,
+                xend = max(which(
+                  temp.df$mrt54 < new.sample.meta.score[i]
+                )),
+                y = new.sample.meta.score[i],
+                yend = new.sample.meta.score[i]
+              )
+            }
+  df.lines.hor$labels <- names(new.sample.meta.score)
+  
+  df.lines.ver <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              data.frame(
+                x = max(which(
+                  temp.df$mrt54 < new.sample.meta.score[i]
+                )),
+                xend = max(which(
+                  temp.df$mrt54 < new.sample.meta.score[i]
+                )),
+                y = new.sample.meta.score[i],
+                yend = min(temp.df$mrt54)
+              )
+            }
+  df.lines.ver$perc <-
+    paste0(round(df.lines.ver$xend / length(temp.df$mrt54) * 100), "th")
+  
+  df.lines.ver$colour <- factor(ifelse(1:nrow(df.lines.ver)==indexRow,"highlight","no.highlight"), levels = c("highlight","no.highlight"))
+  df.lines.hor$colour <- factor(ifelse(1:nrow(df.lines.hor)==indexRow,"highlight","no.highlight"), levels = c("highlight","no.highlight"))
+  
+  b <- b +
+    geom_segment(
+      aes(
+        x = x,
+        y = y,
+        xend = xend,
+        yend = yend,
+        colour = as.character(colour)
+      ),
+      #colour = "red",
+      linetype = "dashed",
+      data = df.lines.hor
+    ) +
+    geom_segment(
+      aes(
+        x = x,
+        y = y,
+        xend = xend,
+        yend = yend,
+        colour = colour
+      ),
+      #colour = "red",
+      linetype = "dashed",
+      data = df.lines.ver
+    ) +
+    #geom_text_repel(aes(x = x+10, y = y+0.1, label = labels), direction = "y", data = df.lines.hor)
+    geom_text(aes(
+      x = x + 10,
+      y = y + 0.1,
+      label = labels,
+      colour = colour
+    ), data = df.lines.hor) 
+  #scale_color_discrete("red", "lightgrey")
+  
+  df <- data.frame()
+  c <- ggplot() + theme_void()
+  
+  
+  #ggarrange(a,a2,ggarrange(
+  # c,b, ncol = 2, nrow = 1, widths = c(0.015,1)),ncol=1,nrow=3)
+  ggarrange(c,
+            b,
+            ncol = 2,
+            nrow = 1,
+            widths = c(0.015, 1))
+  #return(data.frame(perc = df.lines.ver[,5], row.names=rownames(df.lines.ver)))
+}
+
+generate_figure_highlight_ecrt <- function(new.sample.meta.score, indexRow) {
+  if(is.null(indexRow)){indexRow=1}
+  #temp.df <- readRDS(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/temp.df.rds")
+  temp.df <- readRDS(file = "./ecrt20.dist.rds")
+  #df.cat.atrt <- readRDS(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/df.cat.atrt.rds")
+  # df.cat.atrt <- readRDS(file = "./df.cat.atrt.rds")
+  #comb.SDb.atrt <- readRDS(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/comb.SDb.atrt.rds")
+  # comb.SDb.atrt <- readRDS(file = "./comb.SDb.atrt.rds")
+  ggplot(aes(x = 1:nrow(temp.df), y = ecrt20), data = temp.df) +
+    geom_line() +
+    scale_shape_manual(values = c(1, 4,  3)) +
+    scale_color_manual(values = c('#E69F00', '#999999', "white")) +
+    ylab("ATRT-8") +
+    theme_minimal() +
+    theme(
+      axis.title.x = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      legend.position = "none"
+    ) -> b
+  
+  df.lines.hor <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              data.frame(
+                x = 0,
+                xend = max(which(
+                  temp.df$ecrt20 < new.sample.meta.score[i]
+                )),
+                y = new.sample.meta.score[i],
+                yend = new.sample.meta.score[i]
+              )
+            }
+  df.lines.hor$labels <- names(new.sample.meta.score)
+  
+  df.lines.ver <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              data.frame(
+                x = max(which(
+                  temp.df$ecrt20 < new.sample.meta.score[i]
+                )),
+                xend = max(which(
+                  temp.df$ecrt20 < new.sample.meta.score[i]
+                )),
+                y = new.sample.meta.score[i],
+                yend = min(temp.df$ecrt20)
+              )
+            }
+  df.lines.ver$perc <-
+    paste0(round(df.lines.ver$xend / length(temp.df$ecrt20) * 100), "th")
+  
+  df.lines.ver$colour <- factor(ifelse(1:nrow(df.lines.ver)==indexRow,"highlight","no.highlight"), levels = c("highlight","no.highlight"))
+  df.lines.hor$colour <- factor(ifelse(1:nrow(df.lines.hor)==indexRow,"highlight","no.highlight"), levels = c("highlight","no.highlight"))
+  
+  b <- b +
+    geom_segment(
+      aes(
+        x = x,
+        y = y,
+        xend = xend,
+        yend = yend,
+        colour = as.character(colour)
+      ),
+      #colour = "red",
+      linetype = "dashed",
+      data = df.lines.hor
+    ) +
+    geom_segment(
+      aes(
+        x = x,
+        y = y,
+        xend = xend,
+        yend = yend,
+        colour = colour
+      ),
+      #colour = "red",
+      linetype = "dashed",
+      data = df.lines.ver
+    ) +
+    #geom_text_repel(aes(x = x+10, y = y+0.1, label = labels), direction = "y", data = df.lines.hor)
+    geom_text(aes(
+      x = x + 10,
+      y = y + 0.1,
+      label = labels,
+      colour = colour
+    ), data = df.lines.hor) 
+  #scale_color_discrete("red", "lightgrey")
+  
+  df <- data.frame()
+  c <- ggplot() + theme_void()
+  
+  
+  #ggarrange(a,a2,ggarrange(
+  # c,b, ncol = 2, nrow = 1, widths = c(0.015,1)),ncol=1,nrow=3)
+  ggarrange(c,
+            b,
+            ncol = 2,
+            nrow = 1,
+            widths = c(0.015, 1))
+  #return(data.frame(perc = df.lines.ver[,5], row.names=rownames(df.lines.ver)))
+}
+
+generate_figure_highlight_atrt <- function(new.sample.meta.score, indexRow) {
+  if(is.null(indexRow)){indexRow=1}
+  #temp.df <- readRDS(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/temp.df.rds")
+  temp.df <- readRDS(file = "./atrt8.dist.rds")
+  #df.cat.atrt <- readRDS(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/df.cat.atrt.rds")
+  # df.cat.atrt <- readRDS(file = "./df.cat.atrt.rds")
+  #comb.SDb.atrt <- readRDS(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/comb.SDb.atrt.rds")
+  # comb.SDb.atrt <- readRDS(file = "./comb.SDb.atrt.rds")
   ggplot(aes(x = 1:nrow(temp.df), y = atrt8), data = temp.df) +
     geom_line() +
     scale_shape_manual(values = c(1, 4,  3)) +
@@ -335,50 +541,11 @@ generate_figure_highlight <- function(new.sample.meta.score, indexRow) {
   #return(data.frame(perc = df.lines.ver[,5], row.names=rownames(df.lines.ver)))
 }
 
-
 #generate_figure_highlight(c("sampleA" = 0.2, "sampleB" = 0.3, "sampleC" = 0.7), 1)
 
-generate_figure_percentage <- function(new.sample.meta.score, indexRow){
-  temp.df <- readRDS(file =  "./temp.df.rds")
-  df.cat.atrt <- readRDS(file = "./df.cat.atrt.rds")
-  comb.SDb.atrt <- readRDS(file = "./comb.SDb.atrt.rds")
-  
-  ggplot(aes(x=1:nrow(temp.df)), data = temp.df) +
-    geom_point(aes(y=time.os, color = factor(status.os), shape = factor(status.os)), size = 2, show.legend = FALSE) +
-    scale_shape_manual(values=c(1, 4,  3)) +
-    scale_color_manual(values=c('#E69F00','#999999',"white")) +
-    ylab("Time in days") +
-    # new_scale_color() +
-    # geom_point(aes(y=time.fruh*30, color = factor(status.fruh), shape = factor(status.fruh)), size = 4, show.legend = FALSE) +
-    # scale_color_manual(values=c('red','blue',"white")) +
-    theme_minimal() +
-    theme(axis.title.x=element_blank(),
-          axis.text.x=element_blank(),
-          axis.ticks.x=element_blank()) -> a
-  
-  ggplot(aes(x=1:nrow(temp.df)), data = temp.df) +
-    # geom_point(aes(y=time.os, color = factor(status.os), shape = factor(status.os)), size = 4, show.legend = FALSE) +
-    # scale_shape_manual(values=c(1, 4,  3)) +
-    # scale_color_manual(values=c('#E69F00','#999999',"white")) +
-    # new_scale_color() +
-    geom_point(aes(y=time.fruh*30, color = factor(status.fruh), shape = factor(status.fruh)), size = 2, show.legend = FALSE) +
-    scale_color_manual(values=c('#E69F00','#999999',"white")) +
-    scale_shape_manual(values=c(1, 4,  3)) +
-    ylab("Time in days") +
-    theme_minimal() +
-    theme(axis.title.x=element_blank(),
-          axis.text.x=element_blank(),
-          axis.ticks.x=element_blank()) -> a2
-  
-  ggplot(aes(x=1:nrow(temp.df),y=atrt8), data = temp.df) +
-    geom_line() +
-    scale_shape_manual(values=c(1, 4,  3)) +
-    scale_color_manual(values=c('#E69F00','#999999',"white")) +
-    ylab("ATRT-8") +
-    theme_minimal() +
-    theme(axis.title.x=element_blank(),
-          axis.text.x=element_blank(),
-          axis.ticks.x=element_blank()) -> b
+generate_figure_percentage_atrt <- function(new.sample.meta.score, indexRow){
+  temp.df <- readRDS(file =  "./atrt8.dist.rds")
+
   
   df.lines.hor <-foreach(i = 1:length(new.sample.meta.score), .combine = rbind)%do%{
     data.frame(x=0,
@@ -397,5 +564,84 @@ generate_figure_percentage <- function(new.sample.meta.score, indexRow){
   return(df.lines.ver$perc[indexRow])
 }
 
+generate_figure_percentage_mrt <- function(new.sample.meta.score, indexRow){
+  temp.df <- readRDS(file =  "./mrt54.dist.rds")
+  
+  
+  df.lines.hor <-foreach(i = 1:length(new.sample.meta.score), .combine = rbind)%do%{
+    data.frame(x=0,
+               xend=max(which(temp.df$atrt8 <new.sample.meta.score[i])),
+               y=new.sample.meta.score[i],
+               yend=new.sample.meta.score[i])}
+  df.lines.hor$labels <- names(new.sample.meta.score)
+  
+  df.lines.ver <-foreach(i = 1:length(new.sample.meta.score), .combine = rbind)%do%{
+    data.frame(x=max(which(temp.df$mrt54 < new.sample.meta.score[i])),
+               xend=max(which(temp.df$mrt54 < new.sample.meta.score[i])),
+               y=new.sample.meta.score[i],
+               yend=min(temp.df$mrt54))}
+  df.lines.ver$perc <- paste0(round(df.lines.ver$xend/ length(temp.df$mrt54)*100),"th")
+  
+  return(df.lines.ver$perc[indexRow])
+}
 
+generate_figure_percentage_ecrt <- function(new.sample.meta.score, indexRow){
+  temp.df <- readRDS(file =  "./ecrt20.dist.rds")
+  
+  
+  df.lines.hor <-foreach(i = 1:length(new.sample.meta.score), .combine = rbind)%do%{
+    data.frame(x=0,
+               xend=max(which(temp.df$ecrt20 <new.sample.meta.score[i])),
+               y=new.sample.meta.score[i],
+               yend=new.sample.meta.score[i])}
+  df.lines.hor$labels <- names(new.sample.meta.score)
+  
+  df.lines.ver <-foreach(i = 1:length(new.sample.meta.score), .combine = rbind)%do%{
+    data.frame(x=max(which(temp.df$ecrt20 < new.sample.meta.score[i])),
+               xend=max(which(temp.df$ecrt20 < new.sample.meta.score[i])),
+               y=new.sample.meta.score[i],
+               yend=min(temp.df$ecrt20))}
+  df.lines.ver$perc <- paste0(round(df.lines.ver$xend/ length(temp.df$ecrt20)*100),"th")
+  
+  return(df.lines.ver$perc[indexRow])
+}
 
+# df.cat.atrt <- readRDS(file = "./df.cat.atrt.rds")
+# comb.SDb.atrt <- readRDS(file = "./comb.SDb.atrt.rds")
+
+# ggplot(aes(x=1:nrow(temp.df)), data = temp.df) +
+#   geom_point(aes(y=time.os, color = factor(status.os), shape = factor(status.os)), size = 2, show.legend = FALSE) +
+#   scale_shape_manual(values=c(1, 4,  3)) +
+#   scale_color_manual(values=c('#E69F00','#999999',"white")) +
+#   ylab("Time in days") +
+#   # new_scale_color() +
+#   # geom_point(aes(y=time.fruh*30, color = factor(status.fruh), shape = factor(status.fruh)), size = 4, show.legend = FALSE) +
+#   # scale_color_manual(values=c('red','blue',"white")) +
+#   theme_minimal() +
+#   theme(axis.title.x=element_blank(),
+#         axis.text.x=element_blank(),
+#         axis.ticks.x=element_blank()) -> a
+# 
+# ggplot(aes(x=1:nrow(temp.df)), data = temp.df) +
+#   # geom_point(aes(y=time.os, color = factor(status.os), shape = factor(status.os)), size = 4, show.legend = FALSE) +
+#   # scale_shape_manual(values=c(1, 4,  3)) +
+#   # scale_color_manual(values=c('#E69F00','#999999',"white")) +
+#   # new_scale_color() +
+#   geom_point(aes(y=time.fruh*30, color = factor(status.fruh), shape = factor(status.fruh)), size = 2, show.legend = FALSE) +
+#   scale_color_manual(values=c('#E69F00','#999999',"white")) +
+#   scale_shape_manual(values=c(1, 4,  3)) +
+#   ylab("Time in days") +
+#   theme_minimal() +
+#   theme(axis.title.x=element_blank(),
+#         axis.text.x=element_blank(),
+#         axis.ticks.x=element_blank()) -> a2
+# 
+# ggplot(aes(x=1:nrow(temp.df),y=V1), data = temp.df) +
+#   geom_line() +
+#   scale_shape_manual(values=c(1, 4,  3)) +
+#   scale_color_manual(values=c('#E69F00','#999999',"white")) +
+#   ylab("ATRT-8") +
+#   theme_minimal() +
+#   theme(axis.title.x=element_blank(),
+#         axis.text.x=element_blank(),
+#         axis.ticks.x=element_blank()) -> b

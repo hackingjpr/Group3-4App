@@ -151,9 +151,9 @@ server <- function(session, input, output) {
         att$done()
       })
       
-      metagene.react <-  
+       
         
-        if (input$metagenes == "MRT (ATRT & ECRT)") {
+      if (input$metagenes == "MRT (ATRT & ECRT)") {
           ALL -> meta
         }
       if (input$metagenes == "ATRT") {
@@ -176,7 +176,7 @@ server <- function(session, input, output) {
       output$Mval <- renderDT (({test.res
       }),
       options = list(
-        pageLength = 10,
+        pageLength = 10, 
         processing=FALSE),
       selection = "single"
       )
@@ -188,25 +188,70 @@ server <- function(session, input, output) {
       
       att$done(text = "Complete")
 
-      
-      
+
       output$time <- renderText({proc.time() - ptm})
       rowSelect <- reactive({input$Mval_rows_selected})
       
       output$figure <-
         renderPlot(
+          
+          # generate_figure_highlight_mrt(
+          #   figure.input
+          #   ,1)
+
+generate_figure_highlight_mrt(
+  figure.input
+  ,input$Mval_row_last_clicked)
+          # 
+          # if (input$metagenes == "MRT (ATRT & ECRT)") {
+          #   generate_figure_highlight_mrt(
+          #     figure.input
+          #     ,input$Mval_row_last_clicked)
+          # },
+          # if (input$metagenes == "ATRT") {
+          #   generate_figure_highlight_atrt(
+          #     figure.input
+          #     ,input$Mval_row_last_clicked)
+          # },
+          # if (input$metagenes == "ECRT") {
+          #   generate_figure_highlight_ecrt(
+          #     figure.input
+          #     ,input$Mval_row_last_clicked)
+          # }
 
           # https://rstudio.github.io/DT/shiny.html
-          
-          
-          
-          generate_figure_highlight(
 
-            figure.input
-            ,input$Mval_row_last_clicked)
 
         )
-      output$percentages <- renderText ({generate_figure_percentage(figure.input, input$Mval_row_last_clicked)})
+      output$percentages <- renderText (
+        
+        # input <- "./mrt54.dist.rds",
+        generate_figure_percentage_mrt(
+          figure.input,
+          input$Mval_row_last_clicked)
+          # ,input$Mval_row_last_clicked)
+        # "hello",
+        
+        # if (input$metagenes == "MRT (ATRT & ECRT)") {
+        #   figureFile <- "./mrt54.dist.rds"
+        #   generate_figure_percentage_mrt(
+        #     figure.input
+        #     ,input$Mval_row_last_clicked)
+        # },
+        # if (input$metagenes == "ATRT") {
+        #   figureFile <- "./atrt8.dist.rds"
+        #   generate_figure_percentage_atrt(
+        #     figure.input
+        #     ,input$Mval_row_last_clicked)
+        # },
+        # if (input$metagenes == "ECRT") {
+        #   figureFile <- "./ecrt20.dist.rds"
+        #   generate_figure_percentage_ecrt(
+        #     figure.input
+        #     ,input$Mval_row_last_clicked)
+        # }
+      )
+        # {generate_figure_percentage(figure.input, input$Mval_row_last_clicked)})
       
       output$metagenechoice <- renderText({input$metagenes})
       
