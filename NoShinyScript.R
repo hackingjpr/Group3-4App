@@ -1,4 +1,4 @@
-### Set working directory to where "source_functions.R" is
+### Set working directory to wherever "source_functions.R" is
 setwd("/example/Idat-Shiny")
 source("./source_functions.R")
 
@@ -16,7 +16,7 @@ metagene <- ALL
 #metagene <- ATRT
 #metagene <- ECRT
 
-### Extract Metagenes
+### Extract Metagenes (This will be your risk values result)
 test.res <- extract.metagene(
   as.character(metagene[[1]]$genes),
   as.numeric(metagene[[1]]$weights),
@@ -27,7 +27,7 @@ test.res <- extract.metagene(
 ### Round results to 3 figures
 round(test.res, digits = 3)
 
-### Select Risk values
+### Select Risk values column
 figure.input <- test.res$Risk_Value
 
 ### Name the rows
