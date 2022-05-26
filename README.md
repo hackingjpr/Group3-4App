@@ -58,7 +58,38 @@ Once you have your results you can either reset the app by pressing the reset bu
 ![Reset](https://github.com/hackingjpr/Idat-Shiny/blob/main/Tutorial/Reset.png?raw=true)  
 
 Or download your data as a CSV file (data table results), or as a PDF (data table and graph).  
-**Download functionality is not currently supported but will be by the time the paper is published.**
+
+# Run script without using Shiny App
+```
+### Set working directory to wherever "source_functions.R" is
+setwd("/example/Idat-Shiny")
+source("./source_functions.R")
+
+### Choose folder containing idats to be processed
+idats <- "/example/idatfolder/"
+
+### Get Basenames
+temp.base <- get_basenames(idats)
+
+### Process Idats
+temp.processed <- process_idats(temp.base)
+
+### Select metagene set
+metagene <- ALL
+#metagene <- ATRT
+#metagene <- ECRT
+
+### Extract Metagenes (This will be your risk values result)
+test.res <- extract.metagene(
+  as.character(metagene[[1]]$genes),
+  as.numeric(metagene[[1]]$weights),
+  beta2m(temp.processed$betas),
+  as.numeric(metagene[[2]])
+)
+
+### Round results to 3 figures
+round(test.res, digits = 3)
+```
 
 # System Requirements
 ## Hardware Requirements
