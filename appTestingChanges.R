@@ -518,7 +518,7 @@ server <- function(session, input, output) {
       
       output$down <- downloadHandler(
         filename = function() {
-          paste(input$filename,Sys.time(), input$download, sep=".")
+          paste(input$metagenes,Sys.time(), input$download, sep=".")
         },
         content ={ 
           function(file) {
@@ -568,11 +568,15 @@ server <- function(session, input, output) {
                   test.res}) 
                 
               ), file, row.names = TRUE)
-            
+            ####### if not csv then write a pdf
             else
               pdf(file,
-                  width = 14
+                  width = 14,
+                  title = paste(input$metagenes, "output")
                   )
+            
+            paste(input$metagenes)
+            
             grid.table(
               
               ({
@@ -678,21 +682,21 @@ server <- function(session, input, output) {
                     # figureFile <- "./mrt54.dist.rds"
                     generate_figure_highlight_mrt(
                       figure.input
-                      ,input$Mval_row_last_clicked)
+                      ,NA)
                   }))
                 figure.output.atrt <- (
                   (if(input$metagenes == "ATRT") {
                     # figureFile <- "./atrt8.dist.rds"
                     generate_figure_highlight_atrt(
                       figure.input
-                      ,input$Mval_row_last_clicked)
+                      ,NA)
                   }))
                 figure.output.ecrt <-( 
                   (if(input$metagenes == "ECRT") {
                     # figureFile <- "./ecrt20.dist.rds"
                     generate_figure_highlight_ecrt(
                       figure.input
-                      ,input$Mval_row_last_clicked)
+                      ,NA)
                   }))
                 # }
                 
