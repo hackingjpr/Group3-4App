@@ -151,25 +151,25 @@ server <- function(session, input, output) {
         att$done()
       })
       
-       
+      test.res <-(  
         
       if (input$metagenes == "MRT (ATRT & ECRT)") {
           ALL -> meta
-        }
+        } %>%
       if (input$metagenes == "ATRT") {
         ATRT -> meta
-      }
+      } %>%
       if (input$metagenes == "ECRT") {
         ECRT -> meta
-      }
+      } %>%
       #this needs to be reactive
       # output$test.res <- reactive({extract.metagene(
-      test.res <- extract.metagene(
+       extract.metagene(
         as.character(meta[[1]]$genes),
         as.numeric(meta[[1]]$weights),
         beta2m(temp.processed$betas),
         as.numeric(meta[[2]])
-      )
+      ))
     # )})
       round(test.res, digits = 3) -> test.res
       

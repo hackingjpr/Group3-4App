@@ -135,6 +135,16 @@ if(!require(waiter)){
 }
 message("waiter done")
 
+if(!require(tinytex)){
+  install.packages('tinytex')
+  library(tinytex)
+}
+
+
+library(gridExtra)
+library(grid)
+
+
 
 
 message("packages loaded")
@@ -570,7 +580,7 @@ generate_figure_percentage_mrt <- function(new.sample.meta.score, indexRow){
   
   df.lines.hor <-foreach(i = 1:length(new.sample.meta.score), .combine = rbind)%do%{
     data.frame(x=0,
-               xend=max(which(temp.df$atrt8 <new.sample.meta.score[i])),
+               xend=max(which(temp.df$mrt54 <new.sample.meta.score[i])),
                y=new.sample.meta.score[i],
                yend=new.sample.meta.score[i])}
   df.lines.hor$labels <- names(new.sample.meta.score)

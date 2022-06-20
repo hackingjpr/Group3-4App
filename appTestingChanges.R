@@ -143,8 +143,8 @@ server <- function(session, input, output) {
       
       temp.base <- get_basenames(tempDIR)
       
-      cat("Timing start\n")
-      ptm <- proc.time()
+      # cat("Timing start\n")
+      # ptm <- proc.time()
       
       temp.processed <- process_idats(temp.base)
       on.exit({
@@ -570,14 +570,16 @@ server <- function(session, input, output) {
               ), file, row.names = TRUE)
             ####### if not csv then write a pdf
             else
-              pdf(file,
-                  width = 14,
-                  title = paste(input$metagenes, "output")
-                  )
+               pdf(file,
+                   width = 14,
+                   title = paste(input$metagenes, "output")
+                   )
             
-            paste(input$metagenes)
-            
-            grid.table(
+            # tempReport <- file.path(tempdir(), "ShinyReport.Rmd")
+            # file.copy("ShinyReport.Rmd", tempReport, overwrite = TRUE)
+            # message("markdown started")
+
+            RiskValTable <- grid.table(
               
               ({
                 test.res.mrt <- extract.metagene(
@@ -621,7 +623,9 @@ server <- function(session, input, output) {
                 
                 test.res})
             )
-            plot({
+            message("Risk Table Done")
+            
+            RiskValPlot <- plot({
               
               
                 
@@ -714,10 +718,23 @@ server <- function(session, input, output) {
                 figure.output
                 
                 
+                
+                
               })
-              dev.off()
+            message("risk plot done")
+            # rmarkdown::render(
+            #   tempReport,
+            #   # output_file = file,
+            #   pdf_document(),
+            #   RiskValTable = "RiskValTable",
+            #   RiskValPlot = "RiskValPlot",
+            #   envir = new.env(parent = globalenv())
+            # )
+               dev.off()
             
           }
+          
+          
           # if (input$download == "csv")
           #   write.csv(output$Mval)
           # else
