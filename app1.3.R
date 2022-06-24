@@ -71,6 +71,7 @@ ui <- shiny::fluidPage(
                                             title = "Risk Values",
                                             status = "info",
                                             solidHeader = TRUE,
+                                            collapsible = TRUE,
                                             DTOutput('Mval')
                                           ))),
                                         (fluidRow(
@@ -78,20 +79,31 @@ ui <- shiny::fluidPage(
                                             title = "Risk plot", 
                                             status = "warning", 
                                             solidHeader = TRUE,
-                                            collapsible = FALSE,
+                                            collapsible = TRUE,
                                             plotOutput("figure")),
                                           box(
                                             title = "Selections",
                                             status = "success",
                                             solidHeader = TRUE,
+                                            collapsible = TRUE,
                                             h3("Metagene Set:"),
                                             textOutput("metagenechoice"),
                                             h3("Sample Selected:"),
                                             textOutput("sample"),
                                             h3("Patient's Risk Percentile:"),
                                             textOutput("percentages")
-                                          ))
-                                        )),
+                                          ))),
+                                         (fluidRow(
+                                           box(
+                                             width = 12,
+                                             title = "Summary",
+                                             status = "primary",
+                                             solidHeader = TRUE,
+                                             collapsible = TRUE,
+                                             includeMarkdown("./ResultsSummary.md")
+                                           )
+                                         ))
+                                        ),
                                
                                #Download Tab
                                tabPanel("Download",
