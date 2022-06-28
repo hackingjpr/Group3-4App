@@ -43,15 +43,15 @@ message("bumphunter done")
 # }
 # 
 # message("minfi done")
-# if(!require(IlluminaHumanMethylationEPICmanifest)){
-#   BiocManager::install("IlluminaHumanMethylationEPICmanifest")
-#   library(IlluminaHumanMethylationEPICmanifest)
-# }
+ if(!require(IlluminaHumanMethylationEPICmanifest)){
+   BiocManager::install("IlluminaHumanMethylationEPICmanifest")
+   library(IlluminaHumanMethylationEPICmanifest)
+ }
 # message("illumina1 done")
-# if(!require(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)){
-#   BiocManager::install("IlluminaHumanMethylationEPICanno.ilm10b4.hg19")
-#   library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
-# }
+ if(!require(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)){
+   BiocManager::install("IlluminaHumanMethylationEPICanno.ilm10b4.hg19")
+   library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+ }
 #message("manifest loaded")
 if(!require(shiny)){
   install.packages("shiny")
