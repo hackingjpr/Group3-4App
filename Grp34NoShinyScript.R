@@ -5,13 +5,13 @@ source("./source_functions.R")
 
 ### load in the prediction object
 load(file = "./g3.g4.cont.rfe.Rdata")
-pred.cont.rand.for <- predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)])
 
 ### I have attached some know values you can read here
-pred.cont.rand.for <- readRDS(file = "./pred.cont.rand.for.rds")
+pred.cont.rand.for.original <- readRDS(file = "./pred.cont.rand.for.rds")
 
 ### Choose folder containing idats to be processed
-idats <- "./Mix"
+idats <- "~/Idats/Mix"
+
 
 ### Get Basenames
 temp.base <- get_basenames(idats)
@@ -23,7 +23,10 @@ temp.processed <- process_idats(temp.base)
 beta2m(temp.processed$betas) -> M.values
 
 ### Round results to 3 figures
-round(test.res, digits = 3)
+round(M.values, digits = 3)
+
+metagene <- predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)])
+metagene.df <- data.frame(g3g4.score = metagene)
 
 ### Select Risk values column
 figure.input <- test.res$Risk_Value

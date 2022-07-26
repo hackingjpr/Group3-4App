@@ -5,24 +5,15 @@ Upload your idat files (for now unzipped idat files only), including both red an
 
 Upload a minimum of two samples. Increasing the number of samples will of course increase the length of time for the upcoming processes so we recommend ~10 sample batches. This will make looking through the results easier and will speed up the process.
 
-# Step Two - Selecting Metagenes
 
-Select your desired metagene set, this depends on wether you want your risk score to be calculated against ATRT, ECRT, or MRT metagenes.  
-
-![Metagene](metagene.png)  
+# Step Two - Generate GROUP 3/4 SCORES????
 
 
-# Step Three - Generate Risk Values
-
-Press this button:  
-  
-  ![Generate Risk Values](generate_risk_values.png)  
-
-This will start the process of generating risk values.
+This will start the process of generating GROUP 3/4 SCORES.
 
 # Step Four - Results
 
-Once the calculation has been completed you should be brought to the Results tab. This tab will show a data table at the top which displays your sample names on the left and their risk vaules on the right. 
+Once the calculation has been completed you should be brought to the Results tab. This tab will show a data table at the top which displays your sample names on the left and their GROUP 3/4 SCORES on the right. 
 
 ![Risk Values](risk_values.png)  
 
