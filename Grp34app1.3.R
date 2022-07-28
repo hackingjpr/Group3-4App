@@ -1,4 +1,4 @@
-source("./source_functions.R")
+source("./Grp34source_functions.R")
 
 
 ui <- shiny::fluidPage(
@@ -10,7 +10,7 @@ ui <- shiny::fluidPage(
                 dashboardSidebar(
                   #logo
                   # (img(src='Free_Sample_By_Wix (5).jpg', align = "center")),
-                  (img(src='Free_Sample_By_Wix%20(8).jpg', align = "center")),
+                  (img(src='Free_Sample_By_Wix%20(12).jpg', align = "center")),
                   #uploading idat
                   h2("Step 1"),
                   fileInput(
@@ -163,102 +163,7 @@ server <- function(session, input, output) {
         att$done()
       })
       
-      # test.res.mrt <- extract.metagene(
-      #   as.character(ALL[[1]]$genes),
-      #   as.numeric(ALL[[1]]$weights),
-      #   beta2m(temp.processed$betas),
-      #   as.numeric(ALL[[2]])
-      # )
-      # 
-      # round(test.res.mrt, digits = 3) -> test.res.mrt
-      # 
-      # 
-      # test.res.atrt <- extract.metagene(
-      #   as.character(ATRT[[1]]$genes),
-      #   as.numeric(ATRT[[1]]$weights),
-      #   beta2m(temp.processed$betas),
-      #   as.numeric(ATRT[[2]])
-      # )
-      # 
-      # round(test.res.atrt, digits = 3) -> test.res.atrt
-      # 
-      # 
-      # test.res.ecrt <- extract.metagene(
-      #   as.character(ECRT[[1]]$genes),
-      #   as.numeric(ECRT[[1]]$weights),
-      #   beta2m(temp.processed$betas),
-      #   as.numeric(ECRT[[2]])
-      # )
-      # 
-      # round(test.res.ecrt, digits = 3) -> test.res.ecrt
 
-      
-      #print(test.res)
-      # if (input$metagenes == "MRT (ATRT & ECRT)") {
-      #   test.res.mrt -> test.res
-      # }
-      # if (input$metagenes == "ATRT") {
-      #   test.res.atrt -> test.res
-      # }
-      # if (input$metagenes == "ECRT") {
-      #   test.res.ecrt -> test.res
-      # }
-     # test.res <-  reactive( {
-     #      if (input$metagenes == "MRT (ATRT & ECRT)") {
-     #        test.res.mrt -> test.res
-     #      }
-     #      if (input$metagenes == "ATRT") {
-     #        test.res.atrt -> test.res
-     #      }
-     #      if (input$metagenes == "ECRT") {
-     #        test.res.ecrt -> test.res
-     #      }
-     #   })
-      # message("test.res done")
-      # print(test.res)
-      
-      # test.reactive <- reactive(({
-      #   test.res.mrt <- extract.metagene(
-      #     as.character(ALL[[1]]$genes),
-      #     as.numeric(ALL[[1]]$weights),
-      #     beta2m(temp.processed$betas),
-      #     as.numeric(ALL[[2]])
-      #   )
-      #   
-      #   round(test.res.mrt, digits = 3) -> test.res.mrt
-      #   
-      #   
-      #   test.res.atrt <- extract.metagene(
-      #     as.character(ATRT[[1]]$genes),
-      #     as.numeric(ATRT[[1]]$weights),
-      #     beta2m(temp.processed$betas),
-      #     as.numeric(ATRT[[2]])
-      #   )
-      #   
-      #   round(test.res.atrt, digits = 3) -> test.res.atrt
-      #   
-      #   
-      #   test.res.ecrt <- extract.metagene(
-      #     as.character(ECRT[[1]]$genes),
-      #     as.numeric(ECRT[[1]]$weights),
-      #     beta2m(temp.processed$betas),
-      #     as.numeric(ECRT[[2]])
-      #   )
-      #   
-      #   round(test.res.ecrt, digits = 3) -> test.res.ecrt
-      #   
-      #   if (input$metagenes == "MRT (ATRT & ECRT)") {
-      #     test.res.mrt -> test.res
-      #   }
-      #   if (input$metagenes == "ATRT") {
-      #     test.res.atrt -> test.res
-      #   }
-      #   if (input$metagenes == "ECRT") {
-      #     test.res.ecrt -> test.res
-      #   }
-      #   
-      #   test.res}))
-      
       output$Mval <- renderDT (
         ({
           # Obtain MValues
@@ -470,9 +375,13 @@ server <- function(session, input, output) {
               (
                 ({
                   beta2m(temp.processed$betas) -> M.values
-                  pred.cont.rand.for <- predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)])
-                  round(pred.cont.rand.for, digits = 3) -> pred.cont.rand.for
-                  pred.cont.rand.for
+                  
+                  ### Round results to 3 figures
+                  # round(M.values, digits = 3) -> M.values
+                  
+                  metagene <- round(predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)]), digits = 3)
+                  metagene.df <- data.frame(g3g4.score = metagene)
+                  metagene.df
                   }) 
                 
               ), file, row.names = TRUE)
@@ -487,9 +396,13 @@ server <- function(session, input, output) {
               
               ({
                 beta2m(temp.processed$betas) -> M.values
-                pred.cont.rand.for <- predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)])
-                round(pred.cont.rand.for, digits = 3) -> pred.cont.rand.for
-                pred.cont.rand.for
+                
+                ### Round results to 3 figures
+                # round(M.values, digits = 3) -> M.values
+                
+                metagene <- round(predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)]), digits = 3)
+                metagene.df <- data.frame(g3g4.score = metagene)
+                metagene.df
                 })
             )
             # plot({

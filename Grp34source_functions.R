@@ -167,16 +167,16 @@ library(randomForest)
 message("packages loaded")
 #load(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/ATRT.v3.abs.chun.Rdata")
  # load(file = "./ATRT.v3.abs.chun.Rdata")
- readRDS(file = "./atrt8.model.rds") -> ATRT
-# atrt.meth.os.meta.n8.extract -> ATRT
-#load(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/ECRT.v3.abs.chun.Rdata")
- # load(file = "./ECRT.v3.abs.chun.Rdata")
-readRDS(file = "./ecrt20.model.rds") -> ECRT
-# ecrt.meth.os.meta.n20.extract -> ECRT
-#load(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/ALL.v3.abs.chun.Rdata")
- # load(file = "./ALL.v3.abs.chun.Rdata")
- readRDS(file = "./mrt54.model.rds") -> ALL
- # all.meth.os.meta.n54.extract -> ALL
+#  readRDS(file = "./atrt8.model.rds") -> ATRT
+# # atrt.meth.os.meta.n8.extract -> ATRT
+# #load(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/ECRT.v3.abs.chun.Rdata")
+#  # load(file = "./ECRT.v3.abs.chun.Rdata")
+# readRDS(file = "./ecrt20.model.rds") -> ECRT
+# # ecrt.meth.os.meta.n20.extract -> ECRT
+# #load(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/ALL.v3.abs.chun.Rdata")
+#  # load(file = "./ALL.v3.abs.chun.Rdata")
+#  readRDS(file = "./mrt54.model.rds") -> ALL
+#  # all.meth.os.meta.n54.extract -> ALL
 
 beta2m <- function (beta) {
   m <- log2(beta/(1 - beta))
