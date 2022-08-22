@@ -1,5 +1,4 @@
-source("./Grp34source_functions.R")
-
+source("./AppSourceFunctions.R")
 
 ui <- shiny::fluidPage(
   
@@ -11,28 +10,69 @@ ui <- shiny::fluidPage(
                   #logo
                   # (img(src='Free_Sample_By_Wix (5).jpg', align = "center")),
                   (img(src='Free_Sample_By_Wix%20(12).jpg', align = "center")),
-                  #uploading idat
                   h2("Step 1"),
-                  fileInput(
-                    "idatFile",
-                    "Upload idat files:",
-                    multiple = TRUE,
-                    accept = ".idat"),
+                  radioButtons(
+                    "expmeth",
+                    "Expression or Methylation Data?",
+                    c(Expression = "exp", Methylation = "meth")
+                  ),
+                  conditionalPanel(
+                    condition = "input.expmeth == 'meth'",
+                    fileInput(
+                      "methFile",
+                      "Upload Methylation files:",
+                      multiple = TRUE,
+                      accept = ".idat")),
+                    conditionalPanel(
+                    condition = "input.expmeth == 'exp'",
+                    fileInput(
+                      "expFile",
+                      "Upload Expression files:",
+                      multiple = TRUE,
+                      accept = c(".rds", ".csv", ".txt"))),
+                  conditionalPanel(
+                    condition = "input.expmeth == 'exp'",
+                    sliderInput(
+                      "outlier",
+                      "Select outlier etc",
+                      min = 0.5,
+                      max = 10,
+                      value = 0.5,
+                      step = 0.5,
+                      round = 0.5,
+                      animate = TRUE)),
+                  #uploading idat
+                  # h2("Step 2"),
+                  # fileInput(
+                  #   "idatFile",
+                  #   "Upload idat files:",
+                  #   multiple = TRUE,
+                  #   accept = ".idat"),
                   #Step 2
                   # h2("Step 2"),
                   # selectInput("metagenes", "Select Metagene Set", c("MRT (ATRT & ECRT)", "ATRT", "ECRT")),
                   #set it away
                   h2("Step 2"),
+                  conditionalPanel(
+                    condition = "input.expmeth == 'exp'",
                   actionBttn(
                     inputId = "bttn1",
-                    label = "Generate Group 3/4 Score",
+                    label = "Generate Group 3/4 Score, Expression",
                     color = "primary",
                     style = "fill"
-                  ),
+                  )),
+                  conditionalPanel(
+                    condition = "input.expmeth == 'meth'",
+                    actionBttn(
+                      inputId = "bttn2",
+                      label = "Generate Group 3/4 Score, Methylation",
+                      color = "success",
+                      style = "fill"
+                    )),
                   
                   #Reset button
                   actionBttn(
-                    inputId = "bttn2",
+                    inputId = "bttn3",
                     label = "Reset",
                     color = "danger",
                     style = "fill",
@@ -139,17 +179,137 @@ server <- function(session, input, output) {
   
   Mvals <-
     observeEvent(input$bttn1, {
+      att$set(0, text = "Loading") #Start at 10% 
+      att$auto(ms = 1600, value = 0.0048) # automatically increment
+      
+      req(input$expFile)
+      
+      require(R.utils)
+      
+      input$expFile$datapath -> in.files
+      message(in.files)
+      paste0(tempDIR,"/", input$expFile$name) -> out.files
+      message(out.files)
+      
+      copied <- file.copy(in.files, out.files)
+      
+      apply(g3g4,2,function(x){(1 / (1 + exp(-x)))}) -> logistic.g3g4
+      apply(logistic.g3g4,1,function(x){x[2]/(x[1]+x[2])}) -> logistic.g3g4.score
+      scaling.function(logistic.g3g4.score) -> logistic.g3g4.score
+      
+      # annotate nmb.mat to change into hgnc symbols
+      annotate.HTseq.IDs(rownames(nmb.mat)) -> annotation
+      nmb.mat[-which(annotation$hgnc_symbol==""|is.na(annotation$hgnc_symbol)),] -> nmb.mat
+      annotation$hgnc_symbol[-which(annotation$hgnc_symbol==""|is.na(annotation$hgnc_symbol))] -> rownames(nmb.mat)
+      
+      message("1")
+      
+      
+      ## pre-filter datasets
+      idx <- param.filter(2^nmb.mat)
+      nmb.mat <- 2^nmb.mat[idx, ]
+      message("2")
+      
+      ## pre-projection normalisation
+      nmb.mat <- prep.data(nmb.mat)
+      message("3")
+      
+      # tpms.mat <- input$expFile$datapath
+      
+      ## interset common genes / probes
+      tpms.mat <- match.select(nmb.mat, in.files)
+      message("4")
+      
+      library(NMF)
+      ## NEED PACKAGE NMF
+      init <- NMF::nmfModel(4, 
+                            nmb.mat, 
+                            W = 0.5, 
+                            H = t(avg.h.val))
+      message("5")
+      
+      ## generate NMF seeded with model
+      nmf.res <- NMF::nmf(nmb.mat, 
+                          4, 
+                          seed = init, 
+                          nrun = 8, 
+                          .pbackend = 20)
+      message("6")
+      
+      
+      ## project using pseudo-inverse & post-projection normalise
+      # project back onto the same dataset
+      rnaseq.H <- project.NMF(input.array = nmb.mat, 
+                              nmf.result = nmf.res)
+      message("7")
+      test <- as.matrix(tpms.mat)
+      # project onto fresh dataset
+      tpms.H <- project.NMF(input.array = test, 
+                            nmf.result = nmf.res)
+      message("8")
+      # tpms.H <- project.NMF(input.array = tpms.mat, 
+      #                       nmf.result = nmf.res)
+      
+      ### define new g3g4 score for projection back onto the original data
+      t(rnaseq.H[c(3,1),]) -> g3g4.rnaseq
+      message("9")
+      apply(g3g4.rnaseq,2,function(x){(1 / (1 + exp(-x)))}) -> logistic.g3g4.rnaseq
+      message("10")
+      apply(logistic.g3g4.rnaseq,1,function(x){x[2]/(x[1]+x[2])}) -> logistic.g3g4.rnaseq.score
+      message("11")
+      scaling.function(logistic.g3g4.rnaseq.score) -> logistic.g3g4.rnaseq.score
+      message("12")
+      
+      ## join and plot the two together (original g3g4 score and g3g4 score projected back onto the same data) kind of a control that it is working
+      ## NEED TIDYFT
+      library(tidyft)
+      df <- inner_join(data.frame(logistic.g3g4.score,ids = names(logistic.g3g4.score)),
+                       data.frame(logistic.g3g4.rnaseq.score, ids = names(logistic.g3g4.rnaseq.score)))
+      message("13")
+      
+      t(tpms.H[c(3,1),]) -> g3g4.tpms
+      message("14")
+      apply(g3g4.tpms,2,function(x){(1 / (1 + exp(-x)))}) -> logistic.g3g4.tpms
+      message("15")
+      apply(logistic.g3g4.tpms,1,function(x){x[2]/(x[1]+x[2])}) -> logistic.g3g4.tpms.score
+      message("16")
+      
+      # some times helpful to remove outliers prior to scaling
+      outlier.idx <- c(head(order(logistic.g3g4.tpms.score), round((input$outlier)*(length(logistic.g3g4.tpms.score)/100))),
+                       tail(order(logistic.g3g4.tpms.score), round((input$outlier)*(length(logistic.g3g4.tpms.score)/100)))
+      )
+      message("17")
+      
+      # scale to create final score
+      scaling.function(logistic.g3g4.tpms.score[-outlier.idx]) -> logistic.g3g4.tpms.score
+      round(logistic.g3g4.tpms.score, digits = 3) -> logistic.g3g4.tpms.score
+      as.data.frame(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score
+      message("18")
+      output$Mval <- renderDT (({logistic.g3g4.tpms.score
+      }),
+      options = list(
+        pageLength = 10, 
+        processing=FALSE),
+      selection = "single"
+      )
+      
+      showTab(inputId = "tabs", target = "Results Table", select = TRUE)
+      showTab(inputId = "tabs", target = "Download")
+    })
+    
+    
+    observeEvent(input$bttn2, {
       att$set(10, text = "Loading") #Start at 10% 
       att$auto(ms = 1600, value = 0.01) # automatically increment
       
       #need idat file to run
-      req(input$idatFile)
+      req(input$methFile)
       require(R.utils)
       
       
-      input$idatFile$datapath -> in.files
+      input$methFile$datapath -> in.files
       message(in.files)
-      paste0(tempDIR,"/", input$idatFile$name) -> out.files
+      paste0(tempDIR,"/", input$methFile$name) -> out.files
       message(out.files)
       
       copied <- file.copy(in.files, out.files)
@@ -190,7 +350,7 @@ server <- function(session, input, output) {
       # output$time <- renderText({proc.time() - ptm})
       rowSelect <- reactive({input$Mval_rows_selected})
       message("row select done")
-      
+      #####
       # output$figure <-
       #   renderPlot({
       #     beta2m(temp.processed$betas) -> M.values
@@ -356,7 +516,7 @@ server <- function(session, input, output) {
       #    #     ,input$Mval_row_last_clicked)
       #    # }
       # })
-
+#####
       # output$metagenechoice <- renderText({input$metagenes})
       
       showTab(inputId = "tabs", target = "Results Table", select = TRUE)
@@ -407,6 +567,7 @@ server <- function(session, input, output) {
                 metagene.df
                 })
             )
+            #####
             # plot({
             #   
             #   
@@ -500,11 +661,11 @@ server <- function(session, input, output) {
             #     figure.output
             #     
             #     
-            #   })
+            #   })####
               dev.off()
             
           }
-          # if (input$download == "csv")
+          # if (input$download == "csv")####
           #   write.csv(output$Mval)
           # else
           #   pdf(output$Mval,
@@ -516,13 +677,14 @@ server <- function(session, input, output) {
       
     })
   #Reset session and delete tempDIR
-  observeEvent(input$bttn2, {
+  observeEvent(input$bttn3, {
     unlink(tempDIR, recursive = T)
     session$reload()
     return()
     print("session reload not working")
   })
   renderText(output$metagenes <- input$metagenes)
+  #####
   # output$down <- downloadHandler(
   #   filename = function() {
   #     paste(input$filename,Sys.time(), ".csv", sep="_")

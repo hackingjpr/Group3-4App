@@ -1,3 +1,6 @@
+########## Methylation ################
+
+
 print(getwd())
 
 library(BiocManager)
@@ -43,15 +46,15 @@ message("bumphunter done")
 # }
 # 
 # message("minfi done")
- if(!require(IlluminaHumanMethylationEPICmanifest)){
-   BiocManager::install("IlluminaHumanMethylationEPICmanifest")
-   library(IlluminaHumanMethylationEPICmanifest)
- }
+if(!require(IlluminaHumanMethylationEPICmanifest)){
+  BiocManager::install("IlluminaHumanMethylationEPICmanifest")
+  library(IlluminaHumanMethylationEPICmanifest)
+}
 # message("illumina1 done")
- if(!require(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)){
-   BiocManager::install("IlluminaHumanMethylationEPICanno.ilm10b4.hg19")
-   library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
- }
+if(!require(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)){
+  BiocManager::install("IlluminaHumanMethylationEPICanno.ilm10b4.hg19")
+  library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+}
 #message("manifest loaded")
 if(!require(shiny)){
   install.packages("shiny")
@@ -155,9 +158,9 @@ if(!require(caret)){
 #   library(randomForest)
 # }
 if(!require(randomForest)){
-packageurl <- "https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz"
-install.packages(packageurl, repos=NULL, type="source")
-library(randomForest)
+  packageurl <- "https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz"
+  install.packages(packageurl, repos=NULL, type="source")
+  library(randomForest)
 }
 
 
@@ -169,7 +172,7 @@ load(file = "./g3.g4.cont.rfe.Rdata")
 
 message("packages loaded")
 #load(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/ATRT.v3.abs.chun.Rdata")
- # load(file = "./ATRT.v3.abs.chun.Rdata")
+# load(file = "./ATRT.v3.abs.chun.Rdata")
 #  readRDS(file = "./atrt8.model.rds") -> ATRT
 # # atrt.meth.os.meta.n8.extract -> ATRT
 # #load(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/ECRT.v3.abs.chun.Rdata")
@@ -265,11 +268,11 @@ createRandString<- function() {
 generate_figure_highlight_mrt <- function(new.sample.meta.score, indexRow) {
   if(is.null(indexRow)){indexRow=1}
   #temp.df <- readRDS(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/temp.df.rds")
-   temp.df <- readRDS(file = "./mrt54.dist.rds")
+  temp.df <- readRDS(file = "./mrt54.dist.rds")
   #df.cat.atrt <- readRDS(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/df.cat.atrt.rds")
-   # df.cat.atrt <- readRDS(file = "./df.cat.atrt.rds")
+  # df.cat.atrt <- readRDS(file = "./df.cat.atrt.rds")
   #comb.SDb.atrt <- readRDS(file = "https://github.com/hackingjpr/Idat-Shiny/blob/main/comb.SDb.atrt.rds")
-   # comb.SDb.atrt <- readRDS(file = "./comb.SDb.atrt.rds")
+  # comb.SDb.atrt <- readRDS(file = "./comb.SDb.atrt.rds")
   ggplot(aes(x = 1:nrow(temp.df), y = mrt54), data = temp.df) +
     geom_line() +
     scale_shape_manual(values = c(1, 4,  3)) +
@@ -575,7 +578,7 @@ generate_figure_highlight_atrt <- function(new.sample.meta.score, indexRow) {
 
 generate_figure_percentage_atrt <- function(new.sample.meta.score, indexRow){
   temp.df <- readRDS(file =  "./atrt8.dist.rds")
-
+  
   
   df.lines.hor <-foreach(i = 1:length(new.sample.meta.score), .combine = rbind)%do%{
     data.frame(x=0,
@@ -675,3 +678,252 @@ generate_figure_percentage_ecrt <- function(new.sample.meta.score, indexRow){
 #   theme(axis.title.x=element_blank(),
 #         axis.text.x=element_blank(),
 #         axis.ticks.x=element_blank()) -> b
+
+############# Expression ########################
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+if(!require(biomaRt)){
+  BiocManager::install("biomaRt")
+  library(biomaRt)
+}
+
+if(!require(tidyft)){
+  BiocManager::install("tidyft")
+  library(tidyft)
+}
+
+
+# load in original metagene H values
+avg.h.val <- readRDS("./avg.h.val.input.rds")
+
+# load in original g3g4 metagene values
+g3g4 <- readRDS("./g3g4.input.rds")
+
+#load in filtered expression values from NMB MB samples used to generate H Values
+nmb.mat <- readRDS("./nmb.mat.input.rds")
+
+
+# tpms.mat <- readRDS(file = "./tpms.mat.rds")
+
+### annotate using library(biomaRt)
+annotate.HTseq.IDs<-function(HTseq.IDs){
+  ENSEMBL_DB_HOST = "uswest.ensembl.org" # Set back to default, once they are up and running again
+  ENSEMBL_VERSION = "Ensembl Genes 101"  # Try to fix https://support.bioconductor.org/p/104454/
+  
+  #mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", host = ENSEMBL_DB_HOST, version = ENSEMBL_VERSION)
+  mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+  ensemblID <- gsub("\\..*", '', HTseq.IDs)
+  #fetch the annotation information from the Ensembl database
+  #ensembl <- useMart('ensembl', dataset='hsapiens_gene_ensembl')
+  symbols <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol'), filters='ensembl_gene_id', ensemblID, mart=mart)
+  #combine the annotation with the RNA-Seq data
+  annotatedix <- match(ensemblID,symbols$ensembl_gene_id)
+  symbols[annotatedix,] -> annotatedGenes
+  return(cbind(HTseq.IDs,annotatedGenes))
+}
+
+
+### loading in all functions needed for projection
+match.select <- function(input1.eset, input2.eset){
+  
+  m1 <- input1.eset
+  gs.names1 <- row.names(m1)
+  gs.descs1 <- row.names(m1)
+  sample.names1 <- names(m1)
+  
+  m2 <- input2.eset
+  gs.names2 <- row.names(m2)
+  gs.descs2 <- row.names(m2)
+  sample.names2 <- names(m2)
+  
+  gs.names3 <- intersect(gs.names1, gs.names2)
+  
+  locations2 <- match(gs.names3, gs.names2, nomatch=0)
+  gs.names2 <- gs.names2[locations2]
+  gs.descs2 <- gs.descs2[locations2]
+  m2 <- m2[locations2, ]
+  
+  return(m2)
+}
+
+prep.data <- function(input.array){
+  
+  m <- input.array
+  col.names <- colnames(input.array)
+  gs.names <- row.names(input.array)
+  gs.descs <- row.names(input.array)
+  sample.names <- colnames(input.array)
+  
+  cols <- length(m[1,])
+  for (j in 1:cols) {  # column rank normalization from 0 to N - 1
+    m[,j] <- rank(m[,j], ties.method = "average") - 1
+  }
+  m <- 10000*m/(length(m[,1]) - 1)
+  
+  v <- m
+  row.names(v) <- gs.names
+  colnames(v) <- col.names
+  
+  return(v)
+}
+
+param.filter <- function(m = NULL,
+                         thres = 20,
+                         ceil = 10000,
+                         shift = 1,
+                         
+                         fold = 3,
+                         delta = 300){
+  if (thres != "NULL") {
+    m[m < thres] <- thres
+  }
+  if (ceil != "NULL") {
+    m[m > ceil] <- ceil
+  }
+  if (shift != "NULL") {
+    m <- m + shift
+  }
+  
+  cols <- ncol(m)
+  rows <- nrow(m)
+  row.max <- apply(m, MARGIN = 1, FUN = max)
+  plot(sort(row.max, decreasing = TRUE), type = "l", main = "row max", ylab = "Value", xlab = "Index")
+  
+  row.min <- apply(m, MARGIN = 1, FUN = min)
+  
+  flag <- array(dim = rows)
+  flag <- (row.max / row.min >= fold) & (row.max - row.min >= delta)
+  cat(length(which(flag)), "genes / probes retained", "\n")
+  flag
+}
+
+scaling.function <- function(x){(x-min(x))/(max(x)-min(x))} 
+
+
+
+param.filter <- function(m = NULL,
+                         thres = 20,
+                         ceil = 10000,
+                         shift = 1,
+                         fold = 3,
+                         delta = 300){
+  if (thres != "NULL") {
+    m[m < thres] <- thres
+  }
+  if (ceil != "NULL") {
+    m[m > ceil] <- ceil
+  }
+  if (shift != "NULL") {
+    m <- m + shift
+  }
+  
+  cols <- ncol(m)
+  rows <- nrow(m)
+  row.max <- apply(m, MARGIN = 1, FUN = max)
+  plot(sort(row.max, decreasing = TRUE), type = "l", main = "row max", ylab = "Value", xlab = "Index")
+  
+  row.min <- apply(m, MARGIN = 1, FUN = min)
+  
+  flag <- array(dim = rows)
+  flag <- (row.max / row.min >= fold) & (row.max - row.min >= delta)
+  cat(length(which(flag)), "genes / probes retained", "\n")
+  flag
+}
+
+prep.data <- function(input.array){
+  
+  m <- input.array
+  col.names <- colnames(input.array)
+  gs.names <- row.names(input.array)
+  gs.descs <- row.names(input.array)
+  sample.names <- colnames(input.array)
+  
+  cols <- length(m[1,])
+  for (j in 1:cols) {  # column rank normalization from 0 to N - 1
+    m[,j] <- rank(m[,j], ties.method = "average") - 1
+  }
+  m <- 10000*m/(length(m[,1]) - 1)
+  
+  v <- m
+  row.names(v) <- gs.names
+  colnames(v) <- col.names
+  
+  return(v)
+}
+match.select <- function(input1.eset, input2.eset){
+  
+  m1 <- input1.eset
+  gs.names1 <- row.names(m1)
+  gs.descs1 <- row.names(m1)
+  sample.names1 <- names(m1)
+  
+  m2 <- input2.eset
+  gs.names2 <- row.names(m2)
+  gs.descs2 <- row.names(m2)
+  sample.names2 <- names(m2)
+  
+  gs.names3 <- intersect(gs.names1, gs.names2)
+  
+  locations2 <- match(gs.names3, gs.names2, nomatch=0)
+  gs.names2 <- gs.names2[locations2]
+  gs.descs2 <- gs.descs2[locations2]
+  m2 <- m2[locations2, ]
+  
+  return(m2)
+}
+project.NMF <- function(input.array, nmf.result){
+  require(MASS)
+  m <- input.array
+  gs.names <- rownames(input.array)
+  gs.descs <- rownames(input.array)
+  sample.names <- colnames(input.array)
+  
+  W <- as.data.frame(basis(nmf.result))
+  W.row.names <- row.names(W)
+  W.row.descs <- row.names(W)
+  W.names <- names(W)
+  
+  overlap <- intersect(gs.names, W.row.names)
+  
+  cat("Size of Input dataset:", length(gs.names), "genes\n")
+  cat("Size of W matrix (rows):", length(W.row.names), "genes\n")
+  cat("Size of overlap:", length(overlap), "genes\n")
+  
+  locations.m <- match(overlap, gs.names, nomatch=0)
+  m2 <- m[locations.m, ]
+  locations.W <- match(overlap, W.row.names, nomatch=0)
+  W2 <- W[locations.W, ]
+  W2 <- as.matrix(W2)
+  
+  H <- ginv(W2) %*% m2
+  
+  n.col <- length(H[1,])
+  for (i in 1:n.col) {
+    S.2 <- sqrt(sum(H[,i]*H[,i]))
+    #        S.2 <- sum(H[,i])
+    H[,i] <- H[,i]/S.2
+  }
+  
+  V <- data.frame(H)
+  names(V) <- sample.names
+  row.names(V) <- W.names
+  return(V)
+}
+
+
+annotate.HTseq.IDs<-function(HTseq.IDs){
+  ENSEMBL_DB_HOST = "uswest.ensembl.org" # Set back to default, once they are up and running again
+  ENSEMBL_VERSION = "Ensembl Genes 101"  # Try to fix https://support.bioconductor.org/p/104454/
+  
+  #mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", host = ENSEMBL_DB_HOST, version = ENSEMBL_VERSION)
+  mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+  ensemblID <- gsub("\\..*", '', HTseq.IDs)
+  #fetch the annotation information from the Ensembl database
+  #ensembl <- useMart('ensembl', dataset='hsapiens_gene_ensembl')
+  symbols <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol'), filters='ensembl_gene_id', ensemblID, mart=mart)
+  #combine the annotation with the RNA-Seq data
+  annotatedix <- match(ensemblID,symbols$ensembl_gene_id)
+  symbols[annotatedix,] -> annotatedGenes
+  return(cbind(HTseq.IDs,annotatedGenes))
+}
