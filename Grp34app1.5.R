@@ -104,12 +104,12 @@ ui <- shiny::fluidPage(
                                         includeMarkdown("./Tutorial/tutorial.md")
                                ),
                                #Results Tab
-                               tabPanel("Results Table",
+                               tabPanel("Methylation Results",
                                         (fluidRow(
                                           box(
                                             width = 12,
                                             title = "Group 3/4 score",
-                                            status = "info",
+                                            status = "success",
                                             solidHeader = TRUE,
                                             collapsible = TRUE,
                                             DTOutput('Mval')
@@ -137,13 +137,53 @@ ui <- shiny::fluidPage(
                                            box(
                                              width = 12,
                                              title = "Summary",
-                                             status = "primary",
+                                             status = "success",
                                              solidHeader = TRUE,
                                              collapsible = TRUE,
                                              includeMarkdown("./ResultsSummary.md")
                                            )
                                          ))
                                         ),
+                               tabPanel("Expression Results",
+                                        (fluidRow(
+                                          box(
+                                            width = 12,
+                                            title = "Group 3/4 score",
+                                            status = "warning",
+                                            solidHeader = TRUE,
+                                            collapsible = TRUE,
+                                            DTOutput('Mval1')
+                                          ))),
+                                        # (fluidRow(
+                                        #   box(
+                                        #     title = "Risk plot",
+                                        #     status = "warning",
+                                        #     solidHeader = TRUE,
+                                        #     collapsible = TRUE,
+                                        #     plotOutput("figure")),
+                                        #   box(
+                                        #     title = "Selections",
+                                        #     status = "success",
+                                        #     solidHeader = TRUE,
+                                        #     collapsible = TRUE,
+                                        #     h3("Metagene Set:"),
+                                        #     textOutput("metagenechoice"),
+                                        #     h3("Sample Selected:"),
+                                        #     textOutput("sample"),
+                                        #     h3("Patient's Risk Percentile:"),
+                                        #     textOutput("percentages")
+                                        #   ))),
+                                        (fluidRow(
+                                          box(
+                                            width = 12,
+                                            title = "Summary",
+                                            status = "warning",
+                                            solidHeader = TRUE,
+                                            collapsible = TRUE,
+                                            includeMarkdown("./ResultsSummary.md")
+                                          )
+                                        ))
+                               ),
                                
                                #Download Tab
                                tabPanel("Download",
@@ -164,7 +204,8 @@ server <- function(session, input, output) {
   # Allow larger files to be uploaded
   options(shiny.maxRequestSize = 30 * 1024 ^ 2)
   #Hide tabs until graph made
-  hideTab(inputId = "tabs", target = "Results Table")
+  hideTab(inputId = "tabs", target = "Expression Results")
+  hideTab(inputId = "tabs", target = "Methylation Results")
   hideTab(inputId = "tabs", target = "Download")
   
   #Loading bar
@@ -311,16 +352,16 @@ server <- function(session, input, output) {
       round(logistic.g3g4.tpms.score, digits = 3) -> logistic.g3g4.tpms.score
       as.data.frame(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score
       message("18")
-      output$Mval <- renderDT (({logistic.g3g4.tpms.score
+      output$Mval1 <- renderDT (({logistic.g3g4.tpms.score
       }),
       options = list(
         pageLength = 10, 
         processing=FALSE),
       selection = "single"
       )
-      
-      showTab(inputId = "tabs", target = "Results Table", select = TRUE)
-      showTab(inputId = "tabs", target = "Download")
+      att$done()
+      showTab(inputId = "tabs", target = "Expression Results", select = TRUE)
+      # showTab(inputId = "tabs", target = "Download")
     })
     
     
@@ -545,7 +586,7 @@ server <- function(session, input, output) {
 #####
       # output$metagenechoice <- renderText({input$metagenes})
       
-      showTab(inputId = "tabs", target = "Results Table", select = TRUE)
+      showTab(inputId = "tabs", target = "Methylation Results", select = TRUE)
       showTab(inputId = "tabs", target = "Download")
       
       #For displaying currently selected sample
