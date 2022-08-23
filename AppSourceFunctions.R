@@ -153,6 +153,17 @@ if(!require(caret)){
   library(caret)
 }
 
+if(!require(NMF)){
+  install.packages('NMF')
+  library(NMF)
+}
+
+if(!require(tidyft)){
+  install.packages('tidyft')
+  library(tidyft)
+}
+
+
 # if(!require(randomForest)){
 #   install.packages('randomForest')
 #   library(randomForest)
@@ -704,7 +715,9 @@ g3g4 <- readRDS("./g3g4.input.rds")
 nmb.mat <- readRDS("./nmb.mat.input.rds")
 
 
-# tpms.mat <- readRDS(file = "./tpms.mat.rds")
+nmb.mat.prepped <- readRDS(file = "./nmb.mat.prepped.rds")
+
+tpms.mat <- readRDS(file = "./tpms.mat.rds")
 
 ### annotate using library(biomaRt)
 annotate.HTseq.IDs<-function(HTseq.IDs){

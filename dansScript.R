@@ -29,6 +29,8 @@ nmb.mat <- 2^nmb.mat[idx, ]
 ## pre-projection normalisation
 nmb.mat <- prep.data(nmb.mat)
 
+saveRDS(nmb.mat, file = "./nmb.mat.prepped.rds")
+
 ## interset common genes / probes
 tpms.mat <- match.select(nmb.mat, tpms.mat)
 
