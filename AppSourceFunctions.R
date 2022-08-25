@@ -712,12 +712,12 @@ avg.h.val <- readRDS("./avg.h.val.input.rds")
 g3g4 <- readRDS("./g3g4.input.rds")
 
 #load in filtered expression values from NMB MB samples used to generate H Values
-nmb.mat <- readRDS("./nmb.mat.input.rds")
+#nmb.mat <- readRDS("./nmb.mat.input.rds")
 
 
 nmb.mat.prepped <- readRDS(file = "./nmb.mat.prepped.rds")
 
-tpms.mat <- readRDS(file = "./tpms.mat.rds")
+#tpms.mat <- readRDS(file = "./tpms.mat.rds")
 
 ### annotate using library(biomaRt)
 annotate.HTseq.IDs<-function(HTseq.IDs){

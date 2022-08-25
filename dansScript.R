@@ -27,9 +27,10 @@ idx <- param.filter(2^nmb.mat)
 nmb.mat <- 2^nmb.mat[idx, ]
 
 ## pre-projection normalisation
-nmb.mat <- prep.data(nmb.mat)
+#nmb.mat.prepped <- prep.data(nmb.mat)
 
 saveRDS(nmb.mat, file = "./nmb.mat.prepped.rds")
+
 
 ## interset common genes / probes
 tpms.mat <- match.select(nmb.mat, tpms.mat)
@@ -79,17 +80,22 @@ t(tpms.H[c(3,1),]) -> g3g4.tpms
 apply(g3g4.tpms,2,function(x){(1 / (1 + exp(-x)))}) -> logistic.g3g4.tpms
 apply(logistic.g3g4.tpms,1,function(x){x[2]/(x[1]+x[2])}) -> logistic.g3g4.tpms.score
 
+
+rbind(logistic.g3g4.rnaseq, logistic.g3g4.tpms) -> scaled.together.logistic.g3g4
+apply( scaled.together.logistic.g3g4,1,function(x){x[2]/(x[1]+x[2])}) ->  scaled.together.logistic.score
+scaled.together.logistic.score[-1:-length( logistic.g3g4.rnaseq.score)] ->  scaled.together.logistic.score
+
 # as.data.frame(logistic.g3g4.tpms.score)
 
 # some times helpful to remove outliers prior to scaling
-outlier.idx <- c(head(order(logistic.g3g4.tpms.score), round(5*(length(logistic.g3g4.tpms.score)/100))),
-                 tail(order(logistic.g3g4.tpms.score), round(5*(length(logistic.g3g4.tpms.score)/100)))
+outlier.idx <- c(head(order(scaled.together.logistic.score), round(5*(length(scaled.together.logistic.score)/100))),
+                 tail(order(scaled.together.logistic.score), round(5*(length(scaled.together.logistic.score)/100)))
 )
 
 # scale to create final score
 scaling.function(logistic.g3g4.tpms.score[-outlier.idx]) -> logistic.g3g4.tpms.score
 
-round(logistic.g3g4.tpms.score, digits = 3)
+round(logistic.g3g4.tpms.score, digits = 3) -> logistic.g3g4.tpms.score
 
 
 as.data.frame(logistic.g3g4.tpms.score)

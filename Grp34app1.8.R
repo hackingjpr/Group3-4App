@@ -112,6 +112,8 @@ ui <- shiny::fluidPage(
                                tabPanel("Tutorial",
                                         includeMarkdown("./Tutorial/tutorial.md")
                                ),
+                               tabPanel("Paper",
+                                        htmlOutput("frame")),
                                #Results Tab
                                tabPanel("Methylation Results",
                                         (fluidRow(
@@ -216,6 +218,11 @@ server <- function(session, input, output) {
   hideTab(inputId = "tabs", target = "Expression Results")
   hideTab(inputId = "tabs", target = "Methylation Results")
   hideTab(inputId = "tabs", target = "Download")
+  
+  output$frame <- renderUI({
+    my_test <- tags$iframe(src="https://www.sciencedirect.com/science/article/pii/S2211124722009718?via%3Dihub", height="900", width="100%")
+    my_test
+  })
   
   #Loading bar
   att <- Attendant$new("progress-bar")
@@ -339,8 +346,8 @@ server <- function(session, input, output) {
       ## join and plot the two together (original g3g4 score and g3g4 score projected back onto the same data) kind of a control that it is working
       ## NEED TIDYFT
 
-      df <- inner_join(data.frame(logistic.g3g4.score,ids = names(logistic.g3g4.score)),
-                       data.frame(logistic.g3g4.rnaseq.score, ids = names(logistic.g3g4.rnaseq.score)))
+      # df <- inner_join(data.frame(logistic.g3g4.score,ids = names(logistic.g3g4.score)),
+      #                  data.frame(logistic.g3g4.rnaseq.score, ids = names(logistic.g3g4.rnaseq.score)))
       message("13")
       
       t(tpms.H[c(3,1),]) -> g3g4.tpms
@@ -349,15 +356,24 @@ server <- function(session, input, output) {
       message("15")
       apply(logistic.g3g4.tpms,1,function(x){x[2]/(x[1]+x[2])}) -> logistic.g3g4.tpms.score
       message("16")
+    
+      
+      rbind(logistic.g3g4.rnaseq, logistic.g3g4.tpms) -> scaled.together.logistic.g3g4
+      message("list")
+      apply( scaled.together.logistic.g3g4,1,function(x){x[2]/(x[1]+x[2])}) ->  scaled.together.logistic.score
+      message("apply")
+      scaled.together.logistic.score[-1:-length( logistic.g3g4.rnaseq.score)] ->  scaled.together.logistic.score
+      message("remove")
+      
       
       # some times helpful to remove outliers prior to scaling
-      outlier.idx <- c(head(order(logistic.g3g4.tpms.score), round((input$outlier)*(length(logistic.g3g4.tpms.score)/100))),
-                       tail(order(logistic.g3g4.tpms.score), round((input$outlier)*(length(logistic.g3g4.tpms.score)/100)))
+      outlier.idx <- c(head(order(scaled.together.logistic.score), round((input$outlier)*(length(scaled.together.logistic.score)/100))),
+                       tail(order(scaled.together.logistic.score), round((input$outlier)*(length(scaled.together.logistic.score)/100)))
       )
       message("17")
       
       # scale to create final score
-      scaling.function(logistic.g3g4.tpms.score[-outlier.idx]) -> logistic.g3g4.tpms.score
+      scaling.function(scaled.together.logistic.score[-outlier.idx]) -> logistic.g3g4.tpms.score
       round(logistic.g3g4.tpms.score, digits = 3) -> logistic.g3g4.tpms.score
       as.data.frame(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score
       message("18")
