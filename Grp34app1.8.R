@@ -128,22 +128,22 @@ ui <- shiny::fluidPage(
                                         (fluidRow(
                                           box(
                                             title = "Risk plot",
-                                            status = "warning",
+                                            status = "success",
                                             solidHeader = TRUE,
                                             collapsible = TRUE,
-                                            plotOutput("figure")))),
-                                        #   box(
-                                        #     title = "Selections",
-                                        #     status = "success",
-                                        #     solidHeader = TRUE,
-                                        #     collapsible = TRUE,
-                                        #     h3("Metagene Set:"),
-                                        #     textOutput("metagenechoice"),
-                                        #     h3("Sample Selected:"),
-                                        #     textOutput("sample"),
-                                        #     h3("Patient's Risk Percentile:"),
-                                        #     textOutput("percentages")
-                                        #   ))),
+                                            plotOutput("figure")),
+                                          box(
+                                            title = "Selections",
+                                            status = "success",
+                                            solidHeader = TRUE,
+                                            collapsible = TRUE,
+                                            # h3("Metagene Set:"),
+                                            # textOutput("metagenechoice"),
+                                            # h3("Sample Selected:"),
+                                            # textOutput("sample"),
+                                            h3("Patient's Risk Percentile:"),
+                                            textOutput("percentages")
+                                          ))),
                                          (fluidRow(
                                            box(
                                              width = 12,
@@ -453,8 +453,7 @@ server <- function(session, input, output) {
       #####
       output$figure <-
         renderPlot({
-
-
+          
           figure.output <-(
             # figureFile <- "./ecrt20.dist.rds"
             generate_figure_highlight_ecrt(
@@ -464,6 +463,13 @@ server <- function(session, input, output) {
           figure.output
           })
           # }
+      output$percentages <- renderText (
+        
+        # input <- "./mrt54.dist.rds",
+        generate_figure_percentage_ecrt(
+          figure.input,
+          input$Mval_row_last_clicked)
+      )
 
 
           # https://rstudio.github.io/DT/shiny.html
