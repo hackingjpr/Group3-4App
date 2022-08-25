@@ -125,13 +125,13 @@ ui <- shiny::fluidPage(
                                             collapsible = TRUE,
                                             DTOutput('Mval')
                                           ))),
-                                        # (fluidRow(
-                                        #   box(
-                                        #     title = "Risk plot", 
-                                        #     status = "warning", 
-                                        #     solidHeader = TRUE,
-                                        #     collapsible = TRUE,
-                                        #     plotOutput("figure")),
+                                        (fluidRow(
+                                          box(
+                                            title = "Risk plot",
+                                            status = "warning",
+                                            solidHeader = TRUE,
+                                            collapsible = TRUE,
+                                            plotOutput("figure")))),
                                         #   box(
                                         #     title = "Selections",
                                         #     status = "success",
@@ -171,7 +171,7 @@ ui <- shiny::fluidPage(
                                         #     status = "warning",
                                         #     solidHeader = TRUE,
                                         #     collapsible = TRUE,
-                                        #     plotOutput("figure")),
+                                        #     plotOutput("figure")))),
                                         #   box(
                                         #     title = "Selections",
                                         #     status = "success",
@@ -200,13 +200,13 @@ ui <- shiny::fluidPage(
                                tabPanel("Download",
                                         textInput("filename", "Please insert desired filename", "Group 3/4 Score"),
                                         radioButtons(inputId = "download", label = "Select file type", choices = c("csv", "pdf")),
-                                        downloadButton("down", "Download the results"),
+                                        downloadButton("down", "Download the results")
                                )
                   )
                 )),
                 #Font Selection            
                 # tags$head(tags$style(HTML('* {font-family: "Courier New"};')))),
-  tags$head(tags$style(HTML('* {font-family: "Calibri"};')))),
+  tags$head(tags$style(HTML('* {font-family: "Calibri"};'))))
 
   
 )
@@ -417,17 +417,17 @@ server <- function(session, input, output) {
         att$done()
       })
       
+      beta2m(temp.processed$betas) -> M.values
+      
+      ### Round results to 3 figures
+      
+      metagene <- round(predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)]), digits = 3)
+      metagene.df <- data.frame('Group.3.4.Score' = metagene)
+
+      
 
       output$Mval <- renderDT (
         ({
-          # Obtain MValues
-          beta2m(temp.processed$betas) -> M.values
-          
-          ### Round results to 3 figures
-          # round(M.values, digits = 3) -> M.values
-          
-          metagene <- round(predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)]), digits = 3)
-          metagene.df <- data.frame(g3g4.score = metagene)
           metagene.df
         }),
       options = list(
@@ -442,63 +442,35 @@ server <- function(session, input, output) {
       # output$time <- renderText({proc.time() - ptm})
       rowSelect <- reactive({input$Mval_rows_selected})
       message("row select done")
+      
+      
+      # print(figure.input)
+
+      
+      figure.input <- metagene.df$Group.3.4.Score
+      names(figure.input) <- rownames(metagene.df)
+      print(figure.input)
       #####
-      # output$figure <-
-      #   renderPlot({
-      #     beta2m(temp.processed$betas) -> M.values
-      #     pred.cont.rand.for <- predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)])
-      #     round(pred.cont.rand.for, digits = 3) -> pred.cont.rand.for
-      #     pred.cont.rand.for
-      #       
-      #       # print(figure.input)
-      #     
-      #     # generate_figure_highlight_mrt(
-      #     #   figure.input
-      #     #   ,1)
-      #     
-      #     # generate_figure_highlight_mrt(
-      #     #   figure.input
-      #     #   ,input$Mval_row_last_clicked)
-      #     # 
-      #     figure.output.mrt <- (
-      #       (if (input$metagenes == "MRT (ATRT & ECRT)") {
-      #       # figureFile <- "./mrt54.dist.rds"
-      #       generate_figure_highlight_mrt(
-      #         figure.input
-      #         ,input$Mval_row_last_clicked)
-      #     }))
-      #     figure.output.atrt <- (
-      #       (if(input$metagenes == "ATRT") {
-      #       # figureFile <- "./atrt8.dist.rds"
-      #       generate_figure_highlight_atrt(
-      #         figure.input
-      #         ,input$Mval_row_last_clicked)
-      #     }))
-      #     figure.output.ecrt <-( 
-      #       (if(input$metagenes == "ECRT") {
-      #       # figureFile <- "./ecrt20.dist.rds"
-      #       generate_figure_highlight_ecrt(
-      #         figure.input
-      #         ,input$Mval_row_last_clicked)
-      #     }))
-      #     # }
-      #     
-      #     if (input$metagenes == "MRT (ATRT & ECRT)") {
-      #       figure.output.mrt -> figure.output
-      #     }
-      #     if (input$metagenes == "ATRT") {
-      #       figure.output.atrt -> figure.output
-      #     }
-      #     if (input$metagenes == "ECRT") {
-      #       figure.output.ecrt -> figure.output
-      #     }
-      #     
-      #     
-      #     figure.output
-      #     # https://rstudio.github.io/DT/shiny.html
-      #     
-      #     
-        # })
+      output$figure <-
+        renderPlot({
+
+
+          figure.output <-(
+            # figureFile <- "./ecrt20.dist.rds"
+            generate_figure_highlight_ecrt(
+              figure.input
+              ,input$Mval_row_last_clicked)
+          )
+          figure.output
+          })
+          # }
+
+
+          # https://rstudio.github.io/DT/shiny.html
+
+
+      
+    #############
       # output$percentages <- renderText (
       #   {
       #   test.res.mrt <- extract.metagene(
@@ -765,9 +737,9 @@ server <- function(session, input, output) {
           #   )
           # dev.off()
         })
+    })    
       
-      
-    })
+    
   #Reset session and delete tempDIR
   observeEvent(input$bttn3, {
     unlink(tempDIR, recursive = T)
