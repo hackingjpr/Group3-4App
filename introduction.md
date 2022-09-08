@@ -4,7 +4,7 @@
 
 This app generates a group3-4 score for input idat files.
 
-[![Graphical abstract](https://ars.els-cdn.com/content/image/1-s2.0-S2211124722009718-fx1.jpg)
+![Graphical abstract](https://ars.els-cdn.com/content/image/1-s2.0-S2211124722009718-fx1.jpg)
 
 # Background
 
