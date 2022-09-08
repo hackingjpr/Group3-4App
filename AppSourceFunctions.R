@@ -163,7 +163,10 @@ if(!require(tidyft)){
   library(tidyft)
 }
 
-
+if(!require(plotly)){
+  install.packages('plotly')
+  library(plotly)
+}
 # if(!require(randomForest)){
 #   install.packages('randomForest')
 #   library(randomForest)
@@ -371,11 +374,13 @@ generate_figure_highlight_mrt <- function(new.sample.meta.score, indexRow) {
   
   #ggarrange(a,a2,ggarrange(
   # c,b, ncol = 2, nrow = 1, widths = c(0.015,1)),ncol=1,nrow=3)
-  ggarrange(c,
+  fig <- ggarrange(c,
             b,
             ncol = 2,
             nrow = 1,
             widths = c(0.015, 1))
+  
+  plotlyfig <- ggplotly
   #return(data.frame(perc = df.lines.ver[,5], row.names=rownames(df.lines.ver)))
 }
 
@@ -1212,4 +1217,301 @@ generate_figure_percentage_ecrt <- function(new.sample.meta.score, indexRow){
   df.lines.ver$perc <- paste0(round(df.lines.ver$xend/ length(temp.df$ecrt20)*100),"th")
   
   return(df.lines.ver$perc[indexRow])
+}
+
+df1 <- data.frame(green = c(0,0.68),
+                  yellow = c(0.68,1),
+                  colour = c("G", "Y"))
+
+
+generate_figure_highlight_g3g4 <- function(new.sample.meta.score, indexRow){
+  if(is.null(indexRow)){indexRow=1}
+  y <- readRDS(file = "./y.vals.rds")
+  df <- as.data.frame(y)
+  ecdf(y) -> model
+  model(y) -> y2
+  b <- ggplot(df, aes(x=y2, y=y)) +
+    geom_rect(data = df1, aes(NULL,NULL, xmin=green, xmax=yellow, fill=colour),
+              ymin=0,ymax=1, colour="white", size=0.5, alpha=0.2) +
+    scale_fill_manual(values=c("G"= "green", "Y" = "yellow")) +
+    geom_hline(yintercept=0, linetype="dashed") +
+    geom_hline(yintercept=0.5, linetype="dashed") +
+    geom_hline(yintercept=1, linetype="dashed") +
+    geom_vline(xintercept=0.68, linetype="dashed") +
+    geom_line() +
+    theme(legend.position = "none")
+  
+  
+  
+  
+  
+  df.lines.hor <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              data.frame(
+                # x = 0,
+                x = 0,
+                xend = y2[max(which(
+                  y < new.sample.meta.score[i]
+                ))],
+                y = y[max(which(
+                  y < new.sample.meta.score[i]
+                ))],
+                yend = y[max(which(
+                  y < new.sample.meta.score[i]
+                ))]
+              )
+            }
+  df.lines.hor$labels <- names(new.sample.meta.score)
+  
+  df.lines.ver <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              data.frame(
+                x = y2[max(which(
+                  y < new.sample.meta.score[i]
+                ))],
+                xend = y2[max(which(
+                  y < new.sample.meta.score[i]
+                ))],
+                y =  y[max(which(
+                  y < new.sample.meta.score[i]
+                ))],
+                yend = 0
+              )
+            }
+  df.lines.ver$perc <-
+    paste0(round(df.lines.ver$xend / length(y2) * 100), "th")
+  
+  df.lines.ver$colour <- factor(ifelse(1:nrow(df.lines.ver)==indexRow,"highlight","no.highlight"), levels = c("highlight","no.highlight"))
+  df.lines.hor$colour <- factor(ifelse(1:nrow(df.lines.hor)==indexRow,"highlight","no.highlight"), levels = c("highlight","no.highlight"))
+  
+  
+  b <- b +
+    geom_segment(
+      aes(
+        x = x,
+        y = y,
+        xend = xend,
+        yend = yend,
+        colour = as.character(colour)
+      ),
+      #colour = "red",
+      linetype = "dashed",
+      size = 1,
+      data = df.lines.hor
+    ) +
+    geom_segment(
+      aes(
+        x = x,
+        y = y,
+        xend = xend,
+        yend = yend,
+        colour = colour
+      ),
+      #colour = "red",
+      linetype = "dashed",
+      size = 1,
+      data = df.lines.ver
+      
+    ) +
+    xlab("") + 
+    ylab("G3/G4 Score")
+  #geom_text_repel(aes(x = x+10, y = y+0.1, label = labels), direction = "y", data = df.lines.hor)
+  # geom_text(aes(
+  #   x = x + 10,
+  #   y = y + 0.1,
+  #   label = labels,
+  #   colour = colour
+  # ), data = df.lines.hor)
+  #scale_color_discrete("red", "lightgrey")
+  
+  df <- data.frame()
+  c <- ggplot() + theme_void()
+  
+  
+  #ggarrange(a,a2,ggarrange(
+  # c,b, ncol = 2, nrow = 1, widths = c(0.015,1)),ncol=1,nrow=3)
+  d<- ggarrange(c,
+                b,
+                ncol = 2,
+                nrow = 1,
+                widths = c(0.015, 1))
+  
+  # d <- subplot(c,
+  #              b,
+  #              ncol=2,
+  #              nrows = 1,
+  #              widths = c(0.015,1))
+  
+  # d <- ggplotly(d)
+  d
+  #return(data.frame(perc = df.lines.ver[,5], row.names=rownames(df.lines.ver)))
+}
+
+
+
+
+
+time.comb <- readRDS(file = "./time.comb.rds")
+age.comb <- readRDS(file = "./age.comb.rds")
+status.comb <- readRDS(file = "./status.comb.rds")
+comb.cont <-readRDS(file = "./comb.cont.rds")
+
+library(survival)
+
+
+new.sample.meta.score <- c(0.5,0.3)
+indexRow <- 0.3
+survivalcurveplot <- function(new.sample.meta.score,indexRow){
+  if(is.null(indexRow)){indexRow=1}
+  df2$pred -> pred
+  df2$surv -> surv
+ b<- ggplot(df2, aes(x=pred, y=surv)) +
+    geom_line() +
+    geom_point(alpha = 1/20) +
+    geom_line(aes(x=pred, y=lo),linetype="dotted") +
+    geom_line(aes(x=pred, y=up),linetype="dotted") +
+    theme_classic() + xlab("Prediction Metagene") + ylab("Survival") +
+    labs(title = "New plot title", subtitle = "A subtitle") +
+    ylim(0,1)
+  
+  ggplotly(b)
+  
+df.lines.hor <-
+  foreach(i = 1:length(new.sample.meta.score),
+          .combine = rbind) %do% {
+            data.frame(
+              # x = 0,
+              x = 0,
+              # xend = 0.4,
+              xend = surv[max(which(
+                pred < new.sample.meta.score[i]
+              ))],
+              # y = pred[max(which(
+              #   pred < new.sample.meta.score[i]
+              # ))],
+              # yend = pred[max(which(
+              #   pred < new.sample.meta.score[i]
+              # ))]
+              y = new.sample.meta.score[i],
+              yend = new.sample.meta.score[i]
+            )
+          }
+# df.lines.hor <-
+#   foreach(i = 1:length(new.sample.meta.score),
+#           .combine = rbind) %do% {
+#             data.frame(
+#               x = 0,
+#               xend = surv[max(which(
+#                 pred < new.sample.meta.score[i]
+#               ))],
+#               y = new.sample.meta.score[i],
+#               yend = new.sample.meta.score[i]
+#             )
+#           }
+df.lines.hor$labels <- names(new.sample.meta.score)
+
+
+df.lines.ver <-
+  foreach(i = 1:length(new.sample.meta.score),
+          .combine = rbind) %do% {
+            data.frame(
+              x = max(which(
+                pred < new.sample.meta.score[i]
+              )),
+              xend = max(which(
+                pred < new.sample.meta.score[i]
+              )),
+              y = new.sample.meta.score[i],
+              yend = min(pred)
+            )
+          }
+
+
+df.lines.ver <-
+  foreach(i = 1:length(new.sample.meta.score),
+          .combine = rbind) %do% {
+            data.frame(
+              x = surv[max(which(
+                pred < new.sample.meta.score[i]
+              ))],
+              xend = surv[max(which(
+                pred < new.sample.meta.score[i]
+              ))],
+              y =  surv[max(which(
+                pred < new.sample.meta.score[i]
+              ))],
+              # x = 0.5,
+              # xend = 0.5,
+              # y = 0.5,
+              yend = 0
+            )
+          }
+df.lines.ver$perc <-
+  paste0(round(df.lines.ver$xend / length(pred) * 100), "th")
+
+df.lines.ver$colour <- factor(ifelse(1:nrow(df.lines.ver)==indexRow,"highlight","no.highlight"), levels = c("highlight","no.highlight"))
+df.lines.hor$colour <- factor(ifelse(1:nrow(df.lines.hor)==indexRow,"highlight","no.highlight"), levels = c("highlight","no.highlight"))
+
+
+b <- b +
+  geom_segment(
+    aes(
+      x = x,
+      y = y,
+      xend = xend,
+      yend = yend,
+      colour = as.character(colour)
+    ),
+    #colour = "red",
+    linetype = "dashed",
+    size = 1,
+    data = df.lines.hor
+  ) +
+  geom_segment(
+    aes(
+      x = x,
+      y = y,
+      xend = xend,
+      yend = yend,
+      colour = colour
+    ),
+    #colour = "red",
+    linetype = "dashed",
+    size = 1,
+    data = df.lines.ver
+    
+  ) +
+  xlab("") + 
+  ylab("G3/G4 Score")
+#geom_text_repel(aes(x = x+10, y = y+0.1, label = labels), direction = "y", data = df.lines.hor)
+# geom_text(aes(
+#   x = x + 10,
+#   y = y + 0.1,
+#   label = labels,
+#   colour = colour
+# ), data = df.lines.hor)
+#scale_color_discrete("red", "lightgrey")
+
+df <- data.frame()
+c <- ggplot() + theme_void()
+
+
+#ggarrange(a,a2,ggarrange(
+# c,b, ncol = 2, nrow = 1, widths = c(0.015,1)),ncol=1,nrow=3)
+d<- ggarrange(c,
+              b,
+              ncol = 2,
+              nrow = 1,
+              widths = c(0.015, 1))
+
+# d <- subplot(c,
+#              b,
+#              ncol=2,
+#              nrows = 1,
+#              widths = c(0.015,1))
+
+# d <- ggplotly(d)
+d
 }
