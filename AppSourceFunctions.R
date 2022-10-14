@@ -1351,7 +1351,68 @@ generate_figure_highlight_g3g4 <- function(new.sample.meta.score, indexRow){
 
 
 
-
+generate_figure_highlight_g3g4PERC <- function(new.sample.meta.score, indexRow){
+  if(is.null(indexRow)){indexRow=1}
+  y <- readRDS(file = "./y.vals.rds")
+  df <- as.data.frame(y)
+  ecdf(y) -> model
+  model(y) -> y2
+  b <- ggplot(df, aes(x=y2, y=y)) +
+    geom_rect(data = df1, aes(NULL,NULL, xmin=green, xmax=yellow, fill=colour),
+              ymin=0,ymax=1, colour="white", size=0.5, alpha=0.2) +
+    scale_fill_manual(values=c("G"= "green", "Y" = "yellow")) +
+    geom_hline(yintercept=0, linetype="dashed") +
+    geom_hline(yintercept=0.5, linetype="dashed") +
+    geom_hline(yintercept=1, linetype="dashed") +
+    geom_vline(xintercept=0.68, linetype="dashed") +
+    geom_line() +
+    theme(legend.position = "none")
+  
+  
+  
+  
+  
+  df.lines.hor <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              data.frame(
+                # x = 0,
+                x = 0,
+                xend = y2[max(which(
+                  y < new.sample.meta.score[i]
+                ))],
+                y = y[max(which(
+                  y < new.sample.meta.score[i]
+                ))],
+                yend = y[max(which(
+                  y < new.sample.meta.score[i]
+                ))]
+              )
+            }
+  df.lines.hor$labels <- names(new.sample.meta.score)
+  
+  df.lines.ver <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              data.frame(
+                x = y2[max(which(
+                  y < new.sample.meta.score[i]
+                ))],
+                xend = y2[max(which(
+                  y < new.sample.meta.score[i]
+                ))],
+                y =  y[max(which(
+                  y < new.sample.meta.score[i]
+                ))],
+                yend = 0
+              )
+            }
+  df.lines.ver$perc <-
+    # paste0(round(df.lines.hor$xend / length(y2) * 100), "th")
+    paste0(round(df.lines.hor$xend / 1 * 100), "th")
+  
+  return(df.lines.ver$perc[indexRow])
+}
 
 time.comb <- readRDS(file = "./time.comb.rds")
 age.comb <- readRDS(file = "./age.comb.rds")
@@ -1363,6 +1424,8 @@ library(survival)
 
 new.sample.meta.score <- c(0.5,0.3)
 indexRow <- 0.3
+
+
 survivalcurveplot <- function(new.sample.meta.score,indexRow){
   if(is.null(indexRow)){indexRow=1}
   df2$pred -> pred
@@ -1372,7 +1435,7 @@ survivalcurveplot <- function(new.sample.meta.score,indexRow){
     geom_point(alpha = 1/20) +
     geom_line(aes(x=pred, y=lo),linetype="dotted") +
     geom_line(aes(x=pred, y=up),linetype="dotted") +
-    theme_classic() + xlab("Prediction Metagene") + ylab("Survival") +
+    theme_classic() + xlab("G3/G4 Score") + ylab("Survival") +
     labs(title = "New plot title", subtitle = "A subtitle") +
     ylim(0,1)
   
@@ -1385,17 +1448,19 @@ df.lines.hor <-
               # x = 0,
               x = 0,
               # xend = 0.4,
-              xend = surv[max(which(
-                pred < new.sample.meta.score[i]
-              ))],
+              xend = new.sample.meta.score[i],
               # y = pred[max(which(
               #   pred < new.sample.meta.score[i]
               # ))],
               # yend = pred[max(which(
               #   pred < new.sample.meta.score[i]
               # ))]
-              y = new.sample.meta.score[i],
-              yend = new.sample.meta.score[i]
+              y = surv[max(which(
+                pred < new.sample.meta.score[i]
+              ))],
+              yend = surv[max(which(
+                pred < new.sample.meta.score[i]
+              ))]
             )
           }
 # df.lines.hor <-
@@ -1417,37 +1482,35 @@ df.lines.ver <-
   foreach(i = 1:length(new.sample.meta.score),
           .combine = rbind) %do% {
             data.frame(
-              x = max(which(
+              x = new.sample.meta.score[i],
+              xend = new.sample.meta.score[i],
+              y = 0,
+              yend = surv[max(which(
                 pred < new.sample.meta.score[i]
-              )),
-              xend = max(which(
-                pred < new.sample.meta.score[i]
-              )),
-              y = new.sample.meta.score[i],
-              yend = min(pred)
+              ))]
             )
           }
 
 
-df.lines.ver <-
-  foreach(i = 1:length(new.sample.meta.score),
-          .combine = rbind) %do% {
-            data.frame(
-              x = surv[max(which(
-                pred < new.sample.meta.score[i]
-              ))],
-              xend = surv[max(which(
-                pred < new.sample.meta.score[i]
-              ))],
-              y =  surv[max(which(
-                pred < new.sample.meta.score[i]
-              ))],
-              # x = 0.5,
-              # xend = 0.5,
-              # y = 0.5,
-              yend = 0
-            )
-          }
+# df.lines.ver <-
+#   foreach(i = 1:length(new.sample.meta.score),
+#           .combine = rbind) %do% {
+#             data.frame(
+#               x = surv[max(which(
+#                 pred < new.sample.meta.score[i]
+#               ))],
+#               xend = surv[max(which(
+#                 pred < new.sample.meta.score[i]
+#               ))],
+#               y =  surv[max(which(
+#                 pred < new.sample.meta.score[i]
+#               ))],
+#               # x = 0.5,
+#               # xend = 0.5,
+#               # y = 0.5,
+#               yend = 0
+#             )
+#           }
 df.lines.ver$perc <-
   paste0(round(df.lines.ver$xend / length(pred) * 100), "th")
 
@@ -1482,9 +1545,9 @@ b <- b +
     size = 1,
     data = df.lines.ver
     
-  ) +
-  xlab("") + 
-  ylab("G3/G4 Score")
+  ) 
+  # xlab("") + 
+  # ylab("G3/G4 Score")
 #geom_text_repel(aes(x = x+10, y = y+0.1, label = labels), direction = "y", data = df.lines.hor)
 # geom_text(aes(
 #   x = x + 10,
@@ -1515,3 +1578,11 @@ d<- ggarrange(c,
 # d <- ggplotly(d)
 d
 }
+
+new.sample.meta.score <- c(0.5,0.3)
+indexRow <- 0.3
+
+
+survivalcurveplot(new.sample.meta.score,indexRow)
+
+

@@ -1,4 +1,4 @@
-source("./AppSourceFunctions.R")
+source("./AppSourceFunctions1.1.R")
 
 library(shinythemes)
 
@@ -88,7 +88,8 @@ ui <- shiny::fluidPage(
                       "Author: James Hacking,", "<br/>",  
                       "Date Created: 26-07-2022,", "<br/>", 
                       "Copyright (c) James Hacking, 2022,", "<br/>",
-                      h5(a("Email: james.hacking@ncl.ac.uk", href="mailto:james.hacking@ncl.ac.uk"))
+                      h5(a("Email: james.hacking@ncl.ac.uk", href="mailto:james.hacking@ncl.ac.uk")),
+                      h4("Disclaimer : This app is designed exclusively for research purposes and is strictly not for diagnostic use.")
                       # shinythemes::themeSelector,()
                       
                     )))
@@ -102,7 +103,7 @@ ui <- shiny::fluidPage(
                                  )),
                                  fluidRow(
                                  HTML('<iframe width="560" height="315" ,
-                                      src="https://www.youtube.com/embed/mHONNcZbwDY",
+                                      src="https://www.youtube.com/embed/th6tD7cBXFM",
                                       frameborder="0" ,
                                       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" ,
                                       allowfullscreen></iframe>'))
@@ -398,42 +399,7 @@ server <- function(session, input, output) {
         processing=FALSE),
       selection = "single"
       )
-      
-      # coxph(Surv(time.comb, status.comb) ~ comb.cont) -> train.fit
-      # summary(survfit(train.fit, data.frame(g3g4.values=comb.cont)), time = 5) -> x
-      # 
-      # df2 <- data.frame(pred = comb.cont,
-      #                   surv = as.numeric(x$surv),
-      #                   up = as.numeric(x$upper),
-      #                   lo = as.numeric(x$lower)
-      # )
-      # 
-      # output$survival <- renderPlot(
-      #   ggplot(df2, aes(x=pred, y=surv)) +
-      #     geom_line() +
-      #     geom_point(alpha = 1/20, size = 2) +
-      #     geom_line(aes(x=pred, y=lo),linetype="dotted") +
-      #     geom_line(aes(x=pred, y=up),linetype="dotted") +
-      #     theme_classic() + xlab("Prediction Metagene") + ylab("Survival") +
-      #     labs(title = "New plot title", subtitle = "A subtitle") +
-      #     ylim(0,1)
-      # )
-      
-      # figure.input <- metagene.df$Group.3.4.Score
-      # names(figure.input) <- rownames(metagene.df)
-      # print(figure.input)
-      # #####
-      # output$figure <-
-      #   renderPlot({
-      #     
-      #     figure.output <-(
-      #       # figureFile <- "./ecrt20.dist.rds"
-      #       generate_figure_highlight_g3g4(
-      #         figure.input
-      #         ,input$Mval_row_last_clicked)
-      #     )
-      #     figure.output
-      #   })
+
       
       att$done()
       
@@ -464,25 +430,7 @@ server <- function(session, input, output) {
           }
         })
     })
-    
-  # pdf(file,
-  #     width = 14,
-  #     title = paste(input$metagenes, "output")
-  # )
-  # 
-  # grid.table(
-  #   
-  #   ({
-  #     beta2m(temp.processed$betas) -> M.values
-  #     
-  #     ### Round results to 3 figures
-  #     # round(M.values, digits = 3) -> M.values
-  #     
-  #     metagene <- round(predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)]), digits = 3)
-  #     metagene.df <- data.frame(g3g4.score = metagene)
-  #     metagene.df
-  #   })
-  # )
+
     observeEvent(input$bttn2, {
       att$set(10, text = "Loading") #Start at 10% 
       att$auto(ms = 1600, value = 0.01) # automatically increment
@@ -559,32 +507,32 @@ server <- function(session, input, output) {
       output$percentages <- renderText (
         
         # input <- "./mrt54.dist.rds",
-        generate_figure_percentage_ecrt(
+        generate_figure_highlight_g3g4PERC(
           figure.input,
           input$Mval_row_last_clicked)
       )
       
-      coxph(Surv(time.comb, status.comb) ~ comb.cont) -> train.fit
-      summary(survfit(train.fit, data.frame(g3g4.values=comb.cont)), time = 5) -> x
+      # coxph(Surv(time.comb, status.comb) ~ comb.cont) -> train.fit
+      # message("Train fit complete")
+      # summary(survfit(train.fit, data.frame(g3g4.values=comb.cont)), time = 5) -> x
+      # df2 <- data.frame(pred = comb.cont,
+      #                   surv = as.numeric(x$surv),
+      #                   up = as.numeric(x$upper),
+      #                   lo = as.numeric(x$lower)
+      # )
+      message(head(df2))
       
-      df2 <- data.frame(pred = comb.cont,
-                        surv = as.numeric(x$surv),
-                        up = as.numeric(x$upper),
-                        lo = as.numeric(x$lower)
-      )
-      
-      output$survival <- renderPlot(
-        renderPlot({
-          
+      output$survival <- renderPlot({
           figure.output <-(
-            # figureFile <- "./ecrt20.dist.rds"
             survivalcurveplot(
               figure.input
               ,input$Mval_row_last_clicked)
+              # c(0.3,0.5),
+              # 0.3)
           )
           figure.output
         })
-      )
+      
       
       
       
@@ -793,101 +741,6 @@ server <- function(session, input, output) {
                 metagene.df
                 })
             )
-            #####
-            # plot({
-            #   
-            #   
-            #     
-            #     test.res.mrt <- extract.metagene(
-            #       as.character(ALL[[1]]$genes),
-            #       as.numeric(ALL[[1]]$weights),
-            #       beta2m(temp.processed$betas),
-            #       as.numeric(ALL[[2]])
-            #     )
-            #     
-            #     round(test.res.mrt, digits = 3) -> test.res.mrt 
-            #     
-            #     
-            #     test.res.atrt <- extract.metagene(
-            #       as.character(ATRT[[1]]$genes),
-            #       as.numeric(ATRT[[1]]$weights),
-            #       beta2m(temp.processed$betas),
-            #       as.numeric(ATRT[[2]])
-            #     )
-            #     
-            #     round(test.res.atrt, digits = 3) -> test.res.atrt
-            #     
-            #     
-            #     test.res.ecrt <- extract.metagene(
-            #       as.character(ECRT[[1]]$genes),
-            #       as.numeric(ECRT[[1]]$weights),
-            #       beta2m(temp.processed$betas),
-            #       as.numeric(ECRT[[2]])
-            #     )
-            #     
-            #     round(test.res.ecrt, digits = 3) -> test.res.ecrt
-            #     
-            #     if (input$metagenes == "MRT (ATRT & ECRT)") {
-            #       test.res.mrt$Risk_Value -> figure.input
-            #       names(figure.input) <- rownames(test.res.mrt)
-            #     }
-            #     if (input$metagenes == "ATRT") {
-            #       test.res.atrt$Risk_Value -> figure.input
-            #       names(figure.input) <- rownames(test.res.atrt)
-            #     }
-            #     if (input$metagenes == "ECRT") {
-            #       test.res.ecrt$Risk_Value -> figure.input
-            #       names(figure.input) <- rownames(test.res.ecrt)
-            #     }
-            #     
-            #     # print(figure.input)
-            #     
-            #     # generate_figure_highlight_mrt(
-            #     #   figure.input
-            #     #   ,1)
-            #     
-            #     # generate_figure_highlight_mrt(
-            #     #   figure.input
-            #     #   ,input$Mval_row_last_clicked)
-            #     # 
-            #     figure.output.mrt <- (
-            #       (if (input$metagenes == "MRT (ATRT & ECRT)") {
-            #         # figureFile <- "./mrt54.dist.rds"
-            #         generate_figure_highlight_mrt(
-            #           figure.input
-            #           ,NA)
-            #       }))
-            #     figure.output.atrt <- (
-            #       (if(input$metagenes == "ATRT") {
-            #         # figureFile <- "./atrt8.dist.rds"
-            #         generate_figure_highlight_atrt(
-            #           figure.input
-            #           ,NA)
-            #       }))
-            #     figure.output.ecrt <-( 
-            #       (if(input$metagenes == "ECRT") {
-            #         # figureFile <- "./ecrt20.dist.rds"
-            #         generate_figure_highlight_ecrt(
-            #           figure.input
-            #           ,NA)
-            #       }))
-            #     # }
-            #     
-            #     if (input$metagenes == "MRT (ATRT & ECRT)") {
-            #       figure.output.mrt -> figure.output
-            #     }
-            #     if (input$metagenes == "ATRT") {
-            #       figure.output.atrt -> figure.output
-            #     }
-            #     if (input$metagenes == "ECRT") {
-            #       figure.output.ecrt -> figure.output
-            #     }
-            #     
-            #     
-            #     figure.output
-            #     
-            #     
-            #   })####
               dev.off()
             
           }
