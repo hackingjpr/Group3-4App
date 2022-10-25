@@ -140,8 +140,8 @@ ui <- shiny::fluidPage(
                                             collapsible = TRUE,
                                             # h3("Metagene Set:"),
                                             # textOutput("metagenechoice"),
-                                            # h3("Sample Selected:"),
-                                            # textOutput("sample"),
+                                            h3("Sample Selected:"),
+                                            textOutput("sample"),
                                             h3("Patient's Risk Percentile:"),
                                             textOutput("percentages")
                                           ))),
@@ -512,6 +512,9 @@ server <- function(session, input, output) {
           input$Mval_row_last_clicked)
       )
       
+      saveRDS(figure.input, file = "./temp/figureinput.RDS")
+      
+      
       # coxph(Surv(time.comb, status.comb) ~ comb.cont) -> train.fit
       # message("Train fit complete")
       # summary(survfit(train.fit, data.frame(g3g4.values=comb.cont)), time = 5) -> x
@@ -571,7 +574,7 @@ server <- function(session, input, output) {
         geom_line(data = df3.y, aes(x=pred, y=up, group=age),linetype="dotted") +
         theme_classic() + xlab("Prediction Metagene") + ylab("Survival") +
         scale_color_manual(values=c('red','dodgerblue')) +
-        labs(title = "New plot title", subtitle = "A subtitle") +
+        # labs(title = "New plot title", subtitle = "A subtitle") +
         ylim(0,1)
     )
 
@@ -699,7 +702,16 @@ server <- function(session, input, output) {
       #For displaying currently selected sample
       
       output$sample <- renderText(input$Mval_cell_clicked$value) 
+      figure.input <- readRDS("./temp/figureinput.RDS")
+      figure.output1 <-(
+        survivalcurveplot(
+          # figure.input
+          # ,input$Mval_row_last_clicked)
+          c(0.3,0.5),
+          0.3)
+      )
       
+
       output$down <- downloadHandler(
         filename = function() {
           paste(input$metagenes,Sys.time(), input$download, sep=".")
@@ -728,19 +740,22 @@ server <- function(session, input, output) {
                   title = paste(input$metagenes, "output")
                   )
             
-            grid.table(
-              
-              ({
-                beta2m(temp.processed$betas) -> M.values
-                
-                ### Round results to 3 figures
-                # round(M.values, digits = 3) -> M.values
-                
-                metagene <- round(predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)]), digits = 3)
-                metagene.df <- data.frame(g3g4.score = metagene)
-                metagene.df
-                })
-            )
+            # grid.table(
+            #   
+            #   ({
+            #     beta2m(temp.processed$betas) -> M.values
+            #     
+            #     ### Round results to 3 figures
+            #     # round(M.values, digits = 3) -> M.values
+            #     
+            #     metagene <- round(predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)]), digits = 3)
+            #     metagene.df <- data.frame(g3g4.score = metagene)
+            #     metagene.df
+            #     })
+            # 
+            # )
+
+            (figure.output1)
               dev.off()
             
           }

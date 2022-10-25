@@ -836,11 +836,11 @@ survivalcurveplot <- function(new.sample.meta.score,indexRow){
     geom_line(aes(x=pred, y=lo),linetype="dotted") +
     geom_line(aes(x=pred, y=up),linetype="dotted") +
     theme_classic() + xlab("G3/G4 Score") + ylab("Survival") +
-    labs(title = "New plot title", subtitle = "A subtitle") +
+    # labs(title = "New plot title", subtitle = "A subtitle") +
     ylim(0,1) +
     theme(legend.position = "none")
   
-  ggplotly(b)
+  # ggplotly(b)
   
   df.lines.hor <-
     foreach(i = 1:length(new.sample.meta.score),
@@ -929,6 +929,5 @@ survivalcurveplot <- function(new.sample.meta.score,indexRow){
 # new.sample.meta.score <- c(0.5,0.3)
 # indexRow <- 0.3
 # 
-#survivalcurveplot(new.sample.meta.score,indexRow)
 
 

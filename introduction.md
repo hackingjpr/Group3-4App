@@ -17,5 +17,3 @@ Functions provided here are compatible with any standard computer with enough RA
 ### Software Requirements
 
 Functions provided import and depend on a number of R packages. Functionality has been tested on *R 4.0.4* with *Ubuntu 20.04.2 LTS*
-
-# Disclaimer : This app is designed exclusively for research purposes and is strictly not for diagnostic use.
