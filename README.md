@@ -3,7 +3,7 @@
 
 - [Overview](#overview)
 - [Tutorial](#tutorial)
-  - [Step One - Uploading Data](#step-one---uploading-data)
+  - [Step One - Uploading Data](#step-one---Select-Expression-or-Methylation)
   - [Step Two - Selecting Metagenes](#step-two---selecting-metagenes)
   - [Step Three - Generate Risk Values](#step-three---generate-risk-values)
   - [Step Four - Results](#step-four---results)
