@@ -179,6 +179,13 @@ ui <- shiny::fluidPage(
                                             collapsible = TRUE,
                                             DTOutput('Mval1')
                                           ))),
+                                        (fluidRow(
+                                          box(
+                                            title = "Risk plot",
+                                            status = "success",
+                                            solidHeader = TRUE,
+                                            collapsible = TRUE,
+                                            plotOutput("figureExpression")))),
                                         # (fluidRow(
                                         #   box(
                                         #     title = "Risk plot",
@@ -305,30 +312,30 @@ server <- function(session, input, output) {
       # message("3")
       
       nmb.mat <- nmb.mat.prepped
-      # tpms.mat <- input$expFile$datapath
-      
-      
-      # in.files <- as.matrix(in.files)
-      print(object.size(in.files))  
-      ## interset common genes / probes
+      # # tpms.mat <- input$expFile$datapath
+      # 
+      # 
+      # # in.files <- as.matrix(in.files)
+      # print(object.size(in.files))  
+      # ## interset common genes / probes
       tpms.mat <- match.select(nmb.mat, in.files)
-      # message(head(tpms.mat))
-      message("4")
-      
-
-      ## NEED PACKAGE NMF
-      init <- NMF::nmfModel(4, 
-                            nmb.mat, 
-                            W = 0.5, 
-                            H = t(avg.h.val))
-      message("5")
-      
-      ## generate NMF seeded with model
-      nmf.res <- NMF::nmf(nmb.mat, 
-                          4, 
-                          seed = init, 
-                          nrun = 8, 
-                          .pbackend = 20)
+      message(head(tpms.mat))
+      # message("4")
+      # 
+      # 
+      # ## NEED PACKAGE NMF
+      # init <- NMF::nmfModel(4, 
+      #                       nmb.mat, 
+      #                       W = 0.5, 
+      #                       H = t(avg.h.val))
+      # message("5")
+      # 
+      # ## generate NMF seeded with model
+      # nmf.res <- NMF::nmf(nmb.mat, 
+      #                     4, 
+      #                     seed = init, 
+      #                     nrun = 8, 
+      #                     .pbackend = 20)
       message("6")
       
       
@@ -354,7 +361,7 @@ server <- function(session, input, output) {
       message("10")
       apply(logistic.g3g4.rnaseq,1,function(x){x[2]/(x[1]+x[2])}) -> logistic.g3g4.rnaseq.score
       message("11")
-      scaling.function(logistic.g3g4.rnaseq.score) -> logistic.g3g4.rnaseq.score
+      scaling.function2(logistic.g3g4.rnaseq.score) -> logistic.g3g4.rnaseq.score
       message("12")
       
       ## join and plot the two together (original g3g4 score and g3g4 score projected back onto the same data) kind of a control that it is working
@@ -371,15 +378,13 @@ server <- function(session, input, output) {
       apply(logistic.g3g4.tpms,1,function(x){x[2]/(x[1]+x[2])}) -> logistic.g3g4.tpms.score
       message("16")
     
-      
       rbind(logistic.g3g4.rnaseq, logistic.g3g4.tpms) -> scaled.together.logistic.g3g4
       message("list")
       apply( scaled.together.logistic.g3g4,1,function(x){x[2]/(x[1]+x[2])}) ->  scaled.together.logistic.score
       message("apply")
       scaled.together.logistic.score[-1:-length( logistic.g3g4.rnaseq.score)] ->  scaled.together.logistic.score
       message("remove")
-      
-      
+
       # some times helpful to remove outliers prior to scaling
       outlier.idx <- c(head(order(scaled.together.logistic.score), round((input$outlier)*(length(scaled.together.logistic.score)/100))),
                        tail(order(scaled.together.logistic.score), round((input$outlier)*(length(scaled.together.logistic.score)/100)))
@@ -387,7 +392,9 @@ server <- function(session, input, output) {
       message("17")
       
       # scale to create final score
-      scaling.function(scaled.together.logistic.score[-outlier.idx]) -> logistic.g3g4.tpms.score
+      scaling.function(scaled.together.logistic.score
+                       # [-outlier.idx]
+                       ) -> logistic.g3g4.tpms.score
       round(logistic.g3g4.tpms.score, digits = 3) -> logistic.g3g4.tpms.score
       as.data.frame(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score
       message("18")
@@ -399,13 +406,24 @@ server <- function(session, input, output) {
         processing=FALSE),
       selection = "single"
       )
+      
+      output$figureExpression <-
+        renderPlot({
+          
+          figure.output <-(
+            # figureFile <- "./ecrt20.dist.rds"
+            generate_figure_highlight_g3g4(
+              logistic.g3g4.tpms.score
+              ,input$Mval1_row_last_clicked)
+          )
+          figure.output
+        })
 
       
       att$done()
       
       showTab(inputId = "tabs", target = "Expression Results", select = TRUE)
       showTab(inputId = "tabs", target = "Download")
-
 
       output$down <- downloadHandler(
         filename = function() {
@@ -439,14 +457,12 @@ server <- function(session, input, output) {
       req(input$methFile)
       require(R.utils)
       
-      
       input$methFile$datapath -> in.files
       message(in.files)
       paste0(tempDIR,"/", input$methFile$name) -> out.files
       message(out.files)
       
       copied <- file.copy(in.files, out.files)
-      
       
       temp.base <- get_basenames(tempDIR)
       
@@ -465,8 +481,6 @@ server <- function(session, input, output) {
       metagene <- round(predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)]), digits = 3)
       metagene.df <- data.frame('Group.3.4.Score' = metagene)
 
-      
-
       output$Mval <- renderDT (
         ({
           metagene.df
@@ -479,15 +493,12 @@ server <- function(session, input, output) {
 
       att$done(text = "Complete")
       
-      
       # output$time <- renderText({proc.time() - ptm})
       rowSelect <- reactive({input$Mval_rows_selected})
       message("row select done")
       
-      
       # print(figure.input)
 
-      
       figure.input <- metagene.df$Group.3.4.Score
       names(figure.input) <- rownames(metagene.df)
       print(figure.input)
@@ -514,7 +525,6 @@ server <- function(session, input, output) {
       
       saveRDS(figure.input, file = "./temp/figureinput.RDS")
       
-      
       # coxph(Surv(time.comb, status.comb) ~ comb.cont) -> train.fit
       # message("Train fit complete")
       # summary(survfit(train.fit, data.frame(g3g4.values=comb.cont)), time = 5) -> x
@@ -535,9 +545,6 @@ server <- function(session, input, output) {
           )
           figure.output
         })
-      
-      
-      
       
       coxph(Surv(time.comb, c(status.comb)) ~ comb.cont + age.comb) -> train.fit.age
       
