@@ -380,7 +380,9 @@ param.filter <- function(m = NULL,
 }
 
 scaling.function <- function(x){(x-min(x))/(max(x)-min(x))} 
-scaling.function2 <- function(x){(x-0)/(6479-0)} 
+scaling.function2 <- function(x){(x-0.3608444)/(0.6065306-0.3608444)} 
+scaling.function3 <- function(x){(x-0.3953062)/(0.5964371-0.3953062)} 
+
 
 
 
@@ -659,12 +661,8 @@ generate_figure_highlight_g3g4Expression <- function(new.sample.meta.score, inde
     geom_line() +
     theme(legend.position = "none")
   
-  
-  
-  
-  
   df.lines.hor <-
-    foreach(i = 1:nrow(new.sample.meta.score),
+    foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
               data.frame(
                 # x = 0,
@@ -683,7 +681,7 @@ generate_figure_highlight_g3g4Expression <- function(new.sample.meta.score, inde
   df.lines.hor$labels <- names(new.sample.meta.score)
   
   df.lines.ver <-
-    foreach(i = 1:nrow(new.sample.meta.score),
+    foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
               data.frame(
                 x = y2[max(which(
@@ -831,6 +829,9 @@ generate_figure_highlight_g3g4PERC <- function(new.sample.meta.score, indexRow){
   return(df.lines.ver$perc[indexRow])
 }
 
+
+#########FOR AGE BASED SURVIVAL PLOT###########
+#
 time.comb <- readRDS(file = "./time.comb.rds")
 age.comb <- readRDS(file = "./age.comb.rds")
 status.comb <- readRDS(file = "./status.comb.rds")
@@ -849,6 +850,35 @@ df2 <- data.frame(pred = comb.cont,
                   surv = as.numeric(x$surv),
                   up = as.numeric(x$upper),
                   lo = as.numeric(x$lower))
+
+coxph(Surv(time.comb, c(status.comb)) ~ comb.cont + age.comb) -> train.fit.age
+
+summary(survfit(train.fit.age, data.frame(comb.cont=comb.cont,
+                                          age.comb = age.comb)), time = 5) -> x
+
+summary(survfit(train.fit.age, data.frame(comb.cont=c(seq(0,1,0.1),seq(0,1,0.1)),
+                                          age.comb=c(rep("TRUE",11),rep("FALSE",11)))), time = 5) -> y
+
+df3 <- data.frame(pred = comb.cont[row.names(x$table)],
+                  surv = as.numeric(x$surv),
+                  up = as.numeric(x$upper),
+                  lo = as.numeric(x$lower),
+                  age = age.comb[row.names(x$table)]
+)
+
+
+df3.y <- data.frame(pred = c(seq(0,1,0.1),seq(0,1,0.1)),
+                    surv = as.numeric(y$surv),
+                    up = as.numeric(y$upper),
+                    lo = as.numeric(y$lower),
+                    age = c(rep("TRUE",11),rep("FALSE",11))
+)
+
+df3$point <- rep("yes",nrow(df3))
+df3.y$point <- rep("no",nrow(df3.y))
+#################SURVIVAL PLOT AND PERCENTAGE##################
+# 
+
 
 survivalcurveplot <- function(new.sample.meta.score,indexRow){
   if(is.null(indexRow)){indexRow=1}
@@ -948,6 +978,63 @@ survivalcurveplot <- function(new.sample.meta.score,indexRow){
   
   
   d
+}
+
+survivalcurveplotPERC <- function(new.sample.meta.score,indexRow){
+  if(is.null(indexRow)){indexRow=1}
+  df2$pred -> pred
+  df2$surv -> surv
+  b<- ggplot(df2, aes(x=pred, y=surv)) +
+    geom_line() +
+    geom_point(alpha = 1/20) +
+    geom_line(aes(x=pred, y=lo),linetype="dotted") +
+    geom_line(aes(x=pred, y=up),linetype="dotted") +
+    theme_classic() + xlab("G3/G4 Score") + ylab("Survival") +
+    # labs(title = "New plot title", subtitle = "A subtitle") +
+    ylim(0,1) +
+    theme(legend.position = "none")
+  
+  # ggplotly(b)
+  
+  df.lines.hor <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              surv[which(
+                pred < new.sample.meta.score[i]
+              )] -> temp.surv
+              data.frame(
+                x = 0,
+                xend = new.sample.meta.score[i],
+                y = temp.surv[which.min(temp.surv)],
+                yend = temp.surv[which.min(temp.surv)]
+              )
+            }
+  
+  df.lines.hor$labels <- names(new.sample.meta.score)
+  
+  
+  df.lines.ver <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              surv[which(
+                pred < new.sample.meta.score[i]
+              )] -> temp.surv
+              data.frame(
+                x = new.sample.meta.score[i],
+                xend = new.sample.meta.score[i],
+                y = 0,
+                yend = temp.surv[which.min(temp.surv)]
+              )
+            }
+  message(df.lines.ver)
+  
+  df.lines.hor$perc <-
+    # paste0(round(df.lines.hor$xend / length(y2) * 100), "th")
+    paste0(round(df.lines.ver$yend / 1 * 100), "th")
+  
+  return(df.lines.hor$perc[indexRow])
+  
+  
 }
 # 
 # new.sample.meta.score <- c(0.5,0.3)

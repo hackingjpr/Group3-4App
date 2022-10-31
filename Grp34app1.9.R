@@ -1,4 +1,4 @@
-source("./AppSourceFunctions1.1.R")
+source("./AppSourceFunctions1.2.R")
 
 library(shinythemes)
 
@@ -182,11 +182,36 @@ ui <- shiny::fluidPage(
                                         (fluidRow(
                                           box(
                                             title = "Risk plot",
-                                            status = "success",
+                                            status = "warning",
                                             solidHeader = TRUE,
                                             collapsible = TRUE,
-                                            plotOutput("figureExpression")))),
-                                        # (fluidRow(
+                                            plotOutput("figureExpression")),
+                                          box(
+                                            title = "Risk plot",
+                                            status = "warning",
+                                            solidHeader = TRUE,
+                                            collapsible = TRUE,
+                                          h3("Sample Selected:"),
+                                          textOutput("sampleExpression"),
+                                          h3("Patient's Risk Percentile:"),
+                                          textOutput("percentagesExpression"),
+                                          h3("Patient's survival Percentile:"),
+                                          textOutput("survivalExpressionPercentage")
+                                          ))),
+                                        (fluidRow(
+                                          box(
+                                            title = "Survival Plot",
+                                            status = "warning",
+                                            solidHeader = TRUE,
+                                            collapsible = TRUE,
+                                            plotOutput("survivalExpression")),
+                                          box(
+                                            title = "Survival Plot",
+                                            status = "warning",
+                                            solidHeader = TRUE,
+                                            collapsible = TRUE,
+                                            plotOutput("survivalageExpression")),
+                                        )),
                                         #   box(
                                         #     title = "Risk plot",
                                         #     status = "warning",
@@ -200,10 +225,7 @@ ui <- shiny::fluidPage(
                                         #     collapsible = TRUE,
                                         #     h3("Metagene Set:"),
                                         #     textOutput("metagenechoice"),
-                                        #     h3("Sample Selected:"),
-                                        #     textOutput("sample"),
-                                        #     h3("Patient's Risk Percentile:"),
-                                        #     textOutput("percentages")
+
                                         #   ))),
                                         (fluidRow(
                                           box(
@@ -392,14 +414,14 @@ server <- function(session, input, output) {
       message("17")
       
       # scale to create final score
-      scaling.function(scaled.together.logistic.score
+      scaling.function3(scaled.together.logistic.score
                        # [-outlier.idx]
                        ) -> logistic.g3g4.tpms.score
       round(logistic.g3g4.tpms.score, digits = 3) -> logistic.g3g4.tpms.score
-      as.data.frame(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score
+      as.data.frame(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score.df
       message("18")
       
-      output$Mval1 <- renderDT (({logistic.g3g4.tpms.score
+      output$Mval1 <- renderDT (({logistic.g3g4.tpms.score.df
       }),
       options = list(
         pageLength = 10, 
@@ -412,12 +434,54 @@ server <- function(session, input, output) {
           
           figure.output <-(
             # figureFile <- "./ecrt20.dist.rds"
-            generate_figure_highlight_g3g4(
+            generate_figure_highlight_g3g4Expression(
               logistic.g3g4.tpms.score
               ,input$Mval1_row_last_clicked)
           )
           figure.output
         })
+      
+      output$percentagesExpression <- renderText (
+        
+        # input <- "./mrt54.dist.rds",
+        generate_figure_highlight_g3g4PERC(
+          logistic.g3g4.tpms.score,
+          input$Mval1_row_last_clicked)
+      )
+      
+      output$sampleExpression <- renderText(input$Mval1_cell_clicked$value) 
+      
+      output$survivalExpression <- renderPlot({
+        figure.output <-(
+          survivalcurveplot(
+            logistic.g3g4.tpms.score
+            ,input$Mval1_row_last_clicked)
+        )
+        figure.output
+      })
+      
+      output$survivalExpressionPercentage <- renderText({
+        figure.output <-(
+          survivalcurveplotPERC(
+            logistic.g3g4.tpms.score
+            ,input$Mval1_row_last_clicked)
+        )
+        figure.output
+      })
+      
+      output$survivalageExpression <- renderPlot(
+        ggplot(df3, aes(x=pred, y=surv, group=age, color = age)) +
+          #geom_line() +
+          geom_point(alpha = 1/10) +
+          geom_line(data = df3.y, aes(x=pred, y=surv, group=age, color = age)) +
+          geom_line(data = df3.y, aes(x=pred, y=lo, group=age),linetype="dotted") +
+          geom_line(data = df3.y, aes(x=pred, y=up, group=age),linetype="dotted") +
+          theme_classic() + xlab("Prediction Metagene") + ylab("Survival") +
+          scale_color_manual(values=c('red','dodgerblue')) +
+          theme(legend.position = "none") +
+          # labs(title = "New plot title", subtitle = "A subtitle") +
+          ylim(0,1)
+      )
 
       
       att$done()
@@ -448,7 +512,7 @@ server <- function(session, input, output) {
           }
         })
     })
-
+############################################## METHYLATION ############################################
     observeEvent(input$bttn2, {
       att$set(10, text = "Loading") #Start at 10% 
       att$auto(ms = 1600, value = 0.01) # automatically increment
@@ -546,32 +610,32 @@ server <- function(session, input, output) {
           figure.output
         })
       
-      coxph(Surv(time.comb, c(status.comb)) ~ comb.cont + age.comb) -> train.fit.age
-      
-      summary(survfit(train.fit.age, data.frame(comb.cont=comb.cont,
-                                                age.comb = age.comb)), time = 5) -> x
-      
-      summary(survfit(train.fit.age, data.frame(comb.cont=c(seq(0,1,0.1),seq(0,1,0.1)),
-                                                age.comb=c(rep("TRUE",11),rep("FALSE",11)))), time = 5) -> y
-      
-      df3 <- data.frame(pred = comb.cont[row.names(x$table)],
-                        surv = as.numeric(x$surv),
-                        up = as.numeric(x$upper),
-                        lo = as.numeric(x$lower),
-                        age = age.comb[row.names(x$table)]
-      )
-      
-      
-      df3.y <- data.frame(pred = c(seq(0,1,0.1),seq(0,1,0.1)),
-                          surv = as.numeric(y$surv),
-                          up = as.numeric(y$upper),
-                          lo = as.numeric(y$lower),
-                          age = c(rep("TRUE",11),rep("FALSE",11))
-      )
-      
-      df3$point <- rep("yes",nrow(df3))
-      df3.y$point <- rep("no",nrow(df3.y))
-      
+      # coxph(Surv(time.comb, c(status.comb)) ~ comb.cont + age.comb) -> train.fit.age
+      # 
+      # summary(survfit(train.fit.age, data.frame(comb.cont=comb.cont,
+      #                                           age.comb = age.comb)), time = 5) -> x
+      # 
+      # summary(survfit(train.fit.age, data.frame(comb.cont=c(seq(0,1,0.1),seq(0,1,0.1)),
+      #                                           age.comb=c(rep("TRUE",11),rep("FALSE",11)))), time = 5) -> y
+      # 
+      # df3 <- data.frame(pred = comb.cont[row.names(x$table)],
+      #                   surv = as.numeric(x$surv),
+      #                   up = as.numeric(x$upper),
+      #                   lo = as.numeric(x$lower),
+      #                   age = age.comb[row.names(x$table)]
+      # )
+      # 
+      # 
+      # df3.y <- data.frame(pred = c(seq(0,1,0.1),seq(0,1,0.1)),
+      #                     surv = as.numeric(y$surv),
+      #                     up = as.numeric(y$upper),
+      #                     lo = as.numeric(y$lower),
+      #                     age = c(rep("TRUE",11),rep("FALSE",11))
+      # )
+      # 
+      # df3$point <- rep("yes",nrow(df3))
+      # df3.y$point <- rep("no",nrow(df3.y))
+      # 
     output$survivalage <- renderPlot(
       ggplot(df3, aes(x=pred, y=surv, group=age, color = age)) +
         #geom_line() +
