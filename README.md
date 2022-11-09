@@ -3,9 +3,9 @@
 
 - [Overview](#overview)
 - [Tutorial](#tutorial)
-  - [Step One - Uploading Data](#step-one---Select-Expression-or-Methylation)
-  - [Step Two - Selecting Metagenes](#step-two---selecting-metagenes)
-  - [Step Three - Generate Risk Values](#step-three---generate-risk-values)
+  - [Step One - Select Expression or Methylation](#step-one---Select-Expression-or-Methylation)
+  - [Step Two - Uploading Data](#step-two---Uploading-Data)
+  - [Step Three - Generate Group 3/4 Scores](#step-three---Generate-Group-3/4-Scores)
   - [Step Four - Results](#step-four---results)
   - [Step Five - Export Data and Reset](#step-five---export-data-and-reset)
 - [System Requirements](#system-requirements)
