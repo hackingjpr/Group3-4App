@@ -298,66 +298,13 @@ server <- function(session, input, output) {
       message("copy")
       
       in.files <- readRDS(in.files)
-      # in.files <- tpms.mat
-      # message(head(in.files))
-      
-      # apply(g3g4,2,function(x){(1 / (1 + exp(-x)))}) -> logistic.g3g4
-      # message("logistic.g3g4")
-      # 
-      # apply(logistic.g3g4,1,function(x){x[2]/(x[1]+x[2])}) -> logistic.g3g4.score
-      # message("logistic.g3g4.score")
-      # 
-      # scaling.function(logistic.g3g4.score) -> logistic.g3g4.score
-      # message("logistic.g3g4.score scaled")
-      # 
-      # # annotate nmb.mat to change into hgnc symbols
-      # annotate.HTseq.IDs(rownames(nmb.mat)) -> annotation
-      # message("annotation")
-      # 
-      # nmb.mat[-which(annotation$hgnc_symbol==""|is.na(annotation$hgnc_symbol)),] -> nmb.mat
-      # message("nmb.mat")
-      # 
-      # annotation$hgnc_symbol[-which(annotation$hgnc_symbol==""|is.na(annotation$hgnc_symbol))] -> rownames(nmb.mat)
-      # 
-      # 
-      # 
-      # message("1")
-      # 
-      # 
-      # ## pre-filter datasets
-      # idx <- param.filter(2^nmb.mat)
-      # nmb.mat <- 2^nmb.mat[idx, ]
-      # message("2")
-      # 
-      # ## pre-projection normalisation
-      # nmb.mat <- prep.data(nmb.mat)
-      # message("3")
       
       nmb.mat <- nmb.mat.prepped
-      # # tpms.mat <- input$expFile$datapath
-      # 
-      # 
-      # # in.files <- as.matrix(in.files)
-      # print(object.size(in.files))  
+ 
       # ## interset common genes / probes
       tpms.mat <- match.select(nmb.mat, in.files)
       message(head(tpms.mat))
-      # message("4")
-      # 
-      # 
-      # ## NEED PACKAGE NMF
-      # init <- NMF::nmfModel(4, 
-      #                       nmb.mat, 
-      #                       W = 0.5, 
-      #                       H = t(avg.h.val))
-      # message("5")
-      # 
-      # ## generate NMF seeded with model
-      # nmf.res <- NMF::nmf(nmb.mat, 
-      #                     4, 
-      #                     seed = init, 
-      #                     nrun = 8, 
-      #                     .pbackend = 20)
+
       message("6")
       
       
@@ -373,8 +320,7 @@ server <- function(session, input, output) {
       tpms.H <- project.NMF(input.array = test, 
                             nmf.result = nmf.res)
       message("8")
-      # tpms.H <- project.NMF(input.array = tpms.mat, 
-      #                       nmf.result = nmf.res)
+
       
       ### define new g3g4 score for projection back onto the original data
       t(rnaseq.H[c(3,1),]) -> g3g4.rnaseq
@@ -389,8 +335,6 @@ server <- function(session, input, output) {
       ## join and plot the two together (original g3g4 score and g3g4 score projected back onto the same data) kind of a control that it is working
       ## NEED TIDYFT
 
-      # df <- inner_join(data.frame(logistic.g3g4.score,ids = names(logistic.g3g4.score)),
-      #                  data.frame(logistic.g3g4.rnaseq.score, ids = names(logistic.g3g4.rnaseq.score)))
       message("13")
       
       t(tpms.H[c(3,1),]) -> g3g4.tpms
@@ -433,7 +377,6 @@ server <- function(session, input, output) {
         renderPlot({
           
           figure.output <-(
-            # figureFile <- "./ecrt20.dist.rds"
             generate_figure_highlight_g3g4Expression(
               logistic.g3g4.tpms.score
               ,input$Mval1_row_last_clicked)
@@ -443,7 +386,6 @@ server <- function(session, input, output) {
       
       output$percentagesExpression <- renderText (
         
-        # input <- "./mrt54.dist.rds",
         generate_figure_highlight_g3g4PERC(
           logistic.g3g4.tpms.score,
           input$Mval1_row_last_clicked)
@@ -503,15 +445,10 @@ server <- function(session, input, output) {
                   width = 7,
                   title = paste(input$filename,Sys.time(), ".pdf", sep="_")
               )
-            # grid.table(
-            #   
-            #   ({logistic.g3g4.tpms.score})
-            # )
             
             grid.table(logistic.g3g4.tpms.score.df)
             
             figure.outputExpression1 <-(
-              # figureFile <- "./ecrt20.dist.rds"
               generate_figure_highlight_g3g4Expression(
                 logistic.g3g4.tpms.score
                 ,1)
@@ -526,7 +463,6 @@ server <- function(session, input, output) {
             
             figure.outputAge <- 
               ggplot(df3, aes(x=pred, y=surv, group=age, color = age)) +
-              #geom_line() +
               geom_point(alpha = 1/10) +
               geom_line(data = df3.y, aes(x=pred, y=surv, group=age, color = age)) +
               geom_line(data = df3.y, aes(x=pred, y=lo, group=age),linetype="dotted") +
@@ -538,7 +474,6 @@ server <- function(session, input, output) {
               ylim(0,1)
             
             grid.arrange(
-              # figure.outputTable, 
               figure.outputExpression1, 
               figure.outputSurvival, 
               figure.outputAge,
@@ -612,13 +547,11 @@ server <- function(session, input, output) {
               figure.input
               ,input$Mval_row_last_clicked)
           )
-          # saveRDS(figure.output, "./temp/plot.RDS")
           figure.output
           })
           # }
       output$percentages <- renderText (
         
-        # input <- "./mrt54.dist.rds",
         generate_figure_highlight_g3g4PERC(
           figure.input,
           input$Mval_row_last_clicked)
@@ -626,14 +559,6 @@ server <- function(session, input, output) {
       
       saveRDS(figure.input, file = "./temp/figureinput.RDS")
       
-      # coxph(Surv(time.comb, status.comb) ~ comb.cont) -> train.fit
-      # message("Train fit complete")
-      # summary(survfit(train.fit, data.frame(g3g4.values=comb.cont)), time = 5) -> x
-      # df2 <- data.frame(pred = comb.cont,
-      #                   surv = as.numeric(x$surv),
-      #                   up = as.numeric(x$upper),
-      #                   lo = as.numeric(x$lower)
-      # )
       message(head(df2))
       
       output$survival <- renderPlot({
@@ -646,33 +571,6 @@ server <- function(session, input, output) {
           )
           figure.output
         })
-      
-      # coxph(Surv(time.comb, c(status.comb)) ~ comb.cont + age.comb) -> train.fit.age
-      # 
-      # summary(survfit(train.fit.age, data.frame(comb.cont=comb.cont,
-      #                                           age.comb = age.comb)), time = 5) -> x
-      # 
-      # summary(survfit(train.fit.age, data.frame(comb.cont=c(seq(0,1,0.1),seq(0,1,0.1)),
-      #                                           age.comb=c(rep("TRUE",11),rep("FALSE",11)))), time = 5) -> y
-      # 
-      # df3 <- data.frame(pred = comb.cont[row.names(x$table)],
-      #                   surv = as.numeric(x$surv),
-      #                   up = as.numeric(x$upper),
-      #                   lo = as.numeric(x$lower),
-      #                   age = age.comb[row.names(x$table)]
-      # )
-      # 
-      # 
-      # df3.y <- data.frame(pred = c(seq(0,1,0.1),seq(0,1,0.1)),
-      #                     surv = as.numeric(y$surv),
-      #                     up = as.numeric(y$upper),
-      #                     lo = as.numeric(y$lower),
-      #                     age = c(rep("TRUE",11),rep("FALSE",11))
-      # )
-      # 
-      # df3$point <- rep("yes",nrow(df3))
-      # df3.y$point <- rep("no",nrow(df3.y))
-      # 
     output$survivalage <- renderPlot(
       ggplot(df3, aes(x=pred, y=surv, group=age, color = age)) +
         #geom_line() +
@@ -812,19 +710,11 @@ server <- function(session, input, output) {
       #For displaying currently selected sample
       
       output$sample <- renderText(input$Mval_cell_clicked$value) 
-      figure.input <- readRDS("./temp/figureinput.RDS")
-      figure.output1 <-(
-        survivalcurveplot(
-          # figure.input
-          # ,input$Mval_row_last_clicked)
-          c(0.3,0.5),
-          0.3)
-      )
+      # figure.input <- readRDS("./temp/figureinput.RDS")
       
       figinput <- readRDS("./temp/figureinput.RDS")
       figureinputDF <- as.data.frame(figinput)
-      # figplot <- readRDS("./temp/plot.RDS")
-      
+
 
       output$down <- downloadHandler(
         filename = function() {
@@ -833,22 +723,11 @@ server <- function(session, input, output) {
         content ={ 
           function(file) {
             if (input$download == "csv")
+              
             
-            write.csv(
-              (
-                ({
-                  figinput
-                  # beta2m(temp.processed$betas) -> M.values
-                  # 
-                  # ### Round results to 3 figures
-                  # # round(M.values, digits = 3) -> M.values
-                  # 
-                  # metagene <- round(predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)]), digits = 3)
-                  # metagene.df <- data.frame(g3g4.score = metagene)
-                  # metagene.df
-                  }) 
-                
-              ), file, row.names = TRUE)
+              write.csv(figureinputDF,
+                        file, row.names = TRUE)
+
             ####### if not csv then write a pdf
             else
               pdf(file,
@@ -856,31 +735,6 @@ server <- function(session, input, output) {
                   title = paste("output")
                   )
             
-            # par( mfrow= c(2,2) )
-
-            # readRDS("./temp/figureinput.RDS")
-
-            # 
-            # grid.table(
-            # 
-            # ({
-            #     beta2m(temp.processed$betas) -> M.values
-            # 
-            #     ### Round results to 3 figures
-            #     # round(M.values, digits = 3) -> M.values
-            # 
-            #     metagene <- round(predict(g3.g4.cont.rfe, t(M.values)[,predictors(g3.g4.cont.rfe)]), digits = 3)
-            #     metagene.df <- data.frame(g3g4.score = metagene)
-            #     metagene.df
-            #     }),
-            # plot(
-            #   figplot
-            # )
-            # 
-            # 
-            # )
-            
-
             colnames(figureinputDF) <- "G3/G4_Score"
             grid.table(figureinputDF)
 
@@ -915,14 +769,11 @@ server <- function(session, input, output) {
             # plot(figure.output2)
             
             grid.arrange(
-              # figure.outputTable, 
               figure.output, 
               figure.output1, 
               figure.output2,
               ncol=2)
 
-            # (figure.output1)
-            # figinput
               dev.off()
             
           }
@@ -941,72 +792,7 @@ server <- function(session, input, output) {
   })
   renderText(output$metagenes <- input$metagenes)
   #####
-  # output$down <- downloadHandler(
-  #   filename = function() {
-  #     paste(input$filename,Sys.time(), ".csv", sep="_")
-  #   },
-  #   content ={ 
-  #     function(file) {
-  #       write.csv(
-  #         (
-  #           ({
-  #             test.res.mrt <- extract.metagene(
-  #               as.character(ALL[[1]]$genes),
-  #               as.numeric(ALL[[1]]$weights),
-  #               beta2m(temp.processed$betas),
-  #               as.numeric(ALL[[2]])
-  #             )
-  #             
-  #             round(test.res.mrt, digits = 3) -> test.res.mrt
-  #             
-  #             
-  #             test.res.atrt <- extract.metagene(
-  #               as.character(ATRT[[1]]$genes),
-  #               as.numeric(ATRT[[1]]$weights),
-  #               beta2m(temp.processed$betas),
-  #               as.numeric(ATRT[[2]])
-  #             )
-  #             
-  #             round(test.res.atrt, digits = 3) -> test.res.atrt
-  #             
-  #             
-  #             test.res.ecrt <- extract.metagene(
-  #               as.character(ECRT[[1]]$genes),
-  #               as.numeric(ECRT[[1]]$weights),
-  #               beta2m(temp.processed$betas),
-  #               as.numeric(ECRT[[2]])
-  #             )
-  #             
-  #             round(test.res.ecrt, digits = 3) -> test.res.ecrt
-  #             
-  #             if (input$metagenes == "MRT (ATRT & ECRT)") {
-  #               test.res.mrt -> test.res
-  #             }
-  #             if (input$metagenes == "ATRT") {
-  #               test.res.atrt -> test.res
-  #             }
-  #             if (input$metagenes == "ECRT") {
-  #               test.res.ecrt -> test.res
-  #             }
-  #             
-  #             test.res}) 
-  #           
-  #         ), file, row.names = TRUE)
-  #     }
-  #     # if (input$download == "csv")
-  #     #   write.csv(output$Mval)
-  #     # else
-  #     #   pdf(output$Mval,
-  #     #       width = 14
-  #     #   )
-  #     # dev.off()
-  #   })
-  # 
-  
-  
-  
-  
-  
+
 }
 
 shinyApp(server = server, ui = ui)

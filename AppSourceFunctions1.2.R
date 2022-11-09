@@ -120,17 +120,17 @@ if(!require(pheatmap)){
 }
 message("pheatmap done")
 
-if(!require(shinycssloaders)){
-  install.packages("shinycssloaders")
-  library(shinycssloaders)
-}
-message("shinycssloaders done")
-
-if(!require(shinybusy)){
-  install.packages("shinybusy")
-  library(shinybusy)
-}
-message("shinybusy done")
+# if(!require(shinycssloaders)){
+#   install.packages("shinycssloaders")
+#   library(shinycssloaders)
+# }
+# message("shinycssloaders done")
+# 
+# if(!require(shinybusy)){
+#   install.packages("shinybusy")
+#   library(shinybusy)
+# }
+# message("shinybusy done")
 
 if(!require(waiter)){
   install.packages("waiter")
@@ -163,10 +163,10 @@ if(!require(tidyft)){
   library(tidyft)
 }
 
-if(!require(plotly)){
-  install.packages('plotly')
-  library(plotly)
-}
+# if(!require(plotly)){
+#   install.packages('plotly')
+#   library(plotly)
+# }
 
 if(!require(randomForest)){
   packageurl <- "https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz"
@@ -989,7 +989,8 @@ survivalcurveplotPERC <- function(new.sample.meta.score,indexRow){
     geom_point(alpha = 1/20) +
     geom_line(aes(x=pred, y=lo),linetype="dotted") +
     geom_line(aes(x=pred, y=up),linetype="dotted") +
-    theme_classic() + xlab("G3/G4 Score") + ylab("Survival") +
+    # theme_classic() + 
+    xlab("G3/G4 Score") + ylab("Survival") +
     # labs(title = "New plot title", subtitle = "A subtitle") +
     ylim(0,1) +
     theme(legend.position = "none")
