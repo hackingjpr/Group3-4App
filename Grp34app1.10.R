@@ -97,6 +97,7 @@ ui <- shiny::fluidPage(
                   tabsetPanel( id = "tabs",
                                #Information Tab
                                tabPanel(
+                                 style = "padding-left:15px",
                                  "Info",
                                  (fluidRow(
                                    includeMarkdown("./introduction.md")
@@ -532,7 +533,6 @@ server <- function(session, input, output) {
       rowSelect <- reactive({input$Mval_rows_selected})
       message("row select done")
       
-      # print(figure.input)
 
       figure.input <- metagene.df$Group.3.4.Score
       names(figure.input) <- rownames(metagene.df)
@@ -542,7 +542,6 @@ server <- function(session, input, output) {
         renderPlot({
           
           figure.output <-(
-            # figureFile <- "./ecrt20.dist.rds"
             generate_figure_highlight_g3g4(
               figure.input
               ,input$Mval_row_last_clicked)
@@ -566,8 +565,6 @@ server <- function(session, input, output) {
             survivalcurveplot(
               figure.input
               ,input$Mval_row_last_clicked)
-              # c(0.3,0.5),
-              # 0.3)
           )
           figure.output
         })
@@ -586,121 +583,8 @@ server <- function(session, input, output) {
         ylim(0,1)
     )
 
-
           # https://rstudio.github.io/DT/shiny.html
-
-
-      
-    #############
-      # output$percentages <- renderText (
-      #   {
-      #   test.res.mrt <- extract.metagene(
-      #     as.character(ALL[[1]]$genes),
-      #     as.numeric(ALL[[1]]$weights),
-      #     beta2m(temp.processed$betas),
-      #     as.numeric(ALL[[2]])
-      #   )
-      #   
-      #   round(test.res.mrt, digits = 3) -> test.res.mrt 
-      #   
-      #   
-      #   test.res.atrt <- extract.metagene(
-      #     as.character(ATRT[[1]]$genes),
-      #     as.numeric(ATRT[[1]]$weights),
-      #     beta2m(temp.processed$betas),
-      #     as.numeric(ATRT[[2]])
-      #   )
-      #   
-      #   round(test.res.atrt, digits = 3) -> test.res.atrt
-      #   
-      #   
-      #   test.res.ecrt <- extract.metagene(
-      #     as.character(ECRT[[1]]$genes),
-      #     as.numeric(ECRT[[1]]$weights),
-      #     beta2m(temp.processed$betas),
-      #     as.numeric(ECRT[[2]])
-      #   )
-      #   
-      #   round(test.res.ecrt, digits = 3) -> test.res.ecrt
-      #   
-      #   if (input$metagenes == "MRT (ATRT & ECRT)") {
-      #     test.res.mrt$Risk_Value -> figure.input
-      #     names(figure.input) <- rownames(test.res.mrt)
-      #   }
-      #   if (input$metagenes == "ATRT") {
-      #     test.res.atrt$Risk_Value -> figure.input
-      #     names(figure.input) <- rownames(test.res.atrt)
-      #   }
-      #   if (input$metagenes == "ECRT") {
-      #     test.res.ecrt$Risk_Value -> figure.input
-      #     names(figure.input) <- rownames(test.res.ecrt)
-      #   }
-      #   
-      #   # print(figure.input)
-      #   
-      #   
-      #   figure.output.mrt <- (
-      #     (if (input$metagenes == "MRT (ATRT & ECRT)") {
-      #       # figureFile <- "./mrt54.dist.rds"
-      #       generate_figure_percentage_mrt(
-      #         figure.input
-      #         ,input$Mval_row_last_clicked)
-      #     }))
-      #   figure.output.atrt <- (
-      #     (if(input$metagenes == "ATRT") {
-      #       # figureFile <- "./atrt8.dist.rds"
-      #       generate_figure_percentage_atrt(
-      #         figure.input
-      #         ,input$Mval_row_last_clicked)
-      #     }))
-      #   figure.output.ecrt <-( 
-      #     (if(input$metagenes == "ECRT") {
-      #       # figureFile <- "./ecrt20.dist.rds"
-      #       generate_figure_percentage_ecrt(
-      #         figure.input
-      #         ,input$Mval_row_last_clicked)
-      #     }))
-      #   # }
-      #   
-      #   if (input$metagenes == "MRT (ATRT & ECRT)") {
-      #     figure.output.mrt -> figure.output.percentage
-      #   }
-      #   if (input$metagenes == "ATRT") {
-      #     figure.output.atrt -> figure.output.percentage
-      #   }
-      #   if (input$metagenes == "ECRT") {
-      #     figure.output.ecrt -> figure.output.percentage
-      #   }
-      #   
-      #   
-      #   figure.output.percentage
-      #   
-      #   # input <- "./mrt54.dist.rds",
-      #   # generate_figure_percentage_mrt(
-      #   #   figure.input,
-      #   #   input$Mval_row_last_clicked)
-      #   # ,input$Mval_row_last_clicked)
-      #   # "hello",
-      #   
-      #    # if (input$metagenes == "MRT (ATRT & ECRT)") {
-      #    #   # figureFile <- "./mrt54.dist.rds"
-      #    #   generate_figure_percentage_mrt(
-      #    #     figure.input
-      #    #     ,input$Mval_row_last_clicked)
-      #    # }
-      #    # if (input$metagenes == "ATRT") {
-      #    #   # figureFile <- "./atrt8.dist.rds"
-      #    #   generate_figure_percentage_atrt(
-      #    #     figure.input
-      #    #     ,input$Mval_row_last_clicked)
-      #    # }
-      #    # if (input$metagenes == "ECRT") {
-      #    #   # figureFile <- "./ecrt20.dist.rds"
-      #    #   generate_figure_percentage_ecrt(
-      #    #     figure.input
-      #    #     ,input$Mval_row_last_clicked)
-      #    # }
-      # })
+    
 #####
       # output$metagenechoice <- renderText({input$metagenes})
       
