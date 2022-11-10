@@ -17,7 +17,7 @@ The repository can be cloned onto your RStudio or the base code can be run indep
 # Tutorial
 ## Step One - Select Expression or Methylation
 
-Depending on whether you are uploading Expression or Methylation data select the appropriate option
+Depending on whether you are uploading Expression or Methylation data select the appropriate option.
 
 ## Step Two - Uploading Data
 
