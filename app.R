@@ -314,8 +314,20 @@ server <- function(session, input, output) {
       copied <- file.copy(in.files, out.files)
       message("copy")
       
-      in.files <- readRDS(in.files)
+      library("tools")
+      input.file <- in.files
+      if(file_ext(input.file)=="rds"){
+        in.files <- readRDS(file = input.file)
+      } else if (file_ext(input.file)=="csv"){
+        in.files <- read.csv(file = input.file)
+      } else if (file_ext(input.file)=="txt"){
+        in.files <- read.delim(file = input.file)
+      } else {
+        message("file not right format!")
+      }
       
+      # in.files <- readRDS(in.files)
+      message("File loaded")
       nmb.mat <- nmb.mat.prepped
  
       # ## interset common genes / probes
@@ -330,11 +342,11 @@ server <- function(session, input, output) {
       rnaseq.H <- project.NMF(input.array = nmb.mat, 
                               nmf.result = nmf.res)
       message("7")
-      test <- as.matrix(tpms.mat)
-      message(object.size(test))
-      message(dim(test))
+      tpms.matrix <- as.matrix(tpms.mat)
+      message(object.size(tpms.matrix))
+      message(dim(tpms.matrix))
       # project onto fresh dataset
-      tpms.H <- project.NMF(input.array = test, 
+      tpms.H <- project.NMF(input.array = tpms.matrix, 
                             nmf.result = nmf.res)
       message("8")
 
@@ -438,18 +450,8 @@ server <- function(session, input, output) {
       })
       
       output$survivalageExpression <- renderPlot(
-        ggplot(df3, aes(x=pred, y=surv, group=age, color = age)) +
-          #geom_line() +
-          geom_point(alpha = 1/10) +
-          geom_line(data = df3.y, aes(x=pred, y=surv, group=age, color = age)) +
-          geom_line(data = df3.y, aes(x=pred, y=lo, group=age),linetype="dotted") +
-          geom_line(data = df3.y, aes(x=pred, y=up, group=age),linetype="dotted") +
-          theme_classic() + xlab("Prediction Metagene") + ylab("Survival") +
-          scale_color_manual(values=c('red','dodgerblue')) +
-          theme(legend.position = "none") +
-          # labs(title = "New plot title", subtitle = "A subtitle") +
-          ylim(0,1) +
-          theme(text = element_text(size = 15)) 
+        SurvivalAgePlot(logistic.g3g4.tpms.score,
+                        input$Mval1_row_last_clicked)
       )
 
       

@@ -534,7 +534,8 @@ generate_figure_highlight_g3g4 <- function(new.sample.meta.score, indexRow){
     geom_hline(yintercept=1, linetype="dashed") +
     geom_vline(xintercept=0.68, linetype="dashed") +
     geom_line() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    theme(text = element_text(size = 15))
   
   
   
@@ -659,7 +660,8 @@ generate_figure_highlight_g3g4Expression <- function(new.sample.meta.score, inde
     geom_hline(yintercept=1, linetype="dashed") +
     geom_vline(xintercept=0.68, linetype="dashed") +
     geom_line() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    theme(text = element_text(size = 15))
   
   df.lines.hor <-
     foreach(i = 1:length(new.sample.meta.score),
@@ -781,7 +783,8 @@ generate_figure_highlight_g3g4PERC <- function(new.sample.meta.score, indexRow){
     geom_hline(yintercept=1, linetype="dashed") +
     geom_vline(xintercept=0.68, linetype="dashed") +
     geom_line() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    theme(text = element_text(size = 15))
   
   
   
@@ -892,7 +895,8 @@ survivalcurveplot <- function(new.sample.meta.score,indexRow){
     theme_classic() + xlab("G3/G4 Score") + ylab("Survival") +
     # labs(title = "New plot title", subtitle = "A subtitle") +
     ylim(0,1) +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    theme(text = element_text(size = 15))
   
   # ggplotly(b)
   
@@ -993,7 +997,8 @@ survivalcurveplotPERC <- function(new.sample.meta.score,indexRow){
     xlab("G3/G4 Score") + ylab("Survival") +
     # labs(title = "New plot title", subtitle = "A subtitle") +
     ylim(0,1) +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    theme(text = element_text(size = 15))
   
   # ggplotly(b)
   
@@ -1042,4 +1047,108 @@ survivalcurveplotPERC <- function(new.sample.meta.score,indexRow){
 # indexRow <- 0.3
 # 
 
+############################# AGE PLOT AND PERCENTAGES ########################### 
+
+
+SurvivalAgePlot <- function (new.sample.meta.score,indexRow){
+  if(is.null(indexRow)){indexRow=1}
+  age <- df3$age
+  df3$pred -> pred
+  df3$surv -> surv
+  b <- ggplot(df3, aes(x=pred, y=surv, group=age, color = age)) +
+    #geom_line() +
+    geom_point(alpha = 1/10) +
+    geom_line(data = df3.y, aes(x=pred, y=surv, group=age, color = age)) +
+    geom_line(data = df3.y, aes(x=pred, y=lo, group=age),linetype="dotted") +
+    geom_line(data = df3.y, aes(x=pred, y=up, group=age),linetype="dotted") +
+    theme_classic() + xlab("Prediction Metagene") + ylab("Survival") +
+    scale_color_manual(values=c('red','dodgerblue')) +
+    theme(legend.position = "none") +
+    # labs(title = "New plot title", subtitle = "A subtitle") +
+    ylim(0,1) +
+    theme(text = element_text(size = 15)) 
+  
+  df.lines.hor <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              surv[which(
+                pred < new.sample.meta.score[i]
+              )] -> temp.surv
+              data.frame(
+                x = 0,
+                xend = new.sample.meta.score[i],
+                y = temp.surv[which.min(temp.surv)],
+                yend = temp.surv[which.min(temp.surv)]
+              )
+            }
+  
+  df.lines.hor$labels <- names(new.sample.meta.score)
+  
+  
+  df.lines.ver <-
+    foreach(i = 1:length(new.sample.meta.score),
+            .combine = rbind) %do% {
+              surv[which(
+                pred < new.sample.meta.score[i]
+              )] -> temp.surv
+              data.frame(
+                x = new.sample.meta.score[i],
+                xend = new.sample.meta.score[i],
+                y = 0,
+                yend = temp.surv[which.min(temp.surv)]
+              )
+            }
+  message(df.lines.ver)
+  
+  
+  df.lines.ver$perc <-
+    paste0(round(df.lines.ver$xend / length(pred) * 100), "th")
+  
+  df.lines.ver$colour <- factor(ifelse(1:nrow(df.lines.ver)==indexRow,"highlight","no.highlight"), levels = c("highlight","no.highlight"))
+  df.lines.hor$colour <- factor(ifelse(1:nrow(df.lines.hor)==indexRow,"highlight","no.highlight"), levels = c("highlight","no.highlight"))
+  
+  
+  b <- b +
+    geom_segment(
+      aes(
+        x = x,
+        y = y,
+        xend = xend,
+        yend = yend,
+        colour = as.character(colour)
+      ),
+      #colour = "red",
+      linetype = "dashed",
+      size = 1,
+      data = df.lines.hor
+    ) +
+    geom_segment(
+      aes(
+        x = x,
+        y = y,
+        xend = xend,
+        yend = yend,
+        colour = colour
+      ),
+      #colour = "red",
+      linetype = "dashed",
+      size = 1,
+      data = df.lines.ver
+      
+    ) 
+  
+  
+  df <- data.frame()
+  c <- ggplot() + theme_void()
+  
+  
+  d<- ggarrange(c,
+                b,
+                ncol = 2,
+                nrow = 1,
+                widths = c(0.015, 1))
+  
+  
+  d
+}
 
