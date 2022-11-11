@@ -307,7 +307,6 @@ annotate.HTseq.IDs<-function(HTseq.IDs){
 
 ### loading in all functions needed for projection
 match.select <- function(input1.eset, input2.eset){
-  
   m1 <- input1.eset
   gs.names1 <- row.names(m1)
   gs.descs1 <- row.names(m1)
@@ -323,9 +322,14 @@ match.select <- function(input1.eset, input2.eset){
   locations2 <- match(gs.names3, gs.names2, nomatch=0)
   gs.names2 <- gs.names2[locations2]
   gs.descs2 <- gs.descs2[locations2]
-  m2 <- m2[locations2, ]
-  
-  return(m2)
+  if(ncol(m2)==1){
+    m2.out <- data.frame(m2[locations2, ])
+    rownames(m2.out) <- gs.descs2
+    colnames(m2.out) <- sample.names2
+  }else{
+    m2.out <- m2[locations2, ]
+  }
+  return(m2.out)
 }
 
 prep.data <- function(input.array){
@@ -435,27 +439,7 @@ prep.data <- function(input.array){
   
   return(v)
 }
-match.select <- function(input1.eset, input2.eset){
-  
-  m1 <- input1.eset
-  gs.names1 <- row.names(m1)
-  gs.descs1 <- row.names(m1)
-  sample.names1 <- names(m1)
-  
-  m2 <- input2.eset
-  gs.names2 <- row.names(m2)
-  gs.descs2 <- row.names(m2)
-  sample.names2 <- names(m2)
-  
-  gs.names3 <- intersect(gs.names1, gs.names2)
-  
-  locations2 <- match(gs.names3, gs.names2, nomatch=0)
-  gs.names2 <- gs.names2[locations2]
-  gs.descs2 <- gs.descs2[locations2]
-  m2 <- m2[locations2, ]
-  
-  return(m2)
-}
+
 project.NMF <- function(input.array, nmf.result){
   require(MASS)
   m <- input.array

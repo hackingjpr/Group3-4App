@@ -330,6 +330,9 @@ server <- function(session, input, output) {
       message("File loaded")
       nmb.mat <- nmb.mat.prepped
  
+      #saveRDS(in.files, "~/Group3-4App/temp/csvfile.rds")
+      in.files <- readRDS("~/Group3-4App/temp/csvfile.rds")
+      
       # ## interset common genes / probes
       tpms.mat <- match.select(nmb.mat, in.files)
       message(head(tpms.mat))
@@ -338,8 +341,7 @@ server <- function(session, input, output) {
 
       message("6")
       
-      saveRDS(in.files, "~/Group3-4App/temp/csvfile.rds")
-      # in.files <- readRDS("~/Group3-4App/temp/csvfile.rds")
+
       
       ## project using pseudo-inverse & post-projection normalise
       # project back onto the same dataset
@@ -395,10 +397,24 @@ server <- function(session, input, output) {
       scaled.together.logistic.score[-1:-length( logistic.g3g4.rnaseq.score)] ->  scaled.together.logistic.score
       message("remove")
 
+      # evaluate this expression if(input$outlier !=0 & round((5)*(length(scaled.together.logistic.score)/100))){ xxxxxxx    }
+      # some times helpful to remove outliers prior to scaling
+  
       # some times helpful to remove outliers prior to scaling
       outlier.idx <- c(head(order(scaled.together.logistic.score), round((input$outlier)*(length(scaled.together.logistic.score)/100))),
                        tail(order(scaled.together.logistic.score), round((input$outlier)*(length(scaled.together.logistic.score)/100)))
       )
+      
+      # mean(logistic.g3g4.tpms) -> mean.logistic.g3g4.tpms
+      # sd(logistic.g3g4.tpms) -> sd.logistic.g3g4.tms
+      # upper.limit <- (3*sd.logistic.g3g4.tms) +  mean.logistic.g3g4.tpms
+      # lower.limit <- mean.logistic.g3g4.tpms - (3*sd.logistic.g3g4.tms)  
+      # 
+      # outlier.idx <- which(logistic.g3g4.tpms>upper.limit | logistic.g3g4.tpms<lower.limit)
+      # if(length(outlier.idx)!=0){
+      #   
+      # } 
+      
       message("17")
       
       # scale to create final score
