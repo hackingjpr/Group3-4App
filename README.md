@@ -3,13 +3,13 @@
 
 - [Overview](#overview)
 - [Tutorial](#tutorial)
-  - [Step One - Select Expression or Methylation](#step-one---Select-Expression-or-Methylation)
-  - [Step Two - Uploading Data](#step-two---Uploading-Data)
-  - [Step Three - Generate Group 3/4 Scores](#step-three---Generate-Group-3/4-Scores)
-  - [Step Four - Results](#step-four---results)
-  - [Step Five - Export Data and Reset](#step-five---export-data-and-reset)
+  - [Step One - Select Expression or Methylation and Upload Data](#step-one---select-expression-or-methylation-and-upload-data)
+  - [Step Two - Generate Group 3/4 Scores](#step-two---generate-group-3/4-scores)
+  - [Step Three - Results](#step-three---results)
+  - [Step Four - Export Data](#step-four---export-data)
+  - [Step Five - Reset](#step-five---reset)
 - [System Requirements](#system-requirements)
-- [Troubleshooting](#Troubleshooting)
+- [Troubleshooting](#troubleshooting)
 
 # Overview
 This script "app.R" encodes a shiny app that, upon uploading idat files, will give a group 3/4 score for patient samples.   
@@ -43,7 +43,7 @@ Click the "Generate Group 3/4 Score" button. This will start the process of gene
 
 ![Generate Scores](generate_scores.png)
 
-# Step Three - Results
+## Step Three - Results
 
 Once the calculation has been completed you should be brought to the Results tab. This tab will show a data table at the top which displays your sample names on the left and their Group 3/4 Scores on the right.
 
@@ -55,11 +55,11 @@ There will also be a green box in the bottom right which will inform you of the 
 
 ![Selections](selections.png)
 
-# Step Four - Export Data
+## Step Four - Export Data
 
 Once you have your results you can download your data as a CSV file (data table results), or as a PDF (data table and graphs).
 
-# Step Five - Reset
+## Step Five - Reset
 
 Once you have looked over or downloaded your data you can reset the app to upload other samples. 
 
