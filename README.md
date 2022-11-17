@@ -12,8 +12,10 @@
 - [Troubleshooting](#Troubleshooting)
 
 # Overview
-This script "app.R" encodes a shiny app that upon uploading idat files, will give a group 3/4 score for patient samples.   
+This script "app.R" encodes a shiny app that, upon uploading idat files, will give a group 3/4 score for patient samples.   
 The repository can be cloned onto your RStudio or the base code can be run independently, this is shown underneath.
+This app is derived from Williamson et. als paper: *Medulloblastoma group 3 and 4 tumors comprise a clinically and biologically significant expression continuum reflecting human cerebellar development*, which can be found [here](https://doi.org/10.1016/j.celrep.2022.111162).
+And is covered in the STAR Protocols paper **INSERT TITLE HERE**
 
 # Installation Instructions
 To install and begin using the app on your own machine you will first need to install RStudio and then clone the repository. Cloning can either be done in the command line or directly in RStudio. The tutorial for how to do so using command line is [here](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository). 
@@ -21,23 +23,27 @@ And for using RStudio directly a tutorial is [here](https://resources.github.com
 Once you have cloned the repository you should see the contained files in the box in the bottom right quadrant. From these files double click on "app.R", this will open the script behind the shiny app. RStudio should recognise that this is a shiny app and display a "Run App" button in the top right corner of the upper left quadrant. If there is no button simply click anywhere in the script and press CTRL+A to select all text and then CTRL+Return to run what is selected. The first time you run the script it may take a while as it will install all of the needed packages, it may also ask you if you want to update your other packages, this choice is up to you. If it still doesn't work then check to see if there is any help in the troubleshooting section of this ReadME. 
 
 # Tutorial
-## Step One - Select Expression or Methylation
+## Step One - Select Expression or Methylation and Upload Data
 
 Depending on whether you are uploading Expression or Methylation data select the appropriate option.
 
-## Step Two - Uploading Data
+Upload your idat files (for now unzipped idat files only) including both red and green files for Methylation, or RDS/TXT/CSV files for Expression.
 
-Upload your idat files (for now unzipped idat files only) including both red and green files for Methylation, or RDS file for Expression.
+![Upload](upload.png)
 
-![upload](upload.png)
+Increasing the number of samples will of course increase the length of time for the upcoming processes so we recommend ~10 sample batches. This will make looking through the results easier and will speed up the process.
 
-Upload a minimum of two samples if running idats. Increasing the number of samples will of course increase the length of time for the upcoming processes so we recommend \~10 sample batches. This will make looking through the results easier and will speed up the process.
+If uploading Expression data you will be asked to give up to two further inputs:  
+1. Selecting whether to scale your results against Williamson et. al's data frame or against your own uploaded data.
+2.  If you selected scaling against your own data you will be asked if you want to filter out any outliers. This is done via a sliding scale from zero for no removal to five, for removing 5x standard deviations from the higher and lower results.
 
-# Step Three - Generate Group 3/4 Scores
+## Step Two - Generate Group 3/4 Scores
 
-This will start the process of generating Group 3/4 Continuum Scores.
+Click the "Generate Group 3/4 Score" button. This will start the process of generating Group 3/4 Continuum Scores and a loading bar should begin filling underneath the "Reset" button.
 
-# Step Four - Results
+![Generate Scores](generate_scores.png)
+
+# Step Three - Results
 
 Once the calculation has been completed you should be brought to the Results tab. This tab will show a data table at the top which displays your sample names on the left and their Group 3/4 Scores on the right.
 
@@ -49,117 +55,35 @@ There will also be a green box in the bottom right which will inform you of the 
 
 ![Selections](selections.png)
 
-# Step Five - Export Data and Reset
+# Step Four - Export Data
 
-Once you have your results you can either reset the app by pressing the reset button:
+Once you have your results you can download your data as a CSV file (data table results), or as a PDF (data table and graphs).
+
+# Step Five - Reset
+
+Once you have looked over or downloaded your data you can reset the app to upload other samples. 
+
+To do this click the "Reset" button in the bar on the left of the app.
 
 ![Reset](Reset.png)
-
-Or download your data as a CSV file (data table results), or as a PDF (data table and graph).\
-**Download functionality is not currently supported but will be by the time the paper is published.**
 
 
 # Run script without using Shiny App
 ```
 ### Set working directory to wherever "source_functions.R" is
-setwd("/example/Idat-Shiny")
-source("./source_functions.R")
-
-### Choose folder containing idats to be processed
-idats <- "/example/idatfolder/"
-
-### Get Basenames
-temp.base <- get_basenames(idats)
-
-### Process Idats
-temp.processed <- process_idats(temp.base)
-
-### Select metagene set
-metagene <- ALL
-#metagene <- ATRT
-#metagene <- ECRT
-
-### Extract Metagenes (This will be your risk values result)
-test.res <- extract.metagene(
-  as.character(metagene[[1]]$genes),
-  as.numeric(metagene[[1]]$weights),
-  beta2m(temp.processed$betas),
-  as.numeric(metagene[[2]])
-)
-
-### Round results to 3 figures
-round(test.res, digits = 3)
+INSERT SCRIPT
 ```
 
 # Example script to run
 ```
 ### Set working directory to wherever "source_functions.R" is
-setwd("/example/Idat-Shiny")
-source("./source_functions.R")
 
-### Choose folder containing idats to be processed
-
-baseDir <- system.file("extdata", package = "minfiData")
-list.files(baseDir)
-
-idats <- (file.path(baseDir, "5723646052"))
-
-
-### Get Basenames
-temp.base <- get_basenames(idats)
-
-### Process Idats
-temp.processed <- process_idats(temp.base)
-
-### Select metagene set
-# For MRT
-metagene <- ALL
-#For ATRT
-#metagene <- ATRT
-#For ECRT
-#metagene <- ECRT
-
-### Extract Metagenes (This will be your risk values result)
-test.res <- extract.metagene(
-  as.character(metagene[[1]]$genes),
-  as.numeric(metagene[[1]]$weights),
-  beta2m(temp.processed$betas),
-  as.numeric(metagene[[2]])
-)
-
-### Round results to 3 figures
-round(test.res, digits = 3)
-
-#For ALL should give : -0.325, -0.416, 0.222
-#For ATRT should give : -1.423, -1.373, -1.678
-#For ECRT should give : -0.071, -0.033, -0.122
-
-### Select Risk values column
-figure.input <- test.res$Risk_Value
-
-### Name the rows
-names(figure.input) <- rownames(test.res)
-print(figure.input)
-
-### Pick the generate_figure_highlight that is required
-generate_figure_highlight_mrt(figure.input,
-                              NA)
-
-# generate_figure_highlight_atrt(figure.input,
-#                                NA)
-
-# generate_figure_highlight_ecrt(figure.input,
-#                                NA)
+INSERT EXAMPLE FROM DEAN
 
 ```
 ## Example Script Results
-For ALL(MRT) should give : -0.325, -0.416, 0.222  
-For ATRT should give : -1.423, -1.373, -1.678  
-For ECRT should give : -0.071, -0.033, -0.122  
-
-For MRT the plot should look like this:
-
-![MRT Example Plot](https://github.com/hackingjpr/Idat-Shiny/blob/main/Tutorial/MRTExamplePlot.png?raw=true)  
+ 
+  
 
 # System Requirements
 ## Hardware Requirements
@@ -174,7 +98,13 @@ Functions provided import and depend on a number of R packages. Functionality ha
 2. Check to see if RStudio is asking you if you want to update your packages, this will appear in the bottom left quadrant and look like "Update (Y/N)". Click in the quadrant and type Y then press Return. If this doesn't sort it then next time press N and press return, RStudio can be temperamental.
 
 ## App wont open after running
-1. Pop ups may be blocked, try running the app again and see if something appears saying "pop up blocked", click this and tell it to allow pop ups.
+Pop ups may be blocked, try running the app again and see if something appears saying "pop up blocked", click this and tell it to allow pop ups.
+
+## App closes after uploading files and clicking "Generate Group 3/4 Scores"
+If running Methylation idat files then make sure you have uploaded both red and green files for the sample.
+
+## App wont open after closing itself due to an error
+If the app closes itself down then you may need to press stop. The button for this is a red hexagon that can be found in the top right corner of the box in the lower left quadrant of the RStudio screen.
 
 
 
