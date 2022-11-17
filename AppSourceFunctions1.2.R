@@ -595,7 +595,7 @@ generate_figure_highlight_g3g4 <- function(new.sample.meta.score, indexRow){
       
     ) +
     xlab("") + 
-    ylab("G3/G4 Score")
+    ylab("Group 3/4 Score")
   #geom_text_repel(aes(x = x+10, y = y+0.1, label = labels), direction = "y", data = df.lines.hor)
   # geom_text(aes(
   #   x = x + 10,
@@ -862,6 +862,9 @@ df3.y <- data.frame(pred = c(seq(0,1,0.1),seq(0,1,0.1)),
 
 df3$point <- rep("yes",nrow(df3))
 df3.y$point <- rep("no",nrow(df3.y))
+
+
+
 #################SURVIVAL PLOT AND PERCENTAGE##################
 # 
 
@@ -875,9 +878,10 @@ survivalcurveplot <- function(new.sample.meta.score,indexRow){
     geom_point(alpha = 1/20) +
     geom_line(aes(x=pred, y=lo),linetype="dotted") +
     geom_line(aes(x=pred, y=up),linetype="dotted") +
-    theme_classic() + xlab("G3/G4 Score") + ylab("Survival") +
+    theme_classic() + xlab("Group 3/4 Score") + ylab("Survival") +
     # labs(title = "New plot title", subtitle = "A subtitle") +
     ylim(0,1) +
+    xlim(0,1) +
     theme(legend.position = "none") +
     theme(text = element_text(size = 15))
   
@@ -977,7 +981,7 @@ survivalcurveplotPERC <- function(new.sample.meta.score,indexRow){
     geom_line(aes(x=pred, y=lo),linetype="dotted") +
     geom_line(aes(x=pred, y=up),linetype="dotted") +
     # theme_classic() + 
-    xlab("G3/G4 Score") + ylab("Survival") +
+    xlab("Group 3/4 Score") + ylab("Survival") +
     # labs(title = "New plot title", subtitle = "A subtitle") +
     ylim(0,1) +
     theme(legend.position = "none") +
@@ -1036,6 +1040,7 @@ survivalcurveplotPERC <- function(new.sample.meta.score,indexRow){
 SurvivalAgePlot <- function (new.sample.meta.score,indexRow){
   if(is.null(indexRow)){indexRow=1}
   age <- df3$age
+  age <- ('True' = 'Over Five')
   df3$pred -> pred
   df3$surv -> surv
   b <- ggplot(df3, aes(x=pred, y=surv, group=age, color = age)) +
@@ -1045,11 +1050,13 @@ SurvivalAgePlot <- function (new.sample.meta.score,indexRow){
     geom_line(data = df3.y, aes(x=pred, y=lo, group=age),linetype="dotted") +
     geom_line(data = df3.y, aes(x=pred, y=up, group=age),linetype="dotted") +
     theme_classic() + xlab("Group 3/4 Score") + ylab("Survival") +
-    scale_color_manual(values=c('red','dodgerblue')) +
-    theme(legend.position = "none") +
+    scale_color_manual(name='Age',
+                       labels=c("Over Five", "Under Five"),
+                       values=c('red','dodgerblue')) +
+    # theme(legend.position = "none") +
     # labs(title = "New plot title", subtitle = "A subtitle") +
     ylim(0,1) +
-    theme(text = element_text(size = 15)) 
+    theme(text = element_text(size = 15))
   
   # df.lines.hor <-
   #   foreach(i = 1:length(new.sample.meta.score),
