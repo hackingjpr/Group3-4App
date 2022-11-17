@@ -36,20 +36,23 @@ ui <- shiny::fluidPage(
                       accept = c(".rds", ".csv", ".txt"))),
                   conditionalPanel(
                     condition = "input.expmeth == 'exp'",
+                    radioButtons(
+                      "scaling",
+                      "Scale using Williamson Et Al dataset or use your uploaded data?",
+                      c("Williamson et al Dataset" = "ours", "Uploaded Dataset" = "yours")
+                    )),
+                  conditionalPanel(
+                    condition = "input.scaling == 'yours'",
                     sliderInput(
                       "outlier",
                       "OUTLIER SELECTION WHAT SHOULD I CALL THIS??",
-                      min = 0.5,
+                      min = 0,
                       max = 10,
-                      value = 0.5,
-                      step = 0.5,
-                      round = 0.5,
-                      animate = TRUE),
-                    radioButtons(
-                      "scaling",
-                      "Scale using our large dataset or use your uploaded data?",
-                      c(Ours = "ours", Yours = "yours")
-                    )),
+                      value = 0,
+                      step = 1,
+                      round = 0,
+                      animate = FALSE))
+                    ,
                   #uploading idat
                   # h2("Step 2"),
                   # fileInput(
@@ -80,13 +83,17 @@ ui <- shiny::fluidPage(
                     )),
                   
                   #Reset button
-                  "Want to upload a different data set?",
+                  column( width = 12,
+                  "Want to upload a different data set?"),
+                  column( width = 12,
                   actionBttn(
                     inputId = "bttn3",
                     label = "Reset",
                     color = "danger",
                     style = "unite",
                     size = "lg"
+                  ),
+                  align = "center"
                   ),
                   #Loading Bar
                   attendantBar("progress-bar"),
@@ -137,7 +144,7 @@ ui <- shiny::fluidPage(
                                           ))),
                                         (fluidRow(
                                           box(
-                                            title = "Risk plot",
+                                            title = "Group 3/4 Plot",
                                             status = "success",
                                             solidHeader = TRUE,
                                             collapsible = TRUE,
@@ -152,17 +159,20 @@ ui <- shiny::fluidPage(
                                             h3("Sample Selected:"),
                                             textOutput("sample"),
                                             h3("Patient's Risk Percentile:"),
-                                            textOutput("percentages")
+                                            textOutput("percentages"),
+                                            
+                                            h3("Patient's Survival Percentile:"),
+                                            textOutput("survivalPercentage")
                                           ))),
                                         (fluidRow(
                                           box(
-                                            title = "Survival Plot",
+                                            title = "Survival Plot: No Risk Factors Considered",
                                             status = "success",
                                             solidHeader = TRUE,
                                             collapsible = TRUE,
                                             plotOutput("survival")),
                                          box(
-                                            title = "Survival Plot",
+                                            title = "Survival Plot: Age Considered",
                                             status = "success",
                                             solidHeader = TRUE,
                                             collapsible = TRUE,
@@ -190,7 +200,7 @@ ui <- shiny::fluidPage(
                                           ))),
                                         (fluidRow(
                                           box(
-                                            title = "Risk plot",
+                                            title = "Group 3/4 Plot",
                                             status = "warning",
                                             solidHeader = TRUE,
                                             collapsible = TRUE,
@@ -203,20 +213,22 @@ ui <- shiny::fluidPage(
                                             collapsible = TRUE,
                                           h3("Sample Selected:"),
                                           textOutput("sampleExpression"),
+                                          # h3("Patients Group 3/4 Score"),
+                                          # textOutput("scoreExpression"),
                                           h3("Patient's Risk Percentile:"),
                                           textOutput("percentagesExpression"),
-                                          h3("Patient's survival Percentile:"),
+                                          h3("Patient's Survival Percentile:"),
                                           textOutput("survivalExpressionPercentage")
                                           ))),
                                         (fluidRow(
                                           box(
-                                            title = "Survival Plot",
+                                            title = "Survival Plot: No Risk Factors Considered",
                                             status = "warning",
                                             solidHeader = TRUE,
                                             collapsible = TRUE,
                                             plotOutput("survivalExpression")),
                                           box(
-                                            title = "Survival Plot",
+                                            title = "Survival Plot: Age Considered",
                                             status = "warning",
                                             solidHeader = TRUE,
                                             collapsible = TRUE,
@@ -279,6 +291,7 @@ server <- function(session, input, output) {
   hideTab(inputId = "tabs", target = "Download Methylation")
   
   
+  
   output$frame <- renderUI({
     my_test <- tags$iframe(src="https://www.sciencedirect.com/science/article/pii/S2211124722009718?via%3Dihub", height="900", width="100%")
     my_test
@@ -331,7 +344,7 @@ server <- function(session, input, output) {
       nmb.mat <- nmb.mat.prepped
  
       #saveRDS(in.files, "~/Group3-4App/temp/csvfile.rds")
-      in.files <- readRDS("~/Group3-4App/temp/csvfile.rds")
+      # in.files <- readRDS("~/Group3-4App/temp/csvfile.rds")
       
       # ## interset common genes / probes
       tpms.mat <- match.select(nmb.mat, in.files)
@@ -420,14 +433,15 @@ server <- function(session, input, output) {
       # scale to create final score
       if (input$scaling == "ours")
       scaling.function3(scaled.together.logistic.score
-                       [-outlier.idx]
+                       # [-outlier.idx]
                        ) -> logistic.g3g4.tpms.score
       else
         scaling.function(scaled.together.logistic.score
                           [-outlier.idx]
         ) -> logistic.g3g4.tpms.score
       round(logistic.g3g4.tpms.score, digits = 3) -> logistic.g3g4.tpms.score
-      as.data.frame(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score.df
+      data.frame('Group.3.4.Score' = logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score.df
+      # logistic.g3g4.tpms.score.df <- ('Group.3.4.Score' = logistic.g3g4.tpms.score)
       message("18")
       
       output$Mval1 <- renderDT (({logistic.g3g4.tpms.score.df
@@ -450,13 +464,25 @@ server <- function(session, input, output) {
         })
       
       output$percentagesExpression <- renderText (
-        
+        {
+        paste(
         generate_figure_highlight_g3g4PERC(
           logistic.g3g4.tpms.score,
-          input$Mval1_row_last_clicked)
+          input$Mval1_row_last_clicked),
+        "of patients had a lower group 3/4 score than this.")
+        }
       )
       
-      output$sampleExpression <- renderText(input$Mval1_cell_clicked$value) 
+      output$sampleExpression <- renderText(
+        if (input$Mval1_cell_clicked$value != 0)  {
+          row.names(logistic.g3g4.tpms.score.df) [1]
+        } 
+        else {
+          input$Mval1_cell_clicked$value
+        }
+      )
+        
+        # input$Mval1_cell_clicked$value) 
       
       output$survivalExpression <- renderPlot({
         figure.output <-(
@@ -473,7 +499,9 @@ server <- function(session, input, output) {
             logistic.g3g4.tpms.score
             ,input$Mval1_row_last_clicked)
         )
-        figure.output
+        paste("According to the dataset in Williamson et als retrospective survival cohort, patients with this score on average had a 5 year survival percentage of",
+              figure.output,
+              ". This does not take into account other risk factors. (See below)")
       })
       
       output$survivalageExpression <- renderPlot(
@@ -615,15 +643,21 @@ server <- function(session, input, output) {
           # }
       output$percentages <- renderText (
         
-        generate_figure_highlight_g3g4PERC(
-          figure.input,
-          input$Mval_row_last_clicked)
+        {
+          paste(
+            generate_figure_highlight_g3g4PERC(
+              figure.input,
+              input$Mval_row_last_clicked),
+            "of patients had a lower group 3/4 score than this.")
+        }
       )
       
       saveRDS(figure.input, file = "./temp/figureinput.RDS")
       
       
       message(head(df2))
+      
+      
       
       output$survival <- renderPlot({
           figure.output <-(
@@ -633,20 +667,22 @@ server <- function(session, input, output) {
           )
           figure.output
         })
+      
+      output$survivalPercentage <- renderText({
+        figure.output <-(
+          survivalcurveplotPERC(
+            figure.input
+            ,input$Mval_row_last_clicked)
+        )
+        paste("According to the dataset in Williamson et als retrospective survival cohort, patients with this score on average had a 5 year survival percentage of",
+              figure.output,
+              ". This does not take into account other risk factors. (See below)")
+      })
+      
+      
     output$survivalage <- renderPlot(
-      ggplot(df3, aes(x=pred, y=surv, group=age, color = age)) +
-        #geom_line() +
-        geom_point(alpha = 1/10) +
-        geom_line(data = df3.y, aes(x=pred, y=surv, group=age, color = age)) +
-        geom_line(data = df3.y, aes(x=pred, y=lo, group=age),linetype="dotted") +
-        geom_line(data = df3.y, aes(x=pred, y=up, group=age),linetype="dotted") +
-        # theme_classic() + 
-        xlab("Prediction Metagene") + 
-        ylab("Survival") +
-        scale_color_manual(values=c('red','dodgerblue')) +
-        # labs(title = "New plot title", subtitle = "A subtitle") +
-        ylim(0,1) +
-        theme(axis.text = element_text(size = 20))       
+        SurvivalAgePlot(figure.input,
+                        input$Mval_row_last_clicked)
     )
 
           # https://rstudio.github.io/DT/shiny.html
