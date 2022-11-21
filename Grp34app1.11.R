@@ -343,7 +343,7 @@ server <- function(session, input, output) {
       message("File loaded")
       nmb.mat <- nmb.mat.prepped
  
-      #saveRDS(in.files, "~/Group3-4App/temp/csvfile.rds")
+      saveRDS(in.files, "~/Group3-4App/temp/csvfile.rds")
       # in.files <- readRDS("~/Group3-4App/temp/csvfile.rds")
       
       # ## interset common genes / probes
@@ -418,15 +418,15 @@ server <- function(session, input, output) {
                        tail(order(scaled.together.logistic.score), round((input$outlier)*(length(scaled.together.logistic.score)/100)))
       )
       
-      # mean(logistic.g3g4.tpms) -> mean.logistic.g3g4.tpms
-      # sd(logistic.g3g4.tpms) -> sd.logistic.g3g4.tms
-      # upper.limit <- (3*sd.logistic.g3g4.tms) +  mean.logistic.g3g4.tpms
-      # lower.limit <- mean.logistic.g3g4.tpms - (3*sd.logistic.g3g4.tms)  
-      # 
-      # outlier.idx <- which(logistic.g3g4.tpms>upper.limit | logistic.g3g4.tpms<lower.limit)
-      # if(length(outlier.idx)!=0){
-      #   
-      # } 
+      mean(logistic.g3g4.tpms) -> mean.logistic.g3g4.tpms
+      sd(logistic.g3g4.tpms) -> sd.logistic.g3g4.tms
+      upper.limit <- (3*sd.logistic.g3g4.tms) +  mean.logistic.g3g4.tpms
+      lower.limit <- mean.logistic.g3g4.tpms - (3*sd.logistic.g3g4.tms)
+
+      outlier.idx <- which(logistic.g3g4.tpms>upper.limit | logistic.g3g4.tpms<lower.limit)
+      if(length(outlier.idx)!=0){
+
+      }
       
       message("17")
       
