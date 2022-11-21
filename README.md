@@ -29,7 +29,7 @@ Depending on whether you are uploading Expression or Methylation data select the
 
 Upload your idat files (for now unzipped idat files only) including both red and green files for Methylation, or RDS/TXT/CSV files for Expression.
 
-![Upload](upload.png)
+![upload.png](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_upload.png)
 
 Increasing the number of samples will of course increase the length of time for the upcoming processes so we recommend ~10 sample batches. This will make looking through the results easier and will speed up the process.
 
@@ -41,19 +41,31 @@ If uploading Expression data you will be asked to give up to two further inputs:
 
 Click the "Generate Group 3/4 Score" button. This will start the process of generating Group 3/4 Continuum Scores and a loading bar should begin filling underneath the "Reset" button.
 
-![Generate Scores](generate_scores.png)
+![Generate Scores](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_generate.png)
 
 ## Step Three - Results
 
 Once the calculation has been completed you should be brought to the Results tab. This tab will show a data table at the top which displays your sample names on the left and their Group 3/4 Scores on the right.
 
-![Risk Values](risk_values.png)
+![Results Table](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_score_table.png)
 
-It will also show a graph (as shown below), the details of this graph and what it shows can be found in the corresponding paper (link)\
-(insert graph example)\
-There will also be a green box in the bottom right which will inform you of the currently selected sample (which will be highlighted in orange on the graph), and the selected metagene set.
+It will also show a number of graphs, an example is below.
 
-![Selections](selections.png)
+![Results Graph](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_result_graph.png)
+
+### Group 3/4 Plot
+shows INSERT WHAT.
+
+### Survival Plot: No Risk Factors Considered
+Shows patients expected five year survival based on only their group 3/4 score and no other risk factors.
+
+### Survival Plot: Age Considered
+Shows patients expected five year survival based on their group 3/4 score but also taking into account their age.
+
+
+There will also be a box entitled "Selected Sample Information", this will inform you of the currently selected sample (which will also be highlighted on the graphs), and give some information about the sample and the expected survival.
+
+![Selections](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_sample_selected.png)
 
 ## Step Four - Export Data
 
@@ -65,7 +77,7 @@ Once you have looked over or downloaded your data you can reset the app to uploa
 
 To do this click the "Reset" button in the bar on the left of the app.
 
-![Reset](Reset.png)
+![Reset](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_reset.png)
 
 
 # Run script without using Shiny App
