@@ -71,6 +71,8 @@ There will also be a box entitled "Selected Sample Information", this will infor
 
 Once you have your results you can download your data as a CSV file (data table results), or as a PDF (data table and graphs).
 
+![Download](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app-download.png)
+
 ## Step Five - Reset
 
 Once you have looked over or downloaded your data you can reset the app to upload other samples. 
