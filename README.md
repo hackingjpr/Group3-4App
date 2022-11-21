@@ -4,7 +4,7 @@
 - [Overview](#overview)
 - [Tutorial](#tutorial)
   - [Step One - Select Expression or Methylation and Upload Data](#step-one---select-expression-or-methylation-and-upload-data)
-  - [Step Two - Generate Group 3/4 Scores](#step-two---generate-group-3/4-scores)
+  - [Step Two - Generate Group 3-4 Scores](#step-two---generate-group-3-4-scores)
   - [Step Three - Results](#step-three---results)
   - [Step Four - Export Data](#step-four---export-data)
   - [Step Five - Reset](#step-five---reset)
@@ -37,7 +37,7 @@ If uploading Expression data you will be asked to give up to two further inputs:
 1. Selecting whether to scale your results against Williamson et. al's data frame or against your own uploaded data.
 2.  If you selected scaling against your own data you will be asked if you want to filter out any outliers. This is done via a sliding scale from zero for no removal to five, for removing 5x standard deviations from the higher and lower results.
 
-## Step Two - Generate Group 3/4 Scores
+## Step Two - Generate Group 3-4 Scores
 
 Click the "Generate Group 3/4 Score" button. This will start the process of generating Group 3/4 Continuum Scores and a loading bar should begin filling underneath the "Reset" button.
 
