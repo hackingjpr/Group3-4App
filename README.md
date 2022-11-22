@@ -35,7 +35,7 @@ Increasing the number of samples will of course increase the length of time for 
 
 If uploading Expression data you will be asked to give up to two further inputs:  
 1. Selecting whether to scale your results against Williamson et. al's data frame or against your own uploaded data.
-2.  If you selected scaling against your own data you will be asked if you want to filter out any outliers. This is done via a sliding scale from zero for no removal to five, for removing 5x standard deviations from the higher and lower results.
+2.  If you selected scaling against your own uploaded data you will be asked if you want to filter out any outliers. This is done via a sliding scale from one to four, for removing samples more than one to four standard deviations from the mean. 
 
 ## Step Two - Generate Group 3-4 Scores
 
