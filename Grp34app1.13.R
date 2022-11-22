@@ -436,7 +436,7 @@ server <- function(session, input, output) {
       }) -> logistic.g3g4.rnaseq.score
       message("11")
       if (input$scaling == "ours")
-        scaling.function2(logistic.g3g4.rnaseq.score) -> logistic.g3g4.rnaseq.score
+        scaling.function3(logistic.g3g4.rnaseq.score) -> logistic.g3g4.rnaseq.score
       
       else
         scaling.function(logistic.g3g4.rnaseq.score) -> logistic.g3g4.rnaseq.score
