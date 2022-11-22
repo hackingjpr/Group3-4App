@@ -1,36 +1,58 @@
-# Step One - Select Expression or Methylation
+# Tutorial
+## Step One - Select Expression or Methylation and Upload Data
 
-Depending on whether you are uploading Expression or Methylation data select the appropriate option
+Depending on whether you are uploading Expression or Methylation data select the appropriate option.
 
-# Step Two - Uploading Data
+Upload your idat files (for now unzipped idat files only) including both red and green files for Methylation, or RDS/TXT/CSV files for Expression.
 
-Upload your idat files (for now unzipped idat files only) including both red and green files for Methylation, or RDS file for Expression.
+![upload.png](app_upload.png "Upload")
 
-![upload](upload.png)
+Increasing the number of samples will of course increase the length of time for the upcoming processes so we recommend ~10 sample batches. This will make looking through the results easier and will speed up the process.
 
-Upload a minimum of two samples if running idats. Increasing the number of samples will of course increase the length of time for the upcoming processes so we recommend \~10 sample batches. This will make looking through the results easier and will speed up the process.
+If uploading Expression data you will be asked to give up to two further inputs:  
+1. Selecting whether to scale your results against Williamson et. al's data frame or against your own uploaded data.
+2.  If you selected scaling against your own data you will be asked if you want to filter out any outliers. This is done via a sliding scale from zero for no removal to five, for removing 5x standard deviations from the higher and lower results.
 
-# Step Three - Generate Group 3/4 Scores
+## Step Two - Generate Group 3-4 Scores
 
-This will start the process of generating Group 3/4 Continuum Scores.
+Click the "Generate Group 3/4 Score" button. This will start the process of generating Group 3/4 Continuum Scores and a loading bar should begin filling underneath the "Reset" button.
 
-# Step Four - Results
+![Generate Scores](app_generate.png "Generate")
+
+## Step Three - Results
 
 Once the calculation has been completed you should be brought to the Results tab. This tab will show a data table at the top which displays your sample names on the left and their Group 3/4 Scores on the right.
 
-![Risk Values](risk_values.png)
+![Results Table](app_score_table.png "Results Table")
 
-It will also show a graph (as shown below), the details of this graph and what it shows can be found in the corresponding paper (link)\
-(insert graph example)\
-There will also be a green box in the bottom right which will inform you of the currently selected sample (which will be highlighted in orange on the graph), and the selected metagene set.
+It will also show a number of graphs, an example is below.
 
-![Selections](selections.png)
+![Results Graph](app_result_graph.png "Results Graph")
 
-# Step Five - Export Data and Reset
+### Group 3/4 Plot
+shows INSERT WHAT.
 
-Once you have your results you can either reset the app by pressing the reset button:
+### Survival Plot: No Risk Factors Considered
+Shows patients expected five year survival based on only their group 3/4 score and no other risk factors.
 
-![Reset](Reset.png)
+### Survival Plot: Age Considered
+Shows patients expected five year survival based on their group 3/4 score but also taking into account their age.
 
-Or download your data as a CSV file (data table results), or as a PDF (data table and graph).\
-**Download functionality is not currently supported but will be by the time the paper is published.**
+
+There will also be a box entitled "Selected Sample Information", this will inform you of the currently selected sample (which will also be highlighted on the graphs), and give some information about the sample and the expected survival.
+
+![Selections](app_sample_selected.png "Selected Sample Information")
+
+## Step Four - Export Data
+
+Once you have your results you can download your data as a CSV file (data table results), or as a PDF (data table and graphs).
+
+![Download](app-download.png "Download")
+
+## Step Five - Reset
+
+Once you have looked over or downloaded your data you can reset the app to upload other samples. 
+
+To do this click the "Reset" button in the bar on the left of the app.
+
+![Reset](app_reset.png "Reset")
