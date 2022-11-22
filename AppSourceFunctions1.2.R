@@ -958,7 +958,7 @@ survivalcurveplot <- function(new.sample.meta.score, indexRow) {
     theme_classic() + xlab("Group 3/4 Score") + ylab("Survival") +
     # labs(title = "New plot title", subtitle = "A subtitle") +
     ylim(0, 1) +
-    xlim(0, 1) +
+    xlim(-0.1, 1) +
     theme(legend.position = "none") +
     theme(text = element_text(size = 15))
   
@@ -971,7 +971,7 @@ survivalcurveplot <- function(new.sample.meta.score, indexRow) {
                 data.frame(
                   x = 0,
                   xend = new.sample.meta.score[i],
-                  y = 0.8,
+                  y = 0,8,
                   yend = 0.8
                 )  
               }else{
@@ -995,7 +995,7 @@ survivalcurveplot <- function(new.sample.meta.score, indexRow) {
                 data.frame(
                   x = 0,
                   xend = new.sample.meta.score[i],
-                  y = 0.8,
+                  y = 0,
                   yend = 0.8
                 )  
               }else{
@@ -1137,7 +1137,7 @@ survivalcurveplotPERC <- function(new.sample.meta.score, indexRow) {
                 data.frame(
                   x = 0,
                   xend = new.sample.meta.score[i],
-                  y = 0.8,
+                  y = 0,
                   yend = 0.8
                 )  
               }else{
@@ -1289,7 +1289,7 @@ SurvivalAgePlot <- function (new.sample.meta.score, indexRow) {
                 data.frame(
                   x = 0,
                   xend = new.sample.meta.score[i],
-                  y = 0.8,
+                  y = 0,
                   yend = 0.8
                 )  
               }else{
