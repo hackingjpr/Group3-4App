@@ -809,7 +809,7 @@ server <- function(session, input, output) {
             else
               pdf(file,
                   width = 14,
-                  title = paste("output")
+                  title = paste(input$filename,Sys.time(), input$downloadMethy, sep=".")
                   )
             
             colnames(figureinputDF) <- "G3/G4_Score"
@@ -830,18 +830,8 @@ server <- function(session, input, output) {
 
             
             figure.output2 <- 
-              ggplot(df3, aes(x=pred, y=surv, group=age, color = age)) +
-              #geom_line() +
-              geom_point(alpha = 1/10) +
-              geom_line(data = df3.y, aes(x=pred, y=surv, group=age, color = age)) +
-              geom_line(data = df3.y, aes(x=pred, y=lo, group=age),linetype="dotted") +
-              geom_line(data = df3.y, aes(x=pred, y=up, group=age),linetype="dotted") +
-              # theme_classic() + 
-              xlab("Prediction Metagene") + 
-              ylab("Survival") +
-              scale_color_manual(values=c('red','dodgerblue')) +
-              # labs(title = "New plot title", subtitle = "A subtitle") +
-              ylim(0,1)
+              SurvivalAgePlot(logistic.g3g4.tpms.score,
+                              1)
             
             # plot(figure.output2)
             

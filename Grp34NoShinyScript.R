@@ -39,6 +39,10 @@ if(ncol(M.values)==1){
 metagene <- round(predict(g3.g4.cont.rfe, input.df), digits = 3)
 metagene.df <- data.frame('Group.3.4.Score' = metagene)
 
+
+### This is your Group3/4 Scores
+metagene.df
+
 ### Select Risk values column
 # figure.input <- test.res$Risk_Value
 figure.input <- metagene.df$Group.3.4.Score
