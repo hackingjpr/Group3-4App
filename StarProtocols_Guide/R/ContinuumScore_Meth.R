@@ -1,5 +1,6 @@
 ### Continuum score generation - Methylation Array - Easy Reproducible Example ###
 #
+# To Do: Update filepaths when testing Git clone
 #
 # Install / Load required packages
 library(mlbench)
