@@ -8,6 +8,8 @@
   - [Step Three - Results](#step-three---results)
   - [Step Four - Export Data](#step-four---export-data)
   - [Step Five - Reset](#step-five---reset)
+- [Run script without using Shiny App](#run-script-without-using-shiny-app)
+- [Example script to run](#example-script-to-run)
 - [System Requirements](#system-requirements)
 - [Troubleshooting](#troubleshooting)
 
@@ -296,7 +298,6 @@ SurvivalAgePlot(logistic.g3g4.tpms.score,
 
 # Example script to run
 ```
-M.values <- read.delim("~/Group3-4App/StarProtocols_Guide/data/mvals.mat.txt")
 
 ### Set working directory to wherever "source_functions.R" is
 setwd("~/Group3-4App")
