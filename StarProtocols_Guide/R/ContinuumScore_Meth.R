@@ -7,13 +7,13 @@ library(caret)
 library(randomForest)
 #
 #
-# NOTE: You MUST update '/path/to/' to the path where you have cloned this repository.
+# NOTE: You MUST update '/your/directory/' to the path where you have cloned this repository.
 #
 # Load in the prediction object
-load(file = "/path/to/Group3-4App-main/StarProtocols_Guide/data/g3.g4.cont.rfe.Rdata")
+load(file = "/your/directory/Group3-4App-main/StarProtocols_Guide/data/g3.g4.cont.rfe.Rdata")
 #
 # Load in example methylation dataset
-mvals.mat <- read.delim("/path/to/Group3-4App-main/StarProtocols_Guide/data/mvals.mat.txt")
+mvals.mat <- read.delim("/your/directory/Group3-4App-main/StarProtocols_Guide/data/mvals.mat.txt")
 #
 #
 # Subset matrix to probes used as predictors in model
