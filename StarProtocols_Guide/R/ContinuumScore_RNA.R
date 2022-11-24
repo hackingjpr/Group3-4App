@@ -2,7 +2,7 @@
 #
 # ToDo : Update filepaths when testing gitclone
 #
-# Install/load packages
+# Load packages
 library(NMF)
 library(MASS)
 #
