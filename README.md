@@ -99,12 +99,8 @@ source("./AppSourceFunctions1.3.R")
 ### load in the prediction object
 load(file = "./Inputs/g3.g4.cont.rfe.Rdata")
 
-### I have attached some know values you can read here
-pred.cont.rand.for.original <- readRDS(file = "./Inputs/pred.cont.rand.for.rds")
-
 ### Choose folder containing idats to be processed
 idats <- "~/Idats/Mix"
-
 
 ### Get Basenames
 temp.base <- get_basenames(idats)
