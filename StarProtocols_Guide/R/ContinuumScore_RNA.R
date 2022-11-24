@@ -7,14 +7,16 @@ library(NMF)
 library(MASS)
 #
 #
+# Note: You MUST update '/path/to' to the directory that you clone this repository in to.
+#
 # Load nmf.res
-nmf.res <- readRDS(file = "~/Documents/STARMETHODS/nmf.res.rds")
+nmf.res <- readRDS(file = "/path/to/Group3-4App-main/StarProtocols_Guide/data/nmf.res.rds")
 
 # tpms.mat
-tpms.mat <- read.delim("~/Documents/STARMETHODS/tpms.mat.txt")
+tpms.mat <- read.delim("/path/to/Group3-4App-main/StarProtocols_Guide/data/tpms.mat.txt")
 
 #Load project.NMF function
-source(file = "~/Documents/Project_NMF.R")
+source(file = "/path/to/Group3-4App-main/StarProtocols_Guide/R/Project_NMF.R")
 
 
 
