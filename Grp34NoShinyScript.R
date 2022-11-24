@@ -1,6 +1,6 @@
 ### Set working directory to wherever "source_functions.R" is
 setwd("~/Group3-4App")
-source("./AppSourceFunctions1.3.R")
+source("./AppSourceFunctions1.5.R")
 
 #####################################
 ############ METHYLATION ############
@@ -11,18 +11,15 @@ source("./AppSourceFunctions1.3.R")
 ### load in the prediction object
 load(file = "./Inputs/g3.g4.cont.rfe.Rdata")
 
-### I have attached some know values you can read here
-pred.cont.rand.for.original <- readRDS(file = "./Inputs/pred.cont.rand.for.rds")
-
-### Choose folder containing idats to be processed
-idats <- "~/Idats/Mix"
-
+### Choose folder containing idats to be processed (make sure you set this to yours)
+idats <- "~/your/idat/file/location"
 
 ### Get Basenames
 temp.base <- get_basenames(idats)
 
 ### Process Idats
 temp.processed <- process_idats(temp.base)
+
 
 # Obtain MValues
 beta2m(temp.processed$betas) -> M.values
@@ -71,7 +68,7 @@ SurvivalAgePlot(figure.input,
 ############ EXPRESSION ############
 ####################################
 
-## Load in your samples
+## Load in your samples (currently is an example file available from the GitHub repository, if you cloned the GitHub you will already have this)
 in.files <- "./Inputs/subsetTpms.mat10.rds"
 
 input.file <- in.files

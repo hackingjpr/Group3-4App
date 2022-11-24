@@ -1,6 +1,6 @@
-source("./AppSourceFunctions1.4.R")
+source("./AppSourceFunctions1.5.R")
 
-library(shinythemes)
+
 
 
 ui <- shiny::fluidPage(
@@ -186,7 +186,9 @@ ui <- shiny::fluidPage(
               textOutput("percentages"),
               
               h3("Patient's Survival Percentile:"),
-              textOutput("survivalPercentage")
+              textOutput("survivalPercentage"),
+              
+              h4("Disclaimer : This app is designed exclusively for research purposes and is strictly not for diagnostic use.")
             )
           )),
           (fluidRow(
@@ -249,7 +251,10 @@ ui <- shiny::fluidPage(
               h3("Patient's Risk Percentile:"),
               textOutput("percentagesExpression"),
               h3("Patient's Survival Percentile:"),
-              textOutput("survivalExpressionPercentage")
+              textOutput("survivalExpressionPercentage"),
+              
+              tags$b(
+                "Disclaimer : This app is designed exclusively for research purposes and is strictly not for diagnostic use.")
             )
           )),
           (fluidRow(
@@ -830,7 +835,7 @@ server <- function(session, input, output) {
 
             
             figure.output2 <- 
-              SurvivalAgePlot(logistic.g3g4.tpms.score,
+              SurvivalAgePlot(figure.input,
                               1)
             
             # plot(figure.output2)
