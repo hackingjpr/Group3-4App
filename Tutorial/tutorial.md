@@ -35,6 +35,8 @@ shows INSERT WHAT.
 ### Survival Plot: No Risk Factors Considered
 Shows patients expected five year survival based on only their group 3/4 score and no other risk factors.
 
+![Survival Plot 1](app-survival-plot1.png "Survival Plot: No Risk Factors Considered")
+
 ### Survival Plot: Age Considered
 Shows patients expected five year survival based on their group 3/4 score but also taking into account their age.
 
