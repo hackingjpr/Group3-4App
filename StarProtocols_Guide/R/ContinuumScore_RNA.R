@@ -1,5 +1,6 @@
 #### Continuum Score Generation - RNA-Seq - Easiest Reproducible Example ####
 #
+# ToDo : Update filepaths when testing gitclone
 #
 # Install/load packages
 library(NMF)
