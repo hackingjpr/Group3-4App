@@ -1,18 +1,19 @@
 ### Continuum score generation - Methylation Array - Easy Reproducible Example ###
 #
-# To Do: Update filepaths when testing Git clone
 #
-# Install / Load required packages
+# Load required packages (For installation, please see main text)
 library(mlbench)
 library(caret)
 library(randomForest)
 #
 #
+# NOTE: You MUST update '/path/to/' to the path where you have cloned this repository.
+#
 # Load in the prediction object
-load(file = "~/Documents/STARMETHODS/g3.g4.cont.rfe.Rdata")
+load(file = "/path/to/Group3-4App-main/StarProtocols_Guide/data/g3.g4.cont.rfe.Rdata")
 #
 # Load in example methylation dataset
-mvals.mat <- read.delim("~/Documents/mvals.mat.txt")
+mvals.mat <- read.delim("/path/to/Group3-4App-main/StarProtocols_Guide/data/mvals.mat.txt")
 #
 #
 # Subset matrix to probes used as predictors in model
