@@ -1,6 +1,6 @@
 ### Set working directory to wherever "source_functions.R" is
 setwd("~/Group3-4App")
-source("./AppSourceFunctions1.5.R")
+source("./AppSourceFunctions1.7.R")
 
 #####################################
 ############ METHYLATION ############

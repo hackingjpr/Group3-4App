@@ -1,4 +1,4 @@
-source("./AppSourceFunctions1.5.R")
+source("./AppSourceFunctions1.7.R")
 
 
 
@@ -526,13 +526,11 @@ server <- function(session, input, output) {
           }) ->  logistic.g3g4.tpms.score
           message("length(outlier.idx) == 0 & input$scaling == 'yours'")
           scaling.function(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score
-          message("I AM IN THE OTHER IF")
         } else{
           apply(logistic.g3g4.tpms, 1, function(x) {
             x[2] / (x[1] + x[2])
           }) ->  logistic.g3g4.tpms.score
           scaling.function3(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score
-          message("I AM IN ELSE")
         }
       }
       
@@ -600,9 +598,22 @@ server <- function(session, input, output) {
             logistic.g3g4.tpms.score
             ,input$Mval1_row_last_clicked)
         )
+        figure.outputOLDER <-(
+          SurvivalAgePlotPerc5(
+            logistic.g3g4.tpms.score
+            ,input$Mval1_row_last_clicked)
+        )
+        figure.outputYOUNGER <-(
+          SurvivalAgePlotPerc4(
+            logistic.g3g4.tpms.score
+            ,input$Mval1_row_last_clicked)
+        )
+        
         paste("According to the dataset in Williamson et als retrospective survival cohort, patients with this score on average had a 5 year survival percentage of",
               figure.output,
-              ". This does not take into account other risk factors. (See below)")
+              ". This does not take into account other risk factors. If age is taken into account the percentage would change to",
+              figure.outputYOUNGER, "if the patient was under three years old and",
+              figure.outputOLDER, "if older than three. (See below)")
       })
       
       output$survivalageExpression <- renderPlot(
@@ -765,11 +776,24 @@ server <- function(session, input, output) {
         figure.output <-(
           survivalcurveplotPERC(
             figure.input
-            ,input$Mval_row_last_clicked)
-        )
-        paste("According to the dataset in Williamson et als retrospective survival cohort, patients with this score on average had a 5 year survival percentage of",
-              figure.output,
-              ". This does not take into account other risk factors. (See below)")
+            ,input$Mval_row_last_clicked))
+          figure.outputOLDER <-(
+            SurvivalAgePlotPerc5(
+              figure.input
+              ,input$Mval1_row_last_clicked)
+          )
+          figure.outputYOUNGER <-(
+            SurvivalAgePlotPerc4(
+              figure.input
+              ,input$Mval1_row_last_clicked)
+          )
+          
+          paste("According to the dataset in Williamson et als retrospective survival cohort, patients with this score on average had a 5 year survival percentage of",
+                figure.output,
+                ". This does not take into account other risk factors. If age is taken into account the percentage would change to",
+                figure.outputYOUNGER, "if the patient was under three years old and",
+                figure.outputOLDER, "if older than three. (See below)")
+        
       })
       
       

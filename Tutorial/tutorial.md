@@ -27,10 +27,10 @@ Once the calculation has been completed you should be brought to the Results tab
 
 It will also show a number of graphs, an example is below.
 
-![Results Graph](app_result_graph.png "Results Graph")
-
 ### Group 3/4 Plot
-shows INSERT WHAT.
+Places your sample data on a cumulative frequency plot based on data from Williamson et als Cell Reports paper. It tells you whether the patient is Group 3 or Group 4 and allows you to see where the patient ranks against our large dataset.
+
+![Results Graph](app_result_graph.png "Results Graph")
 
 ### Survival Plot: No Risk Factors Considered
 Shows patients expected five year survival based on only their group 3/4 score and no other risk factors.
@@ -40,6 +40,7 @@ Shows patients expected five year survival based on only their group 3/4 score a
 ### Survival Plot: Age Considered
 Shows patients expected five year survival based on their group 3/4 score but also taking into account their age.
 
+![Survival Plot Age](app-survivalAge.png "Survival Plot: Age Considered")
 
 There will also be a box entitled "Selected Sample Information", this will inform you of the currently selected sample (which will also be highlighted on the graphs), and give some information about the sample and the expected survival.
 

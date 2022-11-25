@@ -1,6 +1,6 @@
 ### Set working directory to wherever "source_functions.R" is
-setwd("/example/Idat-Shiny")
-source("./source_functions.R")
+setwd("~/Group3-4App")
+source("./AppSourceFunctions1.3.R")
 
 ### Choose folder containing idats to be processed
 
