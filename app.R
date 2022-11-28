@@ -123,7 +123,8 @@ ui <- shiny::fluidPage(
           ),
           h4(
             "Disclaimer : This app is designed exclusively for research purposes and is strictly not for diagnostic use."
-          )
+          ),
+          h5("Supported by funding from LoveOliver, Children with Cancer UK and CRUK.")
           # shinythemes::themeSelector,()
           
         )
