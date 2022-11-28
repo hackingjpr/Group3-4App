@@ -53,7 +53,7 @@ ui <- shiny::fluidPage(
         sliderInput(
           "outlier",
           "OUTLIER SELECTION WHAT SHOULD I CALL THIS??",
-          min = 0,
+          min = 1,
           max = 4,
           value = 0,
           step = 1,
