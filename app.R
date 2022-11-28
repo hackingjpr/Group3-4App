@@ -55,7 +55,7 @@ ui <- shiny::fluidPage(
           "OUTLIER SELECTION WHAT SHOULD I CALL THIS??",
           min = 1,
           max = 4,
-          value = 0,
+          value = 1,
           step = 1,
           round = 0,
           animate = FALSE
