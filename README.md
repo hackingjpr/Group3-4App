@@ -53,16 +53,22 @@ Once the calculation has been completed you should be brought to the Results tab
 
 It will also show a number of graphs, an example is below.
 
+### Group 3/4 Plot
+Places your sample data on a cumulative frequency plot based on data from Williamson et al’s Cell Reports paper. It tells you whether the patient is Group 3 or Group 4 and allows you to see where the patient ranks against this large dataset. 
+
 ![Results Graph](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_result_graph.png)
 
-### Group 3/4 Plot
-shows INSERT WHAT.
+
 
 ### Survival Plot: No Risk Factors Considered
 Shows patients expected five year survival based on only their group 3/4 score and no other risk factors.
 
+![Survival](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app-survival-plot1.png)
+
 ### Survival Plot: Age Considered
 Shows patients expected five year survival based on their group 3/4 score but also taking into account their age.
+
+![Survival Age](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app-survivalAge.png)
 
 
 There will also be a box entitled "Selected Sample Information", this will inform you of the currently selected sample (which will also be highlighted on the graphs), and give some information about the sample and the expected survival.
