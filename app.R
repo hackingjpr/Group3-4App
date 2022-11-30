@@ -399,8 +399,8 @@ server <- function(session, input, output) {
         message("File loaded")
         nmb.mat <- nmb.mat.prepped
         
-        saveRDS(in.files, "~/Group3-4App/temp/csvfile.rds")
-        in.files <- readRDS("~/Group3-4App/temp/csvfile.rds")
+        # saveRDS(in.files, "~/Group3-4App/temp/csvfile.rds")
+        # in.files <- readRDS("~/Group3-4App/temp/csvfile.rds")
         
         # ## interset common genes / probes
         tpms.mat <- match.select(nmb.mat, in.files)
