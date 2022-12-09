@@ -1,4 +1,4 @@
-source("./AppSourceFunctions1.10.R")
+source("./AppSourceFunctions1.11.R")
 
 message("Begin the app")
 ui <- shiny::fluidPage(
@@ -682,27 +682,14 @@ server <- function(session, input, output) {
     
 
     
+    
     input$methFile$datapath -> in.files
     message(in.files)
     paste0(tempDIR,"/", input$methFile$name) -> out.files
     message(out.files)
     copied <- file.copy(in.files, out.files)
     
-    
-    input.file <- in.files
-    if (file_ext(input.file) == "idat") {
-      temp.base <- get_basenames(tempDIR)
-    } else if (file_ext(input.file) == "csv") {
-      in.files <- read.csv(file = input.file, row.names = 1)
-    } else if (file_ext(input.file) == "txt") {
-      in.files <- read.delim(file = input.file)
-    } else {
-      message("file not right format!")
-    }
-    
-    
-    # 
-    # temp.base <- get_basenames(tempDIR)
+    temp.base <- get_basenames(tempDIR)
     
     #saveRDS(temp.base, "./temp/temp.base.rds")
     
@@ -710,17 +697,13 @@ server <- function(session, input, output) {
     cat("Timing start\n")
     ptm <- proc.time()
     
-    temp.processed <- process_idats(input.file)
+    temp.processed <- process_idats(temp.base)
     on.exit({
       att$done()
     })
     
-    saveRDS(temp.processed$betas, "./Inputs/temp.processed.betas.RDS")
-
-    
-    # READING IN M.VALS
-    
     beta2m(temp.processed$betas) -> M.values
+    
     
     if(ncol(M.values)==1){
       ### for single sample

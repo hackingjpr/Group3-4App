@@ -1,90 +1,90 @@
 ################# Packages ################# 
 print(getwd())
 
-# if (!require(bumphunter)) {
-#   BiocManager::install("bumphunter")
-#   library(bumphunter)
-# }
+if (!require(bumphunter)) {
+  BiocManager::install("bumphunter")
+  library(bumphunter)
+}
 
-# if(!require(minfi)){
-#   BiocManager::install("minfi")
-#   library(minfi)
-# }
+if(!require(minfi)){
+  BiocManager::install("minfi")
+  library(minfi)
+}
 
-# if (!require(shiny)) {
-#   install.packages("shiny")
+if (!require(shiny)) {
+  install.packages("shiny")
   library(shiny)
-# }
+}
 
-# if (!require(DT)) {
-#   install.packages("DT")
+if (!require(DT)) {
+  install.packages("DT")
   library(DT)
-# }
+}
 
 
-# if (!require(shinyWidgets)) {
-#   install.packages("shinyWidgets")
+if (!require(shinyWidgets)) {
+  install.packages("shinyWidgets")
   library(shinyWidgets)
-# }
-# 
-# if (!require(shinydashboard)) {
-#   install.packages("shinydashboard")
-  library(shinydashboard)
-# }
-# 
-# if (!require(ggplot2)) {
-#   install.packages("ggplot2")
-  library(ggplot2)
-# }
-# 
-# if (!require(ggpubr)) {
-#   install.packages("ggpubr")
-  library(ggpubr)
-# }
-# 
-# if (!require(foreach)) {
-#   install.packages("foreach")
-  library(foreach)
-# }
-# 
-# if (!require(waiter)) {
-#   install.packages("waiter")
-  library(waiter)
-# }
-# 
-# if (!require(caret)) {
-#   install.packages('caret')
-  library(caret)
-# }
-# if (!require(NMF)) {
-#   install.packages('NMF')
-  library(NMF)
-# }
+}
 
-# if (!require(randomForest)) {
-#   packageurl <-
-#     "https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz"
-#   install.packages(packageurl, repos = NULL, type = "source")
+if (!require(shinydashboard)) {
+  install.packages("shinydashboard")
+  library(shinydashboard)
+}
+
+if (!require(ggplot2)) {
+  install.packages("ggplot2")
+  library(ggplot2)
+}
+
+if (!require(ggpubr)) {
+  install.packages("ggpubr")
+  library(ggpubr)
+}
+
+if (!require(foreach)) {
+  install.packages("foreach")
+  library(foreach)
+}
+
+if (!require(waiter)) {
+  install.packages("waiter")
+  library(waiter)
+}
+
+if (!require(caret)) {
+  install.packages('caret')
+  library(caret)
+}
+if (!require(NMF)) {
+  install.packages('NMF')
+  library(NMF)
+}
+
+if (!require(randomForest)) {
+  packageurl <-
+    "https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz"
+  install.packages(packageurl, repos = NULL, type = "source")
   library(randomForest)
-# }
-# if (!require(biomaRt)) {
-#   BiocManager::install("biomaRt")
+}
+if (!require(biomaRt)) {
+  BiocManager::install("biomaRt")
   library(biomaRt)
-# }
-# if (!require(gridExtra)) {
-#   install.packages('gridExtra')
+}
+if (!require(gridExtra)) {
+  install.packages('gridExtra')
   library(gridExtra)
-# }
-# 
-# if (!require(survival)) {
-#   install.packages('survival')
+}
+
+if (!require(survival)) {
+  install.packages('survival')
   library(survival)
-# }
-# 
-# if (!require(tools)) {
-#   install.packages('tools')
+}
+
+if (!require(tools)) {
+  install.packages('tools')
   library(tools)
-# }
+}
 library(markdown)
 
 ################# Methylation ################# 

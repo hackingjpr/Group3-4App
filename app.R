@@ -1,7 +1,8 @@
-source("./AppSourceFunctions1.9.R")
+source("./AppSourceFunctions1.10.R")
 
-
+message("Begin the app")
 ui <- shiny::fluidPage(
+  message("UI initiating"),
   #Loading bar
   useAttendant(),
   #Dashboard looks etc
@@ -23,7 +24,7 @@ ui <- shiny::fluidPage(
           "methFile",
           "Upload Methylation files:",
           multiple = TRUE,
-          accept = ".idat"
+          accept = c(".rds", ".csv", ".txt")
         )
       ),
       conditionalPanel(
@@ -381,8 +382,9 @@ server <- function(session, input, output) {
         copied <- file.copy(in.files, out.files)
         message("copy")
         
-        library("tools")
+
         input.file <- in.files
+        
         if (file_ext(input.file) == "rds") {
           in.files <- readRDS(file = input.file)
         } else if (file_ext(input.file) == "csv") {
@@ -679,13 +681,33 @@ server <- function(session, input, output) {
     req(input$methFile)
     require(R.utils)
     
+
+    
     input$methFile$datapath -> in.files
     message(in.files)
-    paste0(tempDIR,"/", input$methFile$name) -> out.files
+    paste0(tempDIR, "/", input$methFile$name) -> out.files
     message(out.files)
-    copied <- file.copy(in.files, out.files)
+    message("TempDir")
     
-    temp.base <- get_basenames(tempDIR)
+    copied <- file.copy(in.files, out.files)
+    message("copy")
+    
+    
+    input.file <- in.files
+    
+    if (file_ext(input.file) == "rds") {
+      in.files <- readRDS(file = input.file)
+    } else if (file_ext(input.file) == "csv") {
+      in.files <- read.csv(file = input.file, row.names = 1)
+    } else if (file_ext(input.file) == "txt") {
+      in.files <- read.delim(file = input.file)
+    } else {
+      message("file not right format!")
+    }
+    
+    
+    # 
+    # temp.base <- get_basenames(tempDIR)
     
     #saveRDS(temp.base, "./temp/temp.base.rds")
     
@@ -693,12 +715,20 @@ server <- function(session, input, output) {
     cat("Timing start\n")
     ptm <- proc.time()
     
-    temp.processed <- process_idats(temp.base)
-    on.exit({
-      att$done()
-    })
+    # temp.processed <- process_idats(input.file)
+    # on.exit({
+    #   att$done()
+    # })
     
-    beta2m(temp.processed$betas) -> M.values
+    # saveRDS(temp.processed$betas, "./Inputs/temp-processed-betas.rds")
+    # write.csv(temp.processed$betas, "./Inputs/temp.processed.betas.csv")
+    # temp.processeddf <- as.data.frame(temp.processed$betas)
+    # write.csv(temp.processeddf, "./Inputs/temp.processed.betas.txt")
+
+    
+    # READING IN M.VALS
+    message("I got to beta2m")
+    beta2m(in.files) -> M.values
     
     if(ncol(M.values)==1){
       ### for single sample
