@@ -149,7 +149,7 @@ ui <- shiny::fluidPage(
                  )),
         #Tutorial Tab
         tabPanel("Tutorial",
-                 includeMarkdown("./Tutorial/tutorial.md")),
+                 includeMarkdown("./Tutorial/tutorialIO.md")),
         tabPanel("Paper",
                  htmlOutput("frame")),
         #Results Tab
@@ -700,13 +700,11 @@ server <- function(session, input, output) {
     } else if (file_ext(input.file) == "csv") {
       in.files <- read.csv(file = input.file, row.names = 1)
     } else if (file_ext(input.file) == "txt") {
-      in.files <- read.delim(file = input.file)
+      in.files <- read.delim(file = input.file, row.names = 1)
     } else {
       message("file not right format!")
     }
     
-    
-    # 
     # temp.base <- get_basenames(tempDIR)
     
     #saveRDS(temp.base, "./temp/temp.base.rds")
