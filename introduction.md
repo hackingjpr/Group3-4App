@@ -3,7 +3,7 @@
 ## Overview
 
 This shiny app, upon uploading idat files, will give a group 3/4 score for patient samples.
-This app is derived from Williamson et als. paper: *Medulloblastoma group 3 and 4 tumors comprise a clinically and biologically significant expression continuum reflecting human cerebellar development*, which can be found [here](https://doi.org/10.1016/j.celrep.2022.111162), or navigate to the "Paper" tab above. The app and protocol in general is covered in the STAR Protocols paper **INSERT TITLE HERE**
+This app is derived from Williamson et als. paper: *Medulloblastoma group 3 and 4 tumors comprise a clinically and biologically significant expression continuum reflecting human cerebellar development*, which can be found [here](https://doi.org/10.1016/j.celrep.2022.111162), or navigate to the "Paper" tab above. The app and protocol in general is covered in the STAR Protocols paper entitled *"Deriving a continuum score for group 3 and 4 medulloblastoma tumour samples analysed via RNA-sequencing or DNA methylation microarray"*
 
 
   ![Graphical abstract](https://ars.els-cdn.com/content/image/1-s2.0-S2211124722009718-fx1.jpg)

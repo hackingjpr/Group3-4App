@@ -804,7 +804,7 @@ comb.cont <- readRDS(file = "./Inputs/comb.cont.rds")
 # indexRow <- 0.3
 
 coxph(Surv(time.comb, status.comb) ~ comb.cont) -> train.fit
-message("Train fit complete")
+# message("Train fit complete")
 
 summary(survfit(train.fit, data.frame(g3g4.values = as.numeric(comb.cont))), time = 5) -> x
 

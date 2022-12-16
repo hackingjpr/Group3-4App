@@ -1,6 +1,12 @@
 ################# Packages ################# 
 print(getwd())
 
+library(unix)
+library(pryr)
+message("Begin")
+message(mem_used())
+message(rlimit_all())
+
 library(BiocManager)
 options(repos = BiocManager::repositories())
 
@@ -12,12 +18,12 @@ options(repos = BiocManager::repositories())
 
 # if (!require(bumphunter)) {
 #   BiocManager::install("bumphunter")
-  library(bumphunter)
+  # library(bumphunter)
 # }
 
 # if(!require(minfi)){
 #   BiocManager::install("minfi")
-  library(minfi)
+  # library(minfi)
 # }
 
 # if (!require(shiny)) {
@@ -78,7 +84,7 @@ options(repos = BiocManager::repositories())
 # }
 # if (!require(biomaRt)) {
 #   BiocManager::install("biomaRt")
-  library(biomaRt)
+  # library(biomaRt)
 # }
 # if (!require(gridExtra)) {
 #   install.packages('gridExtra')
@@ -89,9 +95,9 @@ options(repos = BiocManager::repositories())
 #   install.packages('survival')
   library(survival)
   # }
-
+library(markdown)
 ################# Methylation ################# 
-
+message("all libraries loaded")
 
 beta2m <- function (beta) {
   m <- log2(beta / (1 - beta))
@@ -102,12 +108,12 @@ process_idats <- function(basenames) {
   #check file sizes, epic will be over 1e7
   # Split into mixed or single test e.g. 450k & Epic or one or the other
   file.sizes <- file.info(paste0(basenames, "_Red.idat"))$size
-  
+
   length(which(file.sizes > 1e7)) > 0 &
     length(which(file.sizes < 1e7)) > 0 -> mixed.test
   length(which(file.sizes > 1e7)) > 0 |
     length(which(file.sizes < 1e7)) > 0 -> single.test
-  
+
   if (mixed.test) {
     #  as before where you process them seperately then combine
     idx.epic <-
@@ -128,7 +134,7 @@ process_idats <- function(basenames) {
     comb.beta <- getBeta(comb.gmrSet)
     comb.MRT.pd <- pData(comb.gmrSet)
   }
-  
+
   if ((!mixed.test) & single.test) {
     # only need the one
     single <- read.metharray(basenames,
@@ -140,7 +146,7 @@ process_idats <- function(basenames) {
     comb.beta <- getBeta(comb.gmrSet)
     comb.MRT.pd <- pData(comb.gmrSet)
   }
-  
+
   return(list(betas = comb.beta, pvals = comb.detP))
 }
 
@@ -163,7 +169,7 @@ extract.metagene <- function(index, weights, exp.matrix, scaling) {
   df <- as.data.frame(Risk_Value)
   return(df)
 }
-
+# 
 digits = 0:9
 createRandString <- function() {
   v = c(
@@ -173,32 +179,33 @@ createRandString <- function() {
   )
   return(paste0(v, collapse = ""))
 }
-
+# 
 g3.g4.cont.rfe <- load("./Inputs/g3.g4.cont.rfe.Rdata")
-
-################# Expression ################# 
-
-
+message("g3.g4.cont.rfe loaded")
+# ################# Expression ################# 
+# 
+# 
 # load in original metagene H values
 avg.h.val <- readRDS("./Inputs/avg.h.val.input.rds")
-
+message("avg.h.val.input.rds loaded")
 # load in original g3g4 metagene values
 g3g4 <- readRDS("./Inputs/g3g4.input.rds")
-
+message("g3g4.input.rds loaded")
 #load in filtered expression values from NMB MB samples used to generate H Values
 #nmb.mat <- readRDS("./nmb.mat.input.rds")
-
-
+# 
+# 
 nmb.mat.prepped <- readRDS(file = "./Inputs/nmb.mat.prepped.rds")
+message("nmb.mat.prepped.rds loaded")
 nmf.res <- readRDS("./Inputs/nmf.res.rds")
-
+message("nmf.res.rds loaded")
 #tpms.mat <- readRDS(file = "./tpms.mat.rds")
-
-### annotate using library(biomaRt)
+# 
+# ### annotate using library(biomaRt)
 annotate.HTseq.IDs <- function(HTseq.IDs) {
   ENSEMBL_DB_HOST = "uswest.ensembl.org" # Set back to default, once they are up and running again
   ENSEMBL_VERSION = "Ensembl Genes 101"  # Try to fix https://support.bioconductor.org/p/104454/
-  
+
   #mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", host = ENSEMBL_DB_HOST, version = ENSEMBL_VERSION)
   mart <-
     useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
@@ -217,22 +224,22 @@ annotate.HTseq.IDs <- function(HTseq.IDs) {
   symbols[annotatedix, ] -> annotatedGenes
   return(cbind(HTseq.IDs, annotatedGenes))
 }
-
-
-### loading in all functions needed for projection
+message("annotate.HTseq.IDs")
+# 
+# ### loading in all functions needed for projection
 match.select <- function(input1.eset, input2.eset) {
   m1 <- input1.eset
   gs.names1 <- row.names(m1)
   gs.descs1 <- row.names(m1)
   sample.names1 <- names(m1)
-  
+
   m2 <- input2.eset
   gs.names2 <- row.names(m2)
   gs.descs2 <- row.names(m2)
   sample.names2 <- names(m2)
-  
+
   gs.names3 <- intersect(gs.names1, gs.names2)
-  
+
   locations2 <- match(gs.names3, gs.names2, nomatch = 0)
   gs.names2 <- gs.names2[locations2]
   gs.descs2 <- gs.descs2[locations2]
@@ -245,33 +252,33 @@ match.select <- function(input1.eset, input2.eset) {
   }
   return(m2.out)
 }
-
+# 
 prep.data <- function(input.array) {
   m <- input.array
   col.names <- colnames(input.array)
   gs.names <- row.names(input.array)
   gs.descs <- row.names(input.array)
   sample.names <- colnames(input.array)
-  
+
   cols <- length(m[1, ])
   for (j in 1:cols) {
     # column rank normalization from 0 to N - 1
     m[, j] <- rank(m[, j], ties.method = "average") - 1
   }
   m <- 10000 * m / (length(m[, 1]) - 1)
-  
+
   v <- m
   row.names(v) <- gs.names
   colnames(v) <- col.names
-  
+
   return(v)
 }
-
+# 
 param.filter <- function(m = NULL,
                          thres = 20,
                          ceil = 10000,
                          shift = 1,
-                         
+
                          fold = 3,
                          delta = 300) {
   if (thres != "NULL") {
@@ -283,7 +290,7 @@ param.filter <- function(m = NULL,
   if (shift != "NULL") {
     m <- m + shift
   }
-  
+
   cols <- ncol(m)
   rows <- nrow(m)
   row.max <- apply(m, MARGIN = 1, FUN = max)
@@ -294,15 +301,15 @@ param.filter <- function(m = NULL,
     ylab = "Value",
     xlab = "Index"
   )
-  
+
   row.min <- apply(m, MARGIN = 1, FUN = min)
-  
+
   flag <- array(dim = rows)
   flag <- (row.max / row.min >= fold) & (row.max - row.min >= delta)
   cat(length(which(flag)), "genes / probes retained", "\n")
   flag
 }
-
+# 
 scaling.function <- function(x) {
   (x - min(x)) / (max(x) - min(x))
 }
@@ -311,10 +318,10 @@ scaling.function3 <-
   function(x) {
     (x - 0.3953062) / (0.5964371 - 0.3953062)
   }
-
-
-
-
+# 
+# 
+# message("Scaling function 3 loaded")
+# 
 param.filter <- function(m = NULL,
                          thres = 20,
                          ceil = 10000,
@@ -330,7 +337,7 @@ param.filter <- function(m = NULL,
   if (shift != "NULL") {
     m <- m + shift
   }
-  
+
   cols <- ncol(m)
   rows <- nrow(m)
   row.max <- apply(m, MARGIN = 1, FUN = max)
@@ -341,80 +348,80 @@ param.filter <- function(m = NULL,
     ylab = "Value",
     xlab = "Index"
   )
-  
+
   row.min <- apply(m, MARGIN = 1, FUN = min)
-  
+
   flag <- array(dim = rows)
   flag <- (row.max / row.min >= fold) & (row.max - row.min >= delta)
   cat(length(which(flag)), "genes / probes retained", "\n")
   flag
 }
-
+# 
 prep.data <- function(input.array) {
   m <- input.array
   col.names <- colnames(input.array)
   gs.names <- row.names(input.array)
   gs.descs <- row.names(input.array)
   sample.names <- colnames(input.array)
-  
+
   cols <- length(m[1, ])
   for (j in 1:cols) {
     # column rank normalization from 0 to N - 1
     m[, j] <- rank(m[, j], ties.method = "average") - 1
   }
   m <- 10000 * m / (length(m[, 1]) - 1)
-  
+
   v <- m
   row.names(v) <- gs.names
   colnames(v) <- col.names
-  
+
   return(v)
 }
-
+# 
 project.NMF <- function(input.array, nmf.result) {
   require(MASS)
   m <- input.array
   gs.names <- rownames(input.array)
   gs.descs <- rownames(input.array)
   sample.names <- colnames(input.array)
-  
+
   W <- as.data.frame(basis(nmf.result))
   W.row.names <- row.names(W)
   W.row.descs <- row.names(W)
   W.names <- names(W)
-  
+
   overlap <- intersect(gs.names, W.row.names)
-  
+
   cat("Size of Input dataset:", length(gs.names), "genes\n")
   cat("Size of W matrix (rows):", length(W.row.names), "genes\n")
   cat("Size of overlap:", length(overlap), "genes\n")
-  
+
   locations.m <- match(overlap, gs.names, nomatch = 0)
   m2 <- m[locations.m,]
   locations.W <- match(overlap, W.row.names, nomatch = 0)
   W2 <- W[locations.W,]
   W2 <- as.matrix(W2)
-  
+
   H <- ginv(W2) %*% m2
-  
+
   n.col <- length(H[1, ])
   for (i in 1:n.col) {
     S.2 <- sqrt(sum(H[, i] * H[, i]))
     #        S.2 <- sum(H[,i])
     H[, i] <- H[, i] / S.2
   }
-  
+
   V <- data.frame(H)
   names(V) <- sample.names
   row.names(V) <- W.names
   return(V)
 }
-
-
+# 
+# 
 annotate.HTseq.IDs <- function(HTseq.IDs) {
   ENSEMBL_DB_HOST = "uswest.ensembl.org" # Set back to default, once they are up and running again
   ENSEMBL_VERSION = "Ensembl Genes 101"  # Try to fix https://support.bioconductor.org/p/104454/
-  
+
   #mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", host = ENSEMBL_DB_HOST, version = ENSEMBL_VERSION)
   mart <-
     useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
@@ -433,16 +440,17 @@ annotate.HTseq.IDs <- function(HTseq.IDs) {
   symbols[annotatedix, ] -> annotatedGenes
   return(cbind(HTseq.IDs, annotatedGenes))
 }
-
-################# Graphs ################# 
-
+# message("onto graphs")
+# ################# Graphs ################# 
+# 
 df1 <- data.frame(
   green = c(0, 0.68),
   yellow = c(0.68, 1),
   colour = c("G", "Y")
 )
-
-
+# 
+# message("df1 loaded")
+# 
 generate_figure_highlight_g3g4 <-
   function(new.sample.meta.score, indexRow) {
     if (is.null(indexRow)) {
@@ -476,11 +484,11 @@ generate_figure_highlight_g3g4 <-
       geom_line() +
       theme(legend.position = "none") +
       theme(text = element_text(size = 15))
-    
-    
-    
-    
-    
+
+
+
+
+
     df.lines.hor <-
       foreach(i = 1:length(new.sample.meta.score),
               .combine = rbind) %do% {
@@ -493,7 +501,7 @@ generate_figure_highlight_g3g4 <-
                 )
               }
     df.lines.hor$labels <- names(new.sample.meta.score)
-    
+
     df.lines.ver <-
       foreach(i = 1:length(new.sample.meta.score),
               .combine = rbind) %do% {
@@ -506,7 +514,7 @@ generate_figure_highlight_g3g4 <-
               }
     df.lines.ver$perc <-
       paste0(round(df.lines.ver$xend / length(y2) * 100), "th")
-    
+
     df.lines.ver$colour <-
       factor(
         ifelse(
@@ -525,8 +533,8 @@ generate_figure_highlight_g3g4 <-
         ),
         levels = c("highlight", "no.highlight")
       )
-    
-    
+
+
     b <- b +
       geom_segment(
         aes(
@@ -553,7 +561,7 @@ generate_figure_highlight_g3g4 <-
         linetype = "dashed",
         size = 0.5,
         data = df.lines.ver
-        
+
       ) +
       xlab("") +
       ylab("Group 3/4 Score")
@@ -565,11 +573,11 @@ generate_figure_highlight_g3g4 <-
     #   colour = colour
     # ), data = df.lines.hor)
     #scale_color_discrete("red", "lightgrey")
-    
+
     df <- data.frame()
     c <- ggplot() + theme_void()
-    
-    
+
+
     #ggarrange(a,a2,ggarrange(
     # c,b, ncol = 2, nrow = 1, widths = c(0.015,1)),ncol=1,nrow=3)
     d <- ggarrange(c,
@@ -577,18 +585,18 @@ generate_figure_highlight_g3g4 <-
                    ncol = 2,
                    nrow = 1,
                    widths = c(0.015, 1))
-    
+
     # d <- subplot(c,
     #              b,
     #              ncol=2,
     #              nrows = 1,
     #              widths = c(0.015,1))
-    
+
     # d <- ggplotly(d)
     d
     #return(data.frame(perc = df.lines.ver[,5], row.names=rownames(df.lines.ver)))
   }
-
+# 
 generate_figure_highlight_g3g4Expression <-
   function(new.sample.meta.score, indexRow) {
     if (is.null(indexRow)) {
@@ -622,7 +630,7 @@ generate_figure_highlight_g3g4Expression <-
       geom_line() +
       theme(legend.position = "none") +
       theme(text = element_text(size = 15))
-    
+
     df.lines.hor <-
       foreach(i = 1:length(new.sample.meta.score),
               .combine = rbind) %do% {
@@ -635,7 +643,7 @@ generate_figure_highlight_g3g4Expression <-
                 )
               }
     df.lines.hor$labels <- names(new.sample.meta.score)
-    
+
     df.lines.ver <-
       foreach(i = 1:length(new.sample.meta.score),
               .combine = rbind) %do% {
@@ -648,7 +656,7 @@ generate_figure_highlight_g3g4Expression <-
               }
     df.lines.ver$perc <-
       paste0(round(df.lines.ver$xend / length(y2) * 100), "th")
-    
+
     df.lines.ver$colour <-
       factor(
         ifelse(
@@ -667,8 +675,8 @@ generate_figure_highlight_g3g4Expression <-
         ),
         levels = c("highlight", "no.highlight")
       )
-    
-    
+
+
     b <- b +
       geom_segment(
         aes(
@@ -695,7 +703,7 @@ generate_figure_highlight_g3g4Expression <-
         linetype = "dashed",
         size = 0.5,
         data = df.lines.ver
-        
+
       ) +
       xlab("") +
       ylab("Group 3/4 Score")
@@ -707,11 +715,11 @@ generate_figure_highlight_g3g4Expression <-
     #   colour = colour
     # ), data = df.lines.hor)
     #scale_color_discrete("red", "lightgrey")
-    
+
     df <- data.frame()
     c <- ggplot() + theme_void()
-    
-    
+
+
     #ggarrange(a,a2,ggarrange(
     # c,b, ncol = 2, nrow = 1, widths = c(0.015,1)),ncol=1,nrow=3)
     d <- ggarrange(c,
@@ -719,19 +727,19 @@ generate_figure_highlight_g3g4Expression <-
                    ncol = 2,
                    nrow = 1,
                    widths = c(0.015, 1))
-    
+
     # d <- subplot(c,
     #              b,
     #              ncol=2,
     #              nrows = 1,
     #              widths = c(0.015,1))
-    
+
     # d <- ggplotly(d)
     d
     #return(data.frame(perc = df.lines.ver[,5], row.names=rownames(df.lines.ver)))
   }
-
-
+# 
+# 
 generate_figure_highlight_g3g4PERC <-
   function(new.sample.meta.score, indexRow) {
     if (is.null(indexRow)) {
@@ -765,11 +773,11 @@ generate_figure_highlight_g3g4PERC <-
       geom_line() +
       theme(legend.position = "none") +
       theme(text = element_text(size = 15))
-    
-    
-    
-    
-    
+
+
+
+
+
     df.lines.hor <-
       foreach(i = 1:length(new.sample.meta.score),
               .combine = rbind) %do% {
@@ -782,7 +790,7 @@ generate_figure_highlight_g3g4PERC <-
                 )
               }
     df.lines.hor$labels <- names(new.sample.meta.score)
-    
+
     df.lines.ver <-
       foreach(i = 1:length(new.sample.meta.score),
               .combine = rbind) %do% {
@@ -796,40 +804,49 @@ generate_figure_highlight_g3g4PERC <-
     df.lines.ver$perc <-
       # paste0(round(df.lines.hor$xend / length(y2) * 100), "th")
       paste0(round(df.lines.hor$xend / 1 * 100), "%")
-    
+
     return(df.lines.ver$perc[indexRow])
   }
 
-
-################# FOR AGE BASED SURVIVAL PLOT #################
-#
+message(mem_used())
+message(rlimit_all())
+message("End of source script")
+# 
+# 
+# ################# FOR AGE BASED SURVIVAL PLOT #################
+# #
 time.comb <- readRDS(file = "./Inputs/time.comb.rds")
 age.comb <- readRDS(file = "./Inputs/age.comb.rds")
 status.comb <- readRDS(file = "./Inputs/status.comb.rds")
 comb.cont <- readRDS(file = "./Inputs/comb.cont.rds")
-
-
-# new.sample.meta.score <- c(0.5,0.3)
-# indexRow <- 0.3
-
-coxph(Surv(time.comb, status.comb) ~ comb.cont) -> train.fit
+message("time/age/status/comb.cont loaded")
+# 
+# # new.sample.meta.score <- c(0.5,0.3)
+# # indexRow <- 0.3
+# 
+# # coxph(Surv(time.comb, status.comb) ~ comb.cont) -> train.fit
+# # saveRDS(train.fit, "./Inputs/trainfit.RDS")
+train.fit <- readRDS("./Inputs/trainfit.RDS")
+message("train fit complete")
 # message("Train fit complete")
-
-summary(survfit(train.fit, data.frame(g3g4.values = as.numeric(comb.cont))), time = 5) -> x
-
+# 
+# summary(survfit(train.fit, data.frame(g3g4.values = as.numeric(comb.cont))), time = 5) -> x
+# saveRDS(x, "./Inputs/x-summary.RDS")
+x <- readRDS("./Inputs/x-summary.RDS")
+message("summary train fit")
 df2 <- data.frame(
   pred = comb.cont,
   surv = as.numeric(x$surv),
   up = as.numeric(x$upper),
   lo = as.numeric(x$lower)
 )
-
+message("df2 loaded")
 # df2$pred -> x
 # df2$surv  -> y
 # data = data.frame(x, y)
 # ggplot(aes(x = x, y = y), data = data) +
 #   geom_line()
-# 
+#
 
 fit.extrap <- lm(surv~poly(pred,2,raw=TRUE), data=df2)
 fit.extrap.up <- lm(up~poly(pred,2,raw=TRUE), data=df2)
@@ -839,10 +856,12 @@ extrap.pred <- c(0,0.01,0.02,0.03,0.98,0.99,1)
 extrap.hi <-  predict(fit.extrap.up, data.frame(pred = c(0,0.01,0.02,0.03,0.98,0.99,1)))
 extrap.lo <- predict(fit.extrap.lo, data.frame(pred = c(0,0.01,0.02,0.03,0.98,0.99,1)))
 
+
 data.frame(pred = extrap.pred,
            surv = extrap.surv,
            up = extrap.hi,
            lo = extrap.lo) -> df2.extrap
+message("extrapolation complete")
 # #define x-axis values
 # x_axis <- seq(0, 1, length=15)
 # plot(data$x, data$y, pch=19, xlab='x', ylab='y')
@@ -861,28 +880,28 @@ data.frame(pred = extrap.pred,
 #
 #Residual standard error: 941.9 on 5 degrees of freedom
 #
-#Number of iterations to convergence: 0 
+#Number of iterations to convergence: 0
 #Achieved convergence tolerance: 4.928e-06
 
-# lines(seq(0.5, 4, length.out = 100), 
+# lines(seq(0.5, 4, length.out = 100),
 #       predict(fit, newdata = data.frame(x = seq(0.5, 4, length.out = 100))))
 
 
 coxph(Surv(time.comb, c(status.comb)) ~ comb.cont + age.comb) -> train.fit.age
-
+message("train.fit.age complete")
 summary(survfit(
   train.fit.age,
   data.frame(comb.cont = comb.cont,
              age.comb = age.comb)
 ), time = 5) -> x
-
+# 
 summary(survfit(train.fit.age, data.frame(
   comb.cont = c(seq(0, 1, 0.01), seq(0, 1, 0.01))
   ,
   age.comb = c(rep("TRUE", 101), rep("FALSE", 101))
 )), time = 5) -> y
 
-
+message("summary age complete")
 # fit.extrap3 <- lm(surv~poly(pred,2,raw=TRUE), data=df3)
 # fit.extrap.up3 <- lm(up~poly(pred,2,raw=TRUE), data=df3)
 # fit.extrap.lo3 <- lm(lo~poly(pred,2,raw=TRUE), data=df3)
@@ -890,7 +909,7 @@ summary(survfit(train.fit.age, data.frame(
 # extrap.pred3 <- c(0,0.01,0.02,0.03,0.98,0.99,1)
 # extrap.hi3 <-  predict(fit.extrap.up3, data.frame(pred = c(0,0.01,0.02,0.03,0.98,0.99,1)))
 # extrap.lo3 <- predict(fit.extrap.lo3, data.frame(pred = c(0,0.01,0.02,0.03,0.98,0.99,1)))
-# 
+#
 # data.frame(pred = extrap.pred3,
 #            surv = extrap.surv3,
 #            up = extrap.hi3,
@@ -913,21 +932,21 @@ df3.y <- data.frame(
   lo = as.numeric(y$lower),
   age = c(rep("TRUE", 101), rep("FALSE", 101))
 )
-
+message("df3 complete")
 # df3$point <- rep("yes", nrow(df3))
 # df3.y$point <- rep("no", nrow(df3.y))
 
 
 
-################# SURVIVAL PLOT AND PERCENTAGE ################# 
-
-
-
+# ################# SURVIVAL PLOT AND PERCENTAGE ################# 
+# 
+# 
+# 
 survivalcurveplot <- function(new.sample.meta.score, indexRow) {
   if (is.null(indexRow)) {
     indexRow = 1
   }
-  
+
   df2 <- rbind(df2, df2.extrap)
   df2$pred -> pred
   df2$surv -> surv
@@ -942,7 +961,7 @@ survivalcurveplot <- function(new.sample.meta.score, indexRow) {
     xlim(0, 1) +
     theme(legend.position = "none") +
     theme(text = element_text(size = 15))
-  
+
   df.lines.hor <-
     foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
@@ -952,7 +971,7 @@ survivalcurveplot <- function(new.sample.meta.score, indexRow) {
                   xend = new.sample.meta.score[i],
                   y = 0.8,
                   yend = 0.8
-                )  
+                )
               }else{
                 surv[which(pred < new.sample.meta.score[i])] -> temp.surv
                 data.frame(
@@ -963,10 +982,10 @@ survivalcurveplot <- function(new.sample.meta.score, indexRow) {
                 )
               }
             }
-  
+
   df.lines.hor$labels <- names(new.sample.meta.score)
-  
-  
+
+
   df.lines.ver <-
     foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
@@ -976,7 +995,7 @@ survivalcurveplot <- function(new.sample.meta.score, indexRow) {
                   xend = new.sample.meta.score[i],
                   y = 0,
                   yend = 0.8
-                )  
+                )
               }else{
                 surv[which(pred < new.sample.meta.score[i])] -> temp.surv
                 data.frame(
@@ -988,11 +1007,11 @@ survivalcurveplot <- function(new.sample.meta.score, indexRow) {
               }
             }
   message(df.lines.ver)
-  
-  
+
+
   df.lines.ver$perc <-
     paste0(round(df.lines.ver$xend / length(pred) * 100), "th")
-  
+
   df.lines.ver$colour <-
     factor(
       ifelse(
@@ -1011,8 +1030,8 @@ survivalcurveplot <- function(new.sample.meta.score, indexRow) {
       ),
       levels = c("highlight", "no.highlight")
     )
-  
-  
+
+
   b <- b +
     geom_segment(
       aes(
@@ -1039,31 +1058,31 @@ survivalcurveplot <- function(new.sample.meta.score, indexRow) {
       linetype = "dashed",
       size = 0.5,
       data = df.lines.ver
-      
+
     )
-  
-  
+
+
   df <- data.frame()
   c <- ggplot() + theme_void()
-  
-  
+
+
   d <- ggarrange(c,
                  b,
                  ncol = 2,
                  nrow = 1,
                  widths = c(0.015, 1))
-  
-  
+
+
   d
 }
-
-
-
-
-
+# 
+# 
+# 
+# 
+# 
 survivalcurveplotPERC <- function(new.sample.meta.score, indexRow) {
-  
-  
+
+
   if (is.null(indexRow)) {
     indexRow = 1
   }
@@ -1081,7 +1100,7 @@ survivalcurveplotPERC <- function(new.sample.meta.score, indexRow) {
     ylim(0, 1) +
     theme(legend.position = "none") +
     theme(text = element_text(size = 15))
-  
+
 
   df.lines.hor <-
     foreach(i = 1:length(new.sample.meta.score),
@@ -1092,7 +1111,7 @@ survivalcurveplotPERC <- function(new.sample.meta.score, indexRow) {
                   xend = new.sample.meta.score[i],
                   y = 0.8,
                   yend = 0.8
-                )  
+                )
               }else{
               surv[which(pred < new.sample.meta.score[i])] -> temp.surv
               data.frame(
@@ -1103,10 +1122,10 @@ survivalcurveplotPERC <- function(new.sample.meta.score, indexRow) {
               )
               }
             }
-  
+
   df.lines.hor$labels <- names(new.sample.meta.score)
-  
-  
+
+
   df.lines.ver <-
     foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
@@ -1116,7 +1135,7 @@ survivalcurveplotPERC <- function(new.sample.meta.score, indexRow) {
                   xend = new.sample.meta.score[i],
                   y = 0,
                   yend = 0.8
-                )  
+                )
               }else{
               surv[which(pred < new.sample.meta.score[i])] -> temp.surv
               data.frame(
@@ -1128,22 +1147,22 @@ survivalcurveplotPERC <- function(new.sample.meta.score, indexRow) {
               }
             }
   message(df.lines.ver)
-  
+
   df.lines.hor$perc <-
     paste0(round(df.lines.ver$yend* 100), "%")
-  
-  return(df.lines.hor$perc[indexRow])
-  
-  
-}
-#
-# new.sample.meta.score <- c(0.5,0.3)
-# indexRow <- 0.3
-#
 
-################# AGE PLOT AND PERCENTAGES ################# 
-new.sample.meta.score <- c(0.01, 0, 0.98, 1)
-indexRow <- 2
+  return(df.lines.hor$perc[indexRow])
+
+
+}
+# #
+# # new.sample.meta.score <- c(0.5,0.3)
+# # indexRow <- 0.3
+# #
+# 
+# ################# AGE PLOT AND PERCENTAGES ################# 
+# new.sample.meta.score <- c(0.01, 0, 0.98, 1)
+# indexRow <- 2
 
 
 
@@ -1151,10 +1170,10 @@ SurvivalAgePlot <- function (new.sample.meta.score, indexRow) {
   if (is.null(indexRow)) {
     indexRow = 1
   }
-  
+
   # df3 <- rbind(df3, df3.extrap)
-  
-  
+
+
   age <- df3$age
   age <- ('True' = 'Over Five')
   df3$pred -> pred
@@ -1199,7 +1218,7 @@ SurvivalAgePlot <- function (new.sample.meta.score, indexRow) {
     # labs(title = "New plot title", subtitle = "A subtitle") +
     ylim(0, 1) +
     theme(text = element_text(size = 15))
-  
+
   df.lines.hor4 <-
     foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
@@ -1210,7 +1229,7 @@ SurvivalAgePlot <- function (new.sample.meta.score, indexRow) {
                   xend = new.sample.meta.score[i],
                   y = 0.8,
                   yend = 0.8
-                )  
+                )
               }else{
                 surv4[which(pred4 < new.sample.meta.score[i])] -> temp.surv
                 data.frame(
@@ -1221,10 +1240,10 @@ SurvivalAgePlot <- function (new.sample.meta.score, indexRow) {
                 )
               }
             }
-  
+
   df.lines.hor4$labels <- names(new.sample.meta.score)
-  
-  
+
+
   # df.lines.ver4 <-
   #   foreach(i = 1:length(new.sample.meta.score),
   #           .combine = rbind) %do% {
@@ -1239,7 +1258,7 @@ SurvivalAgePlot <- function (new.sample.meta.score, indexRow) {
   #             )
   #           }
   # message(df.lines.ver4)
-  
+
   df.lines.hor5 <-
     foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
@@ -1250,7 +1269,7 @@ SurvivalAgePlot <- function (new.sample.meta.score, indexRow) {
                   xend = new.sample.meta.score[i],
                   y = 0.8,
                   yend = 0.8
-                )  
+                )
               }else{
                 surv5[which(pred5 < new.sample.meta.score[i])] -> temp.surv
                 data.frame(
@@ -1261,10 +1280,10 @@ SurvivalAgePlot <- function (new.sample.meta.score, indexRow) {
                 )
               }
             }
-  
+
   df.lines.hor5$labels <- names(new.sample.meta.score)
-  
-  
+
+
   df.lines.ver5 <-
     foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
@@ -1274,7 +1293,7 @@ SurvivalAgePlot <- function (new.sample.meta.score, indexRow) {
                   xend = new.sample.meta.score[i],
                   y = 0,
                   yend = 0.8
-                )  
+                )
               }else{
                 surv5[which(pred5 < new.sample.meta.score[i])] -> temp.surv
                 data.frame(
@@ -1285,14 +1304,14 @@ SurvivalAgePlot <- function (new.sample.meta.score, indexRow) {
                 )
               }
             }
-  
-  
+
+
   # df.lines.ver4$perc <-
   #   paste0(round(df.lines.ver4$xend / length(pred4) * 100), "th")
-  
+
   df.lines.ver5$perc <-
     paste0(round(df.lines.ver5$xend / length(pred5) * 100), "th")
-  
+
   # df.lines.ver4$cols <- factor(ifelse(1:nrow(df.lines.ver4)==indexRow,"highlight","no.highlight"), levels = c("highlight","no.highlight"))
   df.lines.hor4$cols <-
     factor(
@@ -1321,8 +1340,8 @@ SurvivalAgePlot <- function (new.sample.meta.score, indexRow) {
       ),
       levels = c("highlight", "no.highlight")
     )
-  
-  
+
+
   b <- b +
     geom_segment(
       aes(
@@ -1376,33 +1395,33 @@ SurvivalAgePlot <- function (new.sample.meta.score, indexRow) {
       size = 0.5,
       data = df.lines.ver5
     )
-  
-  
+
+
   df <- data.frame()
   c <- ggplot() + theme_void()
-  
-  
+
+
   d <- ggarrange(c,
                  b,
                  ncol = 2,
                  nrow = 1,
                  widths = c(0.015, 1))
-  
-  
+
+
   d
   # b
 }
-
-
-
+# 
+# 
+# 
 SurvivalAgePlotPerc5 <- function (new.sample.meta.score, indexRow) {
   if (is.null(indexRow)) {
     indexRow = 1
   }
-  
+
   # df3 <- rbind(df3, df3.extrap)
-  
-  
+
+
   age <- df3$age
   age <- ('True' = 'Over Five')
   df3$pred -> pred
@@ -1447,7 +1466,7 @@ SurvivalAgePlotPerc5 <- function (new.sample.meta.score, indexRow) {
     # labs(title = "New plot title", subtitle = "A subtitle") +
     ylim(0, 1) +
     theme(text = element_text(size = 15))
-  
+
   df.lines.hor4 <-
     foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
@@ -1458,7 +1477,7 @@ SurvivalAgePlotPerc5 <- function (new.sample.meta.score, indexRow) {
                   xend = new.sample.meta.score[i],
                   y = 0.8,
                   yend = 0.8
-                )  
+                )
               }else{
                 surv4[which(pred4 < new.sample.meta.score[i])] -> temp.surv
                 data.frame(
@@ -1469,10 +1488,10 @@ SurvivalAgePlotPerc5 <- function (new.sample.meta.score, indexRow) {
                 )
               }
             }
-  
+
   df.lines.hor4$labels <- names(new.sample.meta.score)
-  
-  
+
+
   # df.lines.ver4 <-
   #   foreach(i = 1:length(new.sample.meta.score),
   #           .combine = rbind) %do% {
@@ -1487,7 +1506,7 @@ SurvivalAgePlotPerc5 <- function (new.sample.meta.score, indexRow) {
   #             )
   #           }
   # message(df.lines.ver4)
-  
+
   df.lines.hor5 <-
     foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
@@ -1498,7 +1517,7 @@ SurvivalAgePlotPerc5 <- function (new.sample.meta.score, indexRow) {
                   xend = new.sample.meta.score[i],
                   y = 0.8,
                   yend = 0.8
-                )  
+                )
               }else{
                 surv5[which(pred5 < new.sample.meta.score[i])] -> temp.surv
                 data.frame(
@@ -1509,10 +1528,10 @@ SurvivalAgePlotPerc5 <- function (new.sample.meta.score, indexRow) {
                 )
               }
             }
-  
+
   df.lines.hor5$labels <- names(new.sample.meta.score)
-  
-  
+
+
   df.lines.ver5 <-
     foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
@@ -1522,7 +1541,7 @@ SurvivalAgePlotPerc5 <- function (new.sample.meta.score, indexRow) {
                   xend = new.sample.meta.score[i],
                   y = 0,
                   yend = 0.8
-                )  
+                )
               }else{
                 surv5[which(pred5 < new.sample.meta.score[i])] -> temp.surv
                 data.frame(
@@ -1533,23 +1552,23 @@ SurvivalAgePlotPerc5 <- function (new.sample.meta.score, indexRow) {
                 )
               }
             }
-  
+
   df.lines.hor5$perc <-
     paste0(round(df.lines.hor5$y* 100), "%")
-  
+
   return(df.lines.hor5$perc[indexRow])
 }
-
-
-
+# 
+# 
+# 
 SurvivalAgePlotPerc4 <- function (new.sample.meta.score, indexRow) {
   if (is.null(indexRow)) {
     indexRow = 1
   }
-  
+
   # df3 <- rbind(df3, df3.extrap)
-  
-  
+
+
   age <- df3$age
   age <- ('True' = 'Over Five')
   df3$pred -> pred
@@ -1594,7 +1613,7 @@ SurvivalAgePlotPerc4 <- function (new.sample.meta.score, indexRow) {
     # labs(title = "New plot title", subtitle = "A subtitle") +
     ylim(0, 1) +
     theme(text = element_text(size = 15))
-  
+
   df.lines.hor4 <-
     foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
@@ -1605,7 +1624,7 @@ SurvivalAgePlotPerc4 <- function (new.sample.meta.score, indexRow) {
                   xend = new.sample.meta.score[i],
                   y = 0.8,
                   yend = 0.8
-                )  
+                )
               }else{
                 surv4[which(pred4 < new.sample.meta.score[i])] -> temp.surv
                 data.frame(
@@ -1616,9 +1635,9 @@ SurvivalAgePlotPerc4 <- function (new.sample.meta.score, indexRow) {
                 )
               }
             }
-  
+
   df.lines.hor4$labels <- names(new.sample.meta.score)
-  
+
   df.lines.hor5 <-
     foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
@@ -1629,7 +1648,7 @@ SurvivalAgePlotPerc4 <- function (new.sample.meta.score, indexRow) {
                   xend = new.sample.meta.score[i],
                   y = 0.8,
                   yend = 0.8
-                )  
+                )
               }else{
                 surv5[which(pred5 < new.sample.meta.score[i])] -> temp.surv
                 data.frame(
@@ -1640,10 +1659,10 @@ SurvivalAgePlotPerc4 <- function (new.sample.meta.score, indexRow) {
                 )
               }
             }
-  
+
   df.lines.hor5$labels <- names(new.sample.meta.score)
-  
-  
+
+
   df.lines.ver5 <-
     foreach(i = 1:length(new.sample.meta.score),
             .combine = rbind) %do% {
@@ -1653,7 +1672,7 @@ SurvivalAgePlotPerc4 <- function (new.sample.meta.score, indexRow) {
                   xend = new.sample.meta.score[i],
                   y = 0,
                   yend = 0.8
-                )  
+                )
               }else{
                 surv5[which(pred5 < new.sample.meta.score[i])] -> temp.surv
                 data.frame(
@@ -1664,10 +1683,13 @@ SurvivalAgePlotPerc4 <- function (new.sample.meta.score, indexRow) {
                 )
               }
             }
-  
+
 
   df.lines.hor4$perc <-
     paste0(round(df.lines.hor4$y* 100), "%")
-  
+
   return(df.lines.hor4$perc[indexRow])
 }
+message(mem_used())
+message(rlimit_all())
+message("End of source script")

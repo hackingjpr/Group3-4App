@@ -1,6 +1,15 @@
 ################# Packages ################# 
 print(getwd())
 
+# library(BiocManager)
+# options(repos = BiocManager::repositories())
+
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install(version = "3.12")
+
+options(repos = BiocManager::repositories())
+
 if (!require(bumphunter)) {
   BiocManager::install("bumphunter")
   library(bumphunter)
@@ -165,7 +174,7 @@ createRandString <- function() {
   return(paste0(v, collapse = ""))
 }
 
-load("./Inputs/g3.g4.cont.rfe.Rdata")
+g3.g4.cont.rfe <- load("./Inputs/g3.g4.cont.rfe.Rdata")
 
 ################# Expression ################# 
 
