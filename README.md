@@ -1,4 +1,4 @@
-# WHAT IS THE TITLE, WILL CHANGE IF THIS IS JUST FOR APP OR ALSO FOR DEAN'S STUFF
+# Deriving a continuum score for group 3 and 4 medulloblastoma tumour samples analysed via RNA-sequencing or DNA methylation microarray
 
 
 - [Overview](#overview)
