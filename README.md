@@ -16,7 +16,7 @@
 # Overview
 This script "app.R" encodes a shiny app that, upon uploading idat files, will give a group 3/4 score for patient samples.   
 The repository can be cloned onto your RStudio or the base code can be run independently, this is shown underneath.
-This app is derived from Williamson et. als paper: *Medulloblastoma group 3 and 4 tumors comprise a clinically and biologically significant expression continuum reflecting human cerebellar development*, which can be found [here](https://doi.org/10.1016/j.celrep.2022.111162).
+This app is derived from the paper of Williamson et al.: *Medulloblastoma group 3 and 4 tumors comprise a clinically and biologically significant expression continuum reflecting human cerebellar development*, which can be found [here](https://doi.org/10.1016/j.celrep.2022.111162).
 And is covered in the STAR Protocols paper: *Deriving a continuum score for group 3 and 4 medulloblastoma tumour samples analysed via RNA-sequencing or DNA methylation microarray*
 
 # Installation Instructions
@@ -36,7 +36,7 @@ Upload your idat files (for now unzipped idat files only) including both red and
 Increasing the number of samples will of course increase the length of time for the upcoming processes so we recommend ~10 sample batches. This will make looking through the results easier and will speed up the process.
 
 If uploading Expression data you will be asked to give up to two further inputs:  
-1. Selecting whether to scale your results against Williamson et. al's data frame or against your own uploaded data.
+1. Selecting whether to scale your results against the data frame of Williamson et al. or against your own uploaded data.
 2.  If you selected scaling against your own uploaded data you will be asked if you want to filter out any outliers. This is done via a sliding scale from one to four, for removing samples more than one to four standard deviations from the mean. 
 
 ## Step Two - Generate Group 3-4 Scores
@@ -54,7 +54,7 @@ Once the calculation has been completed you should be brought to the Results tab
 It will also show a number of graphs, an example is below.
 
 ### Group 3/4 Plot
-Places your sample data on a cumulative frequency plot based on data from Williamson et al’s Cell Reports paper. It tells you whether the patient is Group 3 or Group 4 and allows you to see where the patient ranks against this large dataset. 
+Places your sample data on a cumulative frequency plot based on data from the Cell Reports paper of Williamson et al. It tells you whether the patient is Group 3 or Group 4 and allows you to see where the patient ranks against this large dataset. 
 
 ![Results Graph](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_result_graph.png)
 
