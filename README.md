@@ -17,12 +17,12 @@
 This script "app.R" encodes a shiny app that, upon uploading idat files, will give a group 3/4 score for patient samples.   
 The repository can be cloned onto your RStudio or the base code can be run independently, this is shown underneath.
 This app is derived from Williamson et. als paper: *Medulloblastoma group 3 and 4 tumors comprise a clinically and biologically significant expression continuum reflecting human cerebellar development*, which can be found [here](https://doi.org/10.1016/j.celrep.2022.111162).
-And is covered in the STAR Protocols paper *Deriving a continuum score for group 3 and 4 medulloblastoma tumour samples analysed via RNA-sequencing or DNA methylation microarray*
+And is covered in the STAR Protocols paper: *Deriving a continuum score for group 3 and 4 medulloblastoma tumour samples analysed via RNA-sequencing or DNA methylation microarray*
 
 # Installation Instructions
 To install and begin using the app on your own machine you will first need to install RStudio and then clone the repository. Cloning can either be done in the command line or directly in RStudio. The tutorial for how to do so using command line is [here](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository). 
 And for using RStudio directly a tutorial is [here](https://resources.github.com/github-and-rstudio/).
-Once you have cloned the repository you should see the contained files in the box in the bottom right quadrant. From these files double click on "app.R", this will open the script behind the shiny app. RStudio should recognise that this is a shiny app and display a "Run App" button in the top right corner of the upper left quadrant. If there is no button simply click anywhere in the script and press CTRL+A to select all text and then CTRL+Return to run what is selected. The first time you run the script it may take a while as it will install all of the needed packages, it may also ask you if you want to update your other packages, this choice is up to you. If it still doesn't work then check to see if there is any help in the [troubleshooting](#troubleshooting) section of this ReadME. 
+Once you have cloned the repository you should see the contained files in the box in the bottom right quadrant. From these files double click on "app.R", this will open the script behind the shiny app. RStudio should recognise that this is a shiny app and display a "Run App" button in the top right corner of the upper left quadrant. If there is no button simply click anywhere in the script and press CTRL+A to select all text and then CTRL+Return to run what is selected. The first time you run the script it may take a while as it will install all of the needed packages, it may also ask you if you want to update your other packages, this choice is up to you. If it still doesn't work then check to see if there is any help in the [troubleshooting](#troubleshooting) section of this README. 
 
 # Tutorial
 ## Step One - Select Expression or Methylation and Upload Data
@@ -510,20 +510,20 @@ Functions provided here are compatible with any standard computer with enough RA
 Functions provided import and depend on a number of R packages. Functionality has been tested on *R 4.0.4* with *Ubuntu 20.04.2 LTS*
 
 # Troubleshooting
-## App wont install
+## App won't install
 1. Check if you have selected all of the script before running it.
 2. Check to see if RStudio is asking you if you want to update your packages, this will appear in the bottom left quadrant and look like "Update (Y/N)". Click in the quadrant and type Y then press Return. If this doesn't sort it then next time press N and press return, RStudio can be temperamental.
 
-## App wont open after running
+## App won't open after running
 Pop ups may be blocked, try running the app again and see if something appears saying "pop up blocked", click this and tell it to allow pop ups.
 
 ## App closes after uploading files and clicking "Generate Group 3/4 Scores"
 If running Methylation idat files then make sure you have uploaded both red and green files for the sample.
 
-## App wont open after closing itself due to an error
+## App won't open after closing itself due to an error
 If the app closes itself down then you may need to press stop. The button for this is a red hexagon that can be found in the top right corner of the box in the lower left quadrant of the RStudio screen.
 
 
 
 
-# *Disclaimer : This app is designed exclusively for research purposes and strictly not for diagnostic use.*
+# *Disclaimer: This app is designed exclusively for research purposes and strictly not for diagnostic use.*
