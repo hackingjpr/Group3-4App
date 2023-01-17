@@ -54,22 +54,37 @@ Once the calculation has been completed you should be brought to the Results tab
 It will also show a number of graphs, an example is below.
 
 ### Group 3/4 Plot
+<details>
+  <summary>Plot</summary>
+
+
 Places your sample data on a cumulative frequency plot based on data from the Cell Reports paper of Williamson et al. It tells you whether the patient is Group 3 or Group 4 and allows you to see where the patient ranks against this large dataset. 
 
-![Results Graph](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_result_graph.png)
+ ![E1](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/E1.png)
 
-
+</details>
 
 ### Survival Plot: No Risk Factors Considered
+
+<details>
+  <summary>Plot</summary>
+
 Shows patients expected five year survival based on only their group 3/4 score and no other risk factors.
 
-![Survival](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app-survival-plot1.png)
+ ![E2](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/E2.png)
+
+</details>
 
 ### Survival Plot: Age Considered
+
+<details>
+  <summary>Plot</summary>
+
 Shows patients expected five year survival based on their group 3/4 score but also taking into account their age.
 
-![Survival Age](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app-survivalAge.png)
+ ![E3](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/E3.png)
 
+</details>
 
 There will also be a box entitled "Selected Sample Information", this will inform you of the currently selected sample (which will also be highlighted on the graphs), and give some information about the sample and the expected survival.
 
@@ -91,6 +106,10 @@ To do this click the "Reset" button in the bar on the left of the app.
 
 
 # Run script without using Shiny App
+
+ <details>
+  <summary>Script</summary>
+  
 ```
 ### Set working directory to wherever "source_functions.R" is
 setwd("~/Group3-4App")
@@ -296,9 +315,14 @@ survivalcurveplot(
 ## Age Survival Plot selecting the first sample to highlight
 SurvivalAgePlot(logistic.g3g4.tpms.score,
                 1)
+                
 ```
+</details>
 
 # Example script to run
+ <details>
+  <summary>Example Script</summary>
+
 ```
 
 ### Set working directory to wherever "source_functions.R" is
@@ -498,9 +522,63 @@ SurvivalAgePlot(logistic.g3g4.tpms.score,
 
 
 ```
-## Example Script Results
+ </details>
  
+## Example Script Results
+<details>
+  <summary>Methylation</summary>
+
+
+ For methylation the expected results are:  
+ 
+ ```
+> metagene.df
+        Group.3.4.Score
+NMB_109           0.079
+NMB_110           0.178
+NMB_111           0.319
+NMB_118           0.416
+NMB_119           0.158
+NMB_125           0.057
+NMB_130           0.095
+NMB_132           0.291
+NMB_134           0.203
+NMB_136           0.375
+```
   
+ The following graphs will also be created:  
+ ![M1](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/M1.png)
+ ![M2](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/M2.png)
+ ![M3](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/M3.png)
+ 
+ </details>
+ 
+ <details>
+  <summary>Expression</summary>
+  
+```
+> logistic.g3g4.tpms.score.df
+                                 Group.3.4.Score
+GSM3905407_BCH825_BCH825.P02.A01           0.597
+GSM3905407_BCH825_BCH825.P02.A03           0.722
+GSM3905407_BCH825_BCH825.P02.A05           0.806
+GSM3905407_BCH825_BCH825.P02.A07           0.518
+GSM3905407_BCH825_BCH825.P02.A08           0.763
+GSM3905407_BCH825_BCH825.P02.A09           0.761
+GSM3905407_BCH825_BCH825.P02.A10           0.521
+GSM3905407_BCH825_BCH825.P02.A11           0.802
+GSM3905407_BCH825_BCH825.P02.B01           0.744
+GSM3905407_BCH825_BCH825.P02.B02           0.856
+
+```
+
+ The following graphs will also be created:  
+ ![E1](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/E1.png)
+ ![E2](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/E2.png)
+ ![E3](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/E3.png)
+
+   </details>
+ 
 
 # System Requirements
 ## Hardware Requirements
