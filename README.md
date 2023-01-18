@@ -25,6 +25,10 @@ And for using RStudio directly a tutorial is [here](https://resources.github.com
 Once you have cloned the repository you should see the contained files in the box in the bottom right quadrant. From these files double click on "app.R", this will open the script behind the shiny app. RStudio should recognise that this is a shiny app and display a "Run App" button in the top right corner of the upper left quadrant. If there is no button simply click anywhere in the script and press Ctrl+A to select all text and then Ctrl+Return to run what is selected. The first time you run the script it may take a while as it will install all of the needed packages, it may also ask you if you want to update your other packages, this choice is up to you. If it still doesn't work then check to see if there is any help in the [troubleshooting](#troubleshooting) section of this README. 
 
 # Tutorial
+
+<details>
+  <summary>Tutorial</summary>
+
 ## Step One - Select Expression or Methylation and Upload Data
 
 Depending on whether you are uploading Expression or Methylation data select the appropriate option.
@@ -103,6 +107,8 @@ Once you have looked over or downloaded your data you can reset the app to uploa
 To do this click the "Reset" button in the bar on the left of the app.
 
 ![Reset](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_reset.png)
+  
+  </details>
 
 
 # Run script without using Shiny App
