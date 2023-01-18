@@ -26,9 +26,6 @@ Once you have cloned the repository you should see the contained files in the bo
 
 # Tutorial
 
-<details>
-  <summary>Tutorial</summary>
-
 ## Step One - Select Expression or Methylation and Upload Data
 
 Depending on whether you are uploading Expression or Methylation data select the appropriate option.
@@ -107,8 +104,6 @@ Once you have looked over or downloaded your data you can reset the app to uploa
 To do this click the "Reset" button in the bar on the left of the app.
 
 ![Reset](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_reset.png)
-  
-  </details>
 
 
 # Run script without using Shiny App
