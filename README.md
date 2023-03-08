@@ -114,7 +114,7 @@ To do this click the "Reset" button in the bar on the left of the app.
 ```
 ### Set working directory to wherever "source_functions.R" is
 setwd("~/Group3-4App")
-source("./AppSourceFunctions1.3.R")
+source("./AppSourceFunctions1.11.R")
 
 #####################################
 ############ METHYLATION ############
@@ -328,7 +328,7 @@ SurvivalAgePlot(logistic.g3g4.tpms.score,
 
 ### Set working directory to wherever "source_functions.R" is
 setwd("~/Group3-4App")
-source("./AppSourceFunctions1.5.R")
+source("./AppSourceFunctions1.11.R")
 
 #####################################
 ############ METHYLATION ############
