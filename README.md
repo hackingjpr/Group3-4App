@@ -30,7 +30,7 @@ Once you have cloned the repository you should see the contained files in the bo
 
 Depending on whether you are uploading Expression or Methylation data select the appropriate option.
 
-Upload your idat files (for now unzipped idat files only) including both red and green files for Methylation, or RDS/TXT/CSV files for Expression.
+Upload your idat files including both red and green files for Methylation, or RDS/TXT/CSV files for Expression.
 
 ![upload.png](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_upload.png)
 
