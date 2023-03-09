@@ -14,14 +14,14 @@ library(biomaRt)
 library(MASS)
 #
 # Load project.NMF function:
-source(file = "/your/directory/StarProtocols_Guide/data/Project_NMF.R")
+source(file = "/your/directory/Group3-4App-main/StarProtocols_Guide/data/Project_NMF.R")
 #
 #
 # Load nmf.res
-nmf.res <- readRDS(file = "/your/directory/StarProtocols_Guide/data/nmf.res.rds")
+nmf.res <- readRDS(file = "/your/directory/Group3-4App-main/StarProtocols_Guide/data/nmf.res.rds")
 
 # Load match selected tpms.mat
-tpms.mat <- read.delim("/your/directory/StarProtocols_Guide/data/tpms.mat.txt")
+tpms.mat <- read.delim("/your/directory/Group3-4App-main/StarProtocols_Guide/data/tpms.mat.txt")
 
 # Project NMF model onto tpms.mat
 tpms.H <- project.NMF(input.array = as.matrix(tpms.mat),
