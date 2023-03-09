@@ -1,5 +1,9 @@
 ### Continuum score generation - Methylation Array - Easy Reproducible Example ###
 #
+# Install required packages and their dependencies:
+install.packages("mlbench", dependencies = TRUE)
+install.packages("caret", dependencies = TRUE)
+install.packages("randomForest", dependencies = TRUE)
 #
 # Load required packages (For installation, please see main text)
 library(mlbench)
@@ -27,3 +31,7 @@ colnames(Pred.cont.rand.for) <- "Continuum Score"
 #
 # Preview of output
 head(Pred.cont.rand.for)
+#
+# Export as .csv 
+write.csv(Pred.cont.rand.for, file = "/your/directory/my_continuum_scores_Methylation.csv",
+          row.names = TRUE)
