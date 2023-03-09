@@ -32,7 +32,7 @@ Depending on whether you are uploading Expression or Methylation data select the
 
 Upload your idat files including both red and green files for Methylation, or RDS/TXT/CSV files for Expression.
 
-![upload.png](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_upload.png)
+![upload.png](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/app_upload.png)
 
 Increasing the number of samples will of course increase the length of time for the upcoming processes so we recommend ~10 sample batches. This will make looking through the results easier and will speed up the process.
 
@@ -44,13 +44,13 @@ If uploading Expression data you will be asked to give up to two further inputs:
 
 Click the "Generate Group 3/4 Score" button. This will start the process of generating Group 3/4 Continuum Scores and a loading bar should begin filling underneath the "Reset" button.
 
-![Generate Scores](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_generate.png)
+![Generate Scores](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/app_generate.png)
 
 ## Step Three - Results
 
 Once the calculation has been completed you should be brought to the Results tab. This tab will show a data table at the top which displays your sample names on the left and their Group 3/4 Scores on the right.
 
-![Results Table](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_score_table.png)
+![Results Table](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/app_score_table.png)
 
 It will also show a number of graphs, an example is below.
 
@@ -61,7 +61,7 @@ It will also show a number of graphs, an example is below.
 
 Places your sample data on a cumulative frequency plot based on data from the Cell Reports paper of Williamson et al. It tells you whether the patient is Group 3 or Group 4 and allows you to see where the patient ranks against this large dataset. 
 
- ![E1](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/E1.png)
+ ![E1](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/E1.png)
 
 </details>
 
@@ -72,7 +72,7 @@ Places your sample data on a cumulative frequency plot based on data from the Ce
 
 Shows patients expected five year survival based on only their group 3/4 score and no other risk factors.
 
- ![E2](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/E2.png)
+ ![E2](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/E2.png)
 
 </details>
 
@@ -83,19 +83,19 @@ Shows patients expected five year survival based on only their group 3/4 score a
 
 Shows patients expected five year survival based on their group 3/4 score but also taking into account their age.
 
- ![E3](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/E3.png)
+ ![E3](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/E3.png)
 
 </details>
 
 There will also be a box entitled "Selected Sample Information", this will inform you of the currently selected sample (which will also be highlighted on the graphs), and give some information about the sample and the expected survival.
 
-![Selections](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_sample_selected.png)
+![Selections](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/app_sample_selected.png)
 
 ## Step Four - Export Data
 
 Once you have your results you can download your data as a CSV file (data table results), or as a PDF (data table and graphs).
 
-![Download](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app-download.png)
+![Download](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/app-download.png)
 
 ## Step Five - Reset
 
@@ -103,7 +103,7 @@ Once you have looked over or downloaded your data you can reset the app to uploa
 
 To do this click the "Reset" button in the bar on the left of the app.
 
-![Reset](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/app_reset.png)
+![Reset](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/app_reset.png)
 
 
 # Run script without using Shiny App
@@ -548,9 +548,9 @@ NMB_136           0.375
 ```
   
  The following graphs will also be created:  
- ![M1](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/M1.png)
- ![M2](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/M2.png)
- ![M3](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/M3.png)
+ ![M1](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/M1.png)
+ ![M2](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/M2.png)
+ ![M3](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/M3.png)
  
  </details>
  
@@ -574,9 +574,9 @@ GSM3905407_BCH825_BCH825.P02.B02           0.856
 ```
 
  The following graphs will also be created:  
- ![E1](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/E1.png)
- ![E2](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/E2.png)
- ![E3](https://github.com/hackingjpr/Group3-4App/blob/main/Tutorial/E3.png)
+ ![E1](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/E1.png)
+ ![E2](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/E2.png)
+ ![E3](https://github.com/hackingjpr/Group3-4App/blob/main/ExtraFiles/Tutorial/E3.png)
 
    </details>
  
