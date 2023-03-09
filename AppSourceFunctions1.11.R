@@ -62,9 +62,7 @@ if (!require(NMF)) {
 }
 
 if (!require(randomForest)) {
-  packageurl <-
-    "https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz"
-  install.packages(packageurl, repos = NULL, type = "source")
+  install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz", repos = NULL, type = "source")
   library(randomForest)
 }
 if (!require(biomaRt)) {
@@ -85,8 +83,11 @@ if (!require(tools)) {
   install.packages('tools')
   library(tools)
 }
-library(markdown)
 
+if (!require(markdown)) {
+  install.packages('markdown')
+  library(markdown)
+}
 ################# Methylation ################# 
 
 

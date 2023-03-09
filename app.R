@@ -136,7 +136,7 @@ ui <- shiny::fluidPage(
         tabPanel(style = "padding-left:15px",
                  "Info",
                  (fluidRow(
-                   includeMarkdown("./introduction.md")
+                   includeMarkdown("./ExtraFiles/introduction.md")
                  )),
                  fluidRow(
                    HTML(
@@ -149,7 +149,7 @@ ui <- shiny::fluidPage(
                  )),
         #Tutorial Tab
         tabPanel("Tutorial",
-                 includeMarkdown("./Tutorial/tutorial.md")),
+                 includeMarkdown("./ExtraFiles/Tutorial/tutorial.md")),
         tabPanel("Paper",
                  htmlOutput("frame")),
         #Results Tab
@@ -214,7 +214,7 @@ ui <- shiny::fluidPage(
               status = "success",
               solidHeader = TRUE,
               collapsible = TRUE,
-              includeMarkdown("./ResultsSummary.md")
+              includeMarkdown("./ExtraFiles/ResultsSummary.md")
             )
           ))
         ),
@@ -295,7 +295,7 @@ ui <- shiny::fluidPage(
               status = "warning",
               solidHeader = TRUE,
               collapsible = TRUE,
-              includeMarkdown("./ResultsSummary.md")
+              includeMarkdown("./ExtraFiles/ResultsSummary.md")
             )
           ))
         ),
