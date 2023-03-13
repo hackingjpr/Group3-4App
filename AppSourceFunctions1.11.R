@@ -172,23 +172,23 @@ createRandString <- function() {
   return(paste0(v, collapse = ""))
 }
 
-load("./AppExtraFiles/AppExtraFiles/Inputs/g3.g4.cont.rfe.Rdata")
+load("./AppExtraFiles/Inputs/g3.g4.cont.rfe.Rdata")
 
 ################# Expression ################# 
 
 
 # load in original metagene H values
-avg.h.val <- readRDS("./AppExtraFiles/AppExtraFiles/Inputs/avg.h.val.input.rds")
+avg.h.val <- readRDS("./AppExtraFiles/Inputs/avg.h.val.input.rds")
 
 # load in original g3g4 metagene values
-g3g4 <- readRDS("./AppExtraFiles/AppExtraFiles/Inputs/g3g4.input.rds")
+g3g4 <- readRDS("./AppExtraFiles/Inputs/g3g4.input.rds")
 
 #load in filtered expression values from NMB MB samples used to generate H Values
 #nmb.mat <- readRDS("./nmb.mat.input.rds")
 
 
-nmb.mat.prepped <- readRDS(file = "./AppExtraFiles/AppExtraFiles/Inputs/nmb.mat.prepped.rds")
-nmf.res <- readRDS("./AppExtraFiles/AppExtraFiles/Inputs/nmf.res.rds")
+nmb.mat.prepped <- readRDS(file = "./AppExtraFiles/Inputs/nmb.mat.prepped.rds")
+nmf.res <- readRDS("./AppExtraFiles/Inputs/nmf.res.rds")
 
 #tpms.mat <- readRDS(file = "./tpms.mat.rds")
 
