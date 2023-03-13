@@ -11,7 +11,7 @@ ui <- shiny::fluidPage(
     dashboardSidebar(
       #logo
       # (img(src='Free_Sample_By_Wix (5).jpg', align = "center")),
-      (img(src = 'Free_Sample_By_Wix%20(12).jpg', align = "center")),
+      (img(src = 'AppLogo.jpg', align = "center")),
       h2("Step 1"),
       radioButtons(
         "expmeth",
