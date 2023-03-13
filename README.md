@@ -28,6 +28,9 @@ Once you have cloned the repository you should see the contained files in the bo
 
 ## Step One - Select Expression or Methylation and Upload Data
 
+<details>
+  <summary>Select Expression or Methylation and Upload Data</summary>
+
 Depending on whether you are uploading Expression or Methylation data select the appropriate option.
 
 Upload your idat files including both red and green files for Methylation, or RDS/TXT/CSV files for Expression.
@@ -40,14 +43,19 @@ If uploading Expression data you will be asked to give up to two further inputs:
 1. Selecting whether to scale your results against the data frame of Williamson et al. or against your own uploaded data.
 2.  If you selected scaling against your own uploaded data you will be asked if you want to filter out any outliers. This is done via a sliding scale from one to four, for removing samples more than one to four standard deviations from the mean. 
 
-## Step Two - Generate Group 3-4 Scores
+</details>
 
+## Step Two - Generate Group 3-4 Scores
+<details>
+  <summary>Generate Group 3-4 Scores</summary>
 Click the "Generate Group 3/4 Score" button. This will start the process of generating Group 3/4 Continuum Scores and a loading bar should begin filling underneath the "Reset" button.
 
 ![Generate Scores](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/app_generate.png)
+</details>
 
 ## Step Three - Results
-
+<details>
+  <summary>Results</summary>
 Once the calculation has been completed you should be brought to the Results tab. This tab will show a data table at the top which displays your sample names on the left and their Group 3/4 Scores on the right.
 
 ![Results Table](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/app_score_table.png)
@@ -91,19 +99,31 @@ There will also be a box entitled "Selected Sample Information", this will infor
 
 ![Selections](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/app_sample_selected.png)
 
+</details>
+
 ## Step Four - Export Data
+
+<details>
+  <summary>Export Data</summary>
 
 Once you have your results you can download your data as a CSV file (data table results), or as a PDF (data table and graphs).
 
 ![Download](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/app-download.png)
 
+</details>
+
 ## Step Five - Reset
+
+<details>
+  <summary>Reset</summary>
 
 Once you have looked over or downloaded your data you can reset the app to upload other samples. 
 
 To do this click the "Reset" button in the bar on the left of the app.
 
 ![Reset](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/app_reset.png)
+
+</details>
 
 
 # Run script without using Shiny App
