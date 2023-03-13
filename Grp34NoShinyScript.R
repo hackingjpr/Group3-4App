@@ -9,7 +9,7 @@ source("./AppSourceFunctions1.11.R")
 
 
 ### load in the prediction object
-load(file = "./Inputs/g3.g4.cont.rfe.Rdata")
+load(file = "./AppExtraFiles/Inputs/g3.g4.cont.rfe.Rdata")
 
 ### Choose folder containing idats to be processed (make sure you set this to yours)
 idats <- "~/your/idat/file/location"
@@ -70,7 +70,7 @@ SurvivalAgePlot(figure.input,
 ####################################
 
 ## Load in your samples (currently is an example file available from the GitHub repository, if you cloned the GitHub you will already have this)
-in.files <- "./Inputs/subsetTpms.mat10.rds"
+in.files <- "./AppExtraFiles/Inputs/subsetTpms.mat10.rds"
 
 input.file <- in.files
 if (file_ext(input.file) == "rds") {

@@ -172,23 +172,23 @@ createRandString <- function() {
   return(paste0(v, collapse = ""))
 }
 
-load("./Inputs/g3.g4.cont.rfe.Rdata")
+load("./AppExtraFiles/AppExtraFiles/Inputs/g3.g4.cont.rfe.Rdata")
 
 ################# Expression ################# 
 
 
 # load in original metagene H values
-avg.h.val <- readRDS("./Inputs/avg.h.val.input.rds")
+avg.h.val <- readRDS("./AppExtraFiles/AppExtraFiles/Inputs/avg.h.val.input.rds")
 
 # load in original g3g4 metagene values
-g3g4 <- readRDS("./Inputs/g3g4.input.rds")
+g3g4 <- readRDS("./AppExtraFiles/AppExtraFiles/Inputs/g3g4.input.rds")
 
 #load in filtered expression values from NMB MB samples used to generate H Values
 #nmb.mat <- readRDS("./nmb.mat.input.rds")
 
 
-nmb.mat.prepped <- readRDS(file = "./Inputs/nmb.mat.prepped.rds")
-nmf.res <- readRDS("./Inputs/nmf.res.rds")
+nmb.mat.prepped <- readRDS(file = "./AppExtraFiles/AppExtraFiles/Inputs/nmb.mat.prepped.rds")
+nmf.res <- readRDS("./AppExtraFiles/AppExtraFiles/Inputs/nmf.res.rds")
 
 #tpms.mat <- readRDS(file = "./tpms.mat.rds")
 
@@ -446,7 +446,7 @@ generate_figure_highlight_g3g4 <-
     if (is.null(indexRow)) {
       indexRow = 1
     }
-    y <- readRDS(file = "./Inputs/y.vals.rds")
+    y <- readRDS(file = "./AppExtraFiles/Inputs/y.vals.rds")
     df <- as.data.frame(y)
     ecdf(y) -> model
     model(y) -> y2
@@ -592,7 +592,7 @@ generate_figure_highlight_g3g4Expression <-
     if (is.null(indexRow)) {
       indexRow = 1
     }
-    y <- readRDS(file = "./Inputs/y.vals.rds")
+    y <- readRDS(file = "./AppExtraFiles/Inputs/y.vals.rds")
     df <- as.data.frame(y)
     ecdf(y) -> model
     model(y) -> y2
@@ -735,7 +735,7 @@ generate_figure_highlight_g3g4PERC <-
     if (is.null(indexRow)) {
       indexRow = 1
     }
-    y <- readRDS(file = "./Inputs/y.vals.rds")
+    y <- readRDS(file = "./AppExtraFiles/Inputs/y.vals.rds")
     df <- as.data.frame(y)
     ecdf(y) -> model
     model(y) -> y2
@@ -801,10 +801,10 @@ generate_figure_highlight_g3g4PERC <-
 
 ################# FOR AGE BASED SURVIVAL PLOT #################
 #
-time.comb <- readRDS(file = "./Inputs/time.comb.rds")
-age.comb <- readRDS(file = "./Inputs/age.comb.rds")
-status.comb <- readRDS(file = "./Inputs/status.comb.rds")
-comb.cont <- readRDS(file = "./Inputs/comb.cont.rds")
+time.comb <- readRDS(file = "./AppExtraFiles/Inputs/time.comb.rds")
+age.comb <- readRDS(file = "./AppExtraFiles/Inputs/age.comb.rds")
+status.comb <- readRDS(file = "./AppExtraFiles/Inputs/status.comb.rds")
+comb.cont <- readRDS(file = "./AppExtraFiles/Inputs/comb.cont.rds")
 
 
 # new.sample.meta.score <- c(0.5,0.3)

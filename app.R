@@ -10,7 +10,6 @@ ui <- shiny::fluidPage(
     dashboardHeader(title = "", dropdownMenuOutput("messageMenu")),
     dashboardSidebar(
       #logo
-      # (img(src='Free_Sample_By_Wix (5).jpg', align = "center")),
       (img(src = 'AppLogo.jpg', align = "center")),
       h2("Step 1"),
       radioButtons(
@@ -136,7 +135,7 @@ ui <- shiny::fluidPage(
         tabPanel(style = "padding-left:15px",
                  "Info",
                  (fluidRow(
-                   includeMarkdown("./ExtraFiles/introduction.md")
+                   includeMarkdown("./AppExtraFiles/introduction.md")
                  )),
                  fluidRow(
                    HTML(
@@ -149,7 +148,7 @@ ui <- shiny::fluidPage(
                  )),
         #Tutorial Tab
         tabPanel("Tutorial",
-                 includeMarkdown("./ExtraFiles/Tutorial/tutorial.md")),
+                 includeMarkdown("./AppExtraFiles/Tutorial/tutorial.md")),
         tabPanel("Paper",
                  htmlOutput("frame")),
         #Results Tab
@@ -214,7 +213,7 @@ ui <- shiny::fluidPage(
               status = "success",
               solidHeader = TRUE,
               collapsible = TRUE,
-              includeMarkdown("./ExtraFiles/ResultsSummary.md")
+              includeMarkdown("./AppExtraFiles/ResultsSummary.md")
             )
           ))
         ),
@@ -295,7 +294,7 @@ ui <- shiny::fluidPage(
               status = "warning",
               solidHeader = TRUE,
               collapsible = TRUE,
-              includeMarkdown("./ExtraFiles/ResultsSummary.md")
+              includeMarkdown("./AppExtraFiles/ResultsSummary.md")
             )
           ))
         ),
