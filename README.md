@@ -17,7 +17,7 @@
 This script "app.R" encodes a shiny app that, upon uploading idat files, will give a group 3/4 score for patient samples.   
 The repository can be cloned onto your RStudio or the base code can be run independently, this is shown underneath.
 This app is derived from the paper of Williamson et al.: *Medulloblastoma group 3 and 4 tumors comprise a clinically and biologically significant expression continuum reflecting human cerebellar development*, which can be found [here](https://doi.org/10.1016/j.celrep.2022.111162).
-And is covered in the STAR Protocols paper: *Deriving a continuum score for group 3 and 4 medulloblastoma tumour samples analysed via RNA-sequencing or DNA methylation microarray*
+And is covered in the STAR Protocols paper: *Deriving a continuum score for group 3 and 4 medulloblastoma tumour samples analysed via RNA-sequencing or DNA methylation microarray*. For those not wanting to run their samples on the app the script: [Grp34NoShinyScript.R](https://github.com/hackingjpr/Group3-4App/blob/main/Grp34NoShinyScript.R) can be used, this will provide graphs and outputs but is less interactive. 
 
 # Installation Instructions
 To install and begin using the app on your own machine you will first need to install RStudio and then clone the repository. Cloning can either be done in the command line or directly in RStudio. The tutorial for how to do so using command line is [here](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository). 
