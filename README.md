@@ -577,6 +577,8 @@ NMB_136           0.375
  <details>
   <summary>Expression</summary>
   
+  For expression the expected results are:
+  
 ```
 > logistic.g3g4.tpms.score.df
                                  Group.3.4.Score
