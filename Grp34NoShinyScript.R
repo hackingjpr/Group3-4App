@@ -1,6 +1,6 @@
 ### Set working directory to wherever "source_functions.R" is
 setwd("~/Group3-4App")
-source("./AppSourceFunctions1.7.R")
+source("./AppSourceFunctions1.11.R")
 
 #####################################
 ############ METHYLATION ############
@@ -13,6 +13,7 @@ load(file = "./Inputs/g3.g4.cont.rfe.Rdata")
 
 ### Choose folder containing idats to be processed (make sure you set this to yours)
 idats <- "~/your/idat/file/location"
+
 
 ### Get Basenames
 temp.base <- get_basenames(idats)
