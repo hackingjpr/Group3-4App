@@ -126,7 +126,7 @@ source("./AppSourceFunctions1.11.R")
 load(file = "./Inputs/g3.g4.cont.rfe.Rdata")
 
 ### Choose folder containing idats to be processed
-idats <- "~/Idats/Mix"
+idats <- "~/your/idat/folder"
 
 ### Get Basenames
 temp.base <- get_basenames(idats)
@@ -178,7 +178,7 @@ SurvivalAgePlot(figure.input,
 ####################################
 
 ## Load in your samples
-in.files <- "./Inputs/subsetTpms.mat10.rds"
+in.files <- "./AppExtraFiles/Inputs/subsetTpms.mat10.rds"
 
 input.file <- in.files
 if (file_ext(input.file) == "rds") {
@@ -382,7 +382,7 @@ SurvivalAgePlot(figure.input,
 ####################################
 
 ## Load in your samples (currently is an example file available from the GitHub repository, if you cloned the GitHub you will already have this)
-in.files <- "./Inputs/subsetTpms.mat10.rds"
+in.files <- "./AppExtraFiles/Inputs/subsetTpms.mat10.rds"
 
 input.file <- in.files
 if (file_ext(input.file) == "rds") {
