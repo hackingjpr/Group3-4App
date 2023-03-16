@@ -627,4 +627,4 @@ If the app closes itself down then you may need to press stop. The button for th
 
 
 
-# *Disclaimer: This app is designed exclusively for research purposes and strictly not for diagnostic use.*
+# *Disclaimer: This app is designed exclusively for research purposes and strictly not for diagnostic or clinical use.*
