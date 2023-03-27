@@ -1,6 +1,6 @@
 ### Set working directory to wherever "source_functions.R" is
 setwd("~/Group3-4App")
-source("./AppSourceFunctions1.11.R")
+source("./AppSourceFunctions1.12.R")
 
 #####################################
 ############ METHYLATION ############
@@ -103,18 +103,18 @@ tpms.H <- project.NMF(input.array = tpms.matrix,
                       nmf.result = nmf.res)
 
 ### define new g3g4 score for projection back onto the original data
-t(rnaseq.H[c(3, 1), ]) -> g3g4.rnaseq
+# t(rnaseq.H[c(3, 1), ]) -> g3g4.rnaseq
 
-apply(g3g4.rnaseq, 2, function(x) {
-  (1 / (1 + exp(-x)))
-}) -> logistic.g3g4.rnaseq
-
-apply(logistic.g3g4.rnaseq, 1, function(x) {
-  x[2] / (x[1] + x[2])
-}) -> logistic.g3g4.rnaseq.score
+# apply(g3g4.rnaseq, 2, function(x) {
+#   (1 / (1 + exp(-x)))
+# }) -> logistic.g3g4.rnaseq
+# 
+# apply(logistic.g3g4.rnaseq, 1, function(x) {
+#   x[2] / (x[1] + x[2])
+# }) -> logistic.g3g4.rnaseq.score
 
 ## Scale to Williamson et al. dataset
-scaling.function3(logistic.g3g4.rnaseq.score) -> logistic.g3g4.rnaseq.score
+# scaling.function3(logistic.g3g4.rnaseq.score) -> logistic.g3g4.rnaseq.score
 ScalingChoice <- "ours"
 
 ## Scale to uploaded dataset 
@@ -122,7 +122,7 @@ ScalingChoice <- "ours"
 #ScalingChoice <- "yours"
 
 ## Outlier removal
-outlier <- 1
+outlier <- 0
 
 
 t(tpms.H[c(3,1),]) -> g3g4.tpms

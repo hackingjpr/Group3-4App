@@ -120,7 +120,7 @@ ui <- shiny::fluidPage(
             a("Email: james.hacking@ncl.ac.uk", href = "mailto:james.hacking@ncl.ac.uk")
           ),
           h4(
-            "Disclaimer : This app is designed exclusively for research purposes and is strictly not for diagnostic use."
+            "Disclaimer : This app is designed exclusively for research purposes and is strictly not for diagnostic or clinical use."
           ),
           h5("Supported by funding from LoveOliver, Children with Cancer UK and CRUK.")
           # shinythemes::themeSelector,()
@@ -445,6 +445,8 @@ server <- function(session, input, output) {
         else
           scaling.function(logistic.g3g4.rnaseq.score) -> logistic.g3g4.rnaseq.score
         message("12")
+        
+        message(logistic.g3g4.rnaseq.score)
         
         ## join and plot the two together (original g3g4 score and g3g4 score projected back onto the same data) kind of a control that it is working
         ## NEED TIDYFT
