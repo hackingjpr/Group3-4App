@@ -24,4 +24,4 @@ Functions provided here are compatible with any standard computer with enough RA
 
 ### Software Requirements
 
-Functions provided import and depend on a number of R packages. Functionality has been tested on *R 4.0.4* with *Ubuntu 20.04.2 LTS*
+Functions provided import and depend on a number of R packages. Functionality has been tested on *R 4.2.2* with *Ubuntu 20.04.2 LTS*
