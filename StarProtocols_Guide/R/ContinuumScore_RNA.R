@@ -14,7 +14,7 @@ library(biomaRt)
 library(MASS)
 #
 # Load project.NMF function:
-source(file = "/your/directory/Group3-4App-main/StarProtocols_Guide/data/Project_NMF.R")
+source(file = "/your/directory/Group3-4App-main/StarProtocols_Guide/R/Project_NMF.R")
 #
 #
 # Load nmf.res
