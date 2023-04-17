@@ -1,6 +1,7 @@
 ### Set working directory to wherever "source_functions.R" is
-setwd("~/Group3-4App")
-source("./AppSourceFunctions1.12.R")
+setwd("~/Group3-4App/Group3-4App/")
+source("./AppSourceFunctions1.13.R")
+
 
 #####################################
 ############ METHYLATION ############
@@ -13,6 +14,8 @@ load(file = "./AppExtraFiles/Inputs/g3.g4.cont.rfe.Rdata")
 
 ### Choose folder containing idats to be processed (make sure you set this to yours)
 idats <- "~/your/idat/file/location"
+idats <- "./AppExtraFiles/Inputs/Idats/"
+
 
 
 ### Get Basenames
@@ -32,6 +35,7 @@ if(ncol(M.values)==1){
 }else{
   t(M.values)[,predictors(g3.g4.cont.rfe)] -> input.df
 }
+
 
 ### Round results to 3 figures
 metagene <- round(predict(g3.g4.cont.rfe, input.df), digits = 3)
