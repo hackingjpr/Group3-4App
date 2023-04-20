@@ -327,24 +327,24 @@ SurvivalAgePlot(logistic.g3g4.tpms.continuum.score[samples.to.display,1],
  For methylation the expected results are:  
  
  ```
-> metagene.df
-        Group.3.4.Score
-NMB_109           0.079
-NMB_110           0.178
-NMB_111           0.319
-NMB_118           0.416
-NMB_119           0.158
-NMB_125           0.057
-NMB_130           0.095
-NMB_132           0.291
-NMB_134           0.203
-NMB_136           0.375
+        predict(g3.g4.cont.rfe, t(mvals.mat))
+NMB_109                            0.07934780
+NMB_110                            0.17779087
+NMB_111                            0.31949452
+NMB_118                            0.41626223
+NMB_119                            0.15780596
+NMB_125                            0.05701327
+NMB_130                            0.09525883
+NMB_132                            0.29072448
+NMB_134                            0.20310554
+NMB_136                            0.37450195
+
 ```
   
  The following graphs will also be created:  
- ![M1](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/M1.png)
- ![M2](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/M2.png)
- ![M3](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/M3.png)
+ ![Methylation1](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/Methylation1.png)
+ ![Methylation2](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/Methylation2.png)
+ ![Methylation3](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/Methylation3.png)
  
  </details>
  
@@ -354,25 +354,25 @@ NMB_136           0.375
   For expression the expected results are:
   
 ```
-> logistic.g3g4.tpms.score.df
-                                 Group.3.4.Score
-GSM3905407_BCH825_BCH825.P02.A01           0.597
-GSM3905407_BCH825_BCH825.P02.A03           0.722
-GSM3905407_BCH825_BCH825.P02.A05           0.806
-GSM3905407_BCH825_BCH825.P02.A07           0.518
-GSM3905407_BCH825_BCH825.P02.A08           0.763
-GSM3905407_BCH825_BCH825.P02.A09           0.761
-GSM3905407_BCH825_BCH825.P02.A10           0.521
-GSM3905407_BCH825_BCH825.P02.A11           0.802
-GSM3905407_BCH825_BCH825.P02.B01           0.744
-GSM3905407_BCH825_BCH825.P02.B02           0.856
+> logistic.g3g4.tpms.continuum.score
+          Continuum Score
+Sample1         0.5991949
+Sample2         0.7221333
+Sample3         0.8062744
+Sample4         0.5188520
+Sample5         0.7622158
+Sample6         0.7608163
+Sample7         0.5246359
+Sample8         0.8032780
+Sample9         0.7450637
+Sample10        0.8553960...
 
 ```
 
  The following graphs will also be created:  
- ![E1](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/E1.png)
- ![E2](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/E2.png)
- ![E3](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/E3.png)
+ ![Expression1](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/Expression1.png)
+ ![Expression2](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/Expression2.png)
+ ![Expression3](https://github.com/hackingjpr/Group3-4App/blob/main/AppExtraFiles/Tutorial/Expression3.png)
 
    </details>
  
