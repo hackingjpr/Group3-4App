@@ -8,8 +8,7 @@
   - [Step Three - Results](#step-three---results)
   - [Step Four - Export Data](#step-four---export-data)
   - [Step Five - Reset](#step-five---reset)
-- [Run script without using Shiny App](#run-script-without-using-shiny-app)
-- [Example script to run](#example-script-to-run)
+- [Run script without using Shiny App (with example data)](#run-script-without-using-shiny-app-with-example-data)
 - [System Requirements](#system-requirements)
 - [Troubleshooting](#troubleshooting)
 
@@ -126,423 +125,195 @@ To do this click the "Reset" button in the bar on the left of the app.
 </details>
 
 
-# Run script without using Shiny App
+# Run script without using Shiny App (with example data)
 
  <details>
   <summary>Script</summary>
   
 ```
-### Set working directory to wherever "source_functions.R" is
-setwd("~/Group3-4App")
-source("./AppSourceFunctions1.11.R")
-
 #####################################
 ############ METHYLATION ############
 #####################################
 
+# Install/Load required packages and their dependencies 
 
+install.packages('mlbench', dependencies = TRUE) 
+install.packages('caret', dependencies = TRUE) 
+install.packages('randomForest', dependencies = TRUE) 
 
-### load in the prediction object
-load(file = "./AppExtraFiles/Inputs/g3.g4.cont.rfe.Rdata")
+# For specific package versions, see Key Resource Table section. 
 
-### Choose folder containing idats to be processed
-idats <- "~/your/idat/folder"
+library(mlbench) 
+library(caret) 
+library(randomForest) 
+# This loads each package into your working environment 
 
-### Get Basenames
-temp.base <- get_basenames(idats)
+# CRITICAL: You MUST update ‘/your/directory/’ to the location which you cloned the GitHub repository in step 1 of Continuum score assignment (RNA-Sequencing). 
 
-### Process Idats
-temp.processed <- process_idats(temp.base)
+# Load in the prediction object 
 
-# Obtain MValues
-beta2m(temp.processed$betas) -> M.values
+load(file = "/your/directory/Group3-4App/StarProtocols_Guide/data/g3.g4.cont.rfe.Rdata") 
+# This loads in the precalculated random forest model 
 
-if(ncol(M.values)==1){
-  ### for single sample
-  t(data.frame(t(M.values)[,predictors(g3.g4.cont.rfe)])) -> input.df
-  colnames(M.values) -> rownames(input.df)
-}else{
-  t(M.values)[,predictors(g3.g4.cont.rfe)] -> input.df
-}
+# Load in example methylation dataset. 
 
-### Round results to 3 figures
-metagene <- round(predict(g3.g4.cont.rfe, input.df), digits = 3)
-metagene.df <- data.frame('Group.3.4.Score' = metagene)
+mvals.mat <- read.delim("/your/directory/Group3-4App/StarProtocols_Guide/data/mvals.mat.txt") 
 
-### Select Risk values column
-# figure.input <- test.res$Risk_Value
-figure.input <- metagene.df$Group.3.4.Score
-names(figure.input) <- rownames(metagene.df)
-print(figure.input)
+# CRITICAL: The random forest model in this protocol requires that test data be provided as a matrix of M-values (logit-transformed beta values),
+# where columns correspond to sample ID and rows correspond to probes. If your data is a matrix of beta values (object below named as “your.betas”), 
+# you can easily convert these to M-values using the following: 
 
+#mvals.mat <- log2(your.betas/(1-your.betas)) 
+# logit-transformation 
 
-### Name the rows
-names(figure.input) <- rownames(metagene.df)
-print(figure.input)
+# Subset M-Value matrix to probes used as predictors in model 
+
+mvals.mat <- as.matrix(mvals.mat[predictors(g3.g4.cont.rfe),]) 
+# Removes probes that are not used for prediction 
+
+# Apply test set to model and get predicted continuum scores using predict() 
+
+pred.cont.rand.for <- as.data.frame(predict(g3.g4.cont.rfe, t(mvals.mat))) 
+
+write.csv(pred.cont.rand.for, file = '/your/directory/my_continuum_scores_Methylation.csv', row.names = TRUE) 
+# Export as .csv 
+
+# Expected outcome: A data.frame object where rows correspond to sample ID and column corresponds to each sample's respective continuum score value.  
+  
+source("./AppSourceFunctions1.13.R")
+
+# Example graphs displaying the first 10 samples, graphs can get cluttered if too many samples are displayed
+# currently displays samples 1-10 and highlights sample 1.
+samples.to.display <- c(1:10) #change this to display different samples, currently 1-10.
 
 ### Generate Group3/4 score graph selecting the first sample to highlight
-generate_figure_highlight_g3g4(figure.input,
-                              1)
+generate_figure_highlight_g3g4Expression(pred.cont.rand.for[samples.to.display,1]
+                                         , 1)
+
 ### Generate Survival Plot selecting the first sample to highlight
-survivalcurveplot(
-  figure.input
-  ,1)
+survivalcurveplot(pred.cont.rand.for[samples.to.display,1]
+                  ,1)
 
-### Generate Age Survival plot selecting the first sample to highlight
-SurvivalAgePlot(figure.input,
-                1)
-
-
+### Generate Survival Plot selecting the first sample to highlight
+SurvivalAgePlot(pred.cont.rand.for[samples.to.display,1],
+                1)  
+ 
 ####################################
 ############ EXPRESSION ############
 ####################################
 
-## Load in your samples
-in.files <- "./AppExtraFiles/Inputs/subsetTpms.mat10.rds"
+# Install/load required R packages and their dependencies.  
 
-input.file <- in.files
-if (file_ext(input.file) == "rds") {
-  in.files <- readRDS(file = input.file)
-} else if (file_ext(input.file) == "csv") {
-  in.files <- read.csv(file = input.file, row.names = 1)
-} else if (file_ext(input.file) == "txt") {
-  in.files <- read.delim(file = input.file)
-} else {
-  message("file not right format!")
-}
+install.packages("NMF", dependencies = TRUE) 
+install.packages("MASS", dependencies = TRUE) 
+BiocManager::install("biomaRt") 
 
-nmb.mat <- nmb.mat.prepped
+# For specific package versions, see Key Resource Table section. When confronted with yes/no questions, answer yes to install dependency packages. 
 
-# ## interset common genes / probes
-tpms.mat <- match.select(nmb.mat, in.files)
+library(NMF) 
+library(MASS) 
+# This loads the packages required into your working environment. 
 
-## project using pseudo-inverse & post-projection normalise
-# project back onto the same dataset
-rnaseq.H <- project.NMF(input.array = nmb.mat,
-                        nmf.result = nmf.res)
+# Load required data objects. 
 
-tpms.matrix <- as.matrix(tpms.mat)
-if (ncol(tpms.matrix) == 1) {
-  colnames(in.files) -> colnames(tpms.matrix)
-}
+# CRITICAL: You MUST update ‘/your/directory/’ to the location which you cloned the GitHub repository in step 1. 
 
-# project onto fresh dataset
-tpms.H <- project.NMF(input.array = tpms.matrix,
-                      nmf.result = nmf.res)
+nmf.res <- readRDS(file = "/your/directory/Group3-4App/StarProtocols_Guide/data/nmf.res.rds") 
+# This loads in the precalculated NMF model. 
 
-### define new g3g4 score for projection back onto the original data
-t(rnaseq.H[c(3, 1), ]) -> g3g4.rnaseq
+# Load the required custom functions. 
 
-apply(g3g4.rnaseq, 2, function(x) {
-  (1 / (1 + exp(-x)))
-}) -> logistic.g3g4.rnaseq
-
-apply(logistic.g3g4.rnaseq, 1, function(x) {
-  x[2] / (x[1] + x[2])
-}) -> logistic.g3g4.rnaseq.score
-
-## Scale to Williamson et al. dataset
-scaling.function3(logistic.g3g4.rnaseq.score) -> logistic.g3g4.rnaseq.score
-ScalingChoice <- "ours"
-
-## Scale to uploaded dataset 
-#scaling.function(logistic.g3g4.rnaseq.score) -> logistic.g3g4.rnaseq.score
-#ScalingChoice <- "yours"
-
-## Outlier removal
-outlier <- 1
+source(file = "/your/directory/Group3-4App/StarProtocols_Guide/R/Project_NMF.R") 
+# Wrapper function used to project NMF model onto unseen group3/group4 sample data. A function breakdown is provided below (see figure 1.). 
 
 
-t(tpms.H[c(3,1),]) -> g3g4.tpms
+# Load sample data as a matrix object. 
+tpms.mat <- read.delim("/your/directory/Group3-4App/StarProtocols_Guide/data/tpms.mat.txt") 
 
-apply(g3g4.tpms, 2, function(x) {
-  (1 / (1 + exp(-x)))
-}) -> logistic.g3g4.tpms
+# CRITICAL: If you wish to use your own RNA-sequencing sample data, you must ensure that it follows
+# the same format as tpms.mat. This object is a matrix, where columns correspond to samples and rows correspond to genes,
+# with expression counts presented in the transcripts per million (TPM) format or equivalent. 
+# All genes (rows) must use HUGO gene nomenclature i.e., gene symbols.
+# If your input dataset is not annotated correctly, please see Problem 1 in the Troubleshooting section.
+# Note that a column-rank normalization procedure is employed, this coupled with the NMF projection and other
+# normalisation procedures renders the results somewhat resistant to noise and compatible with representations of expression other than TPM.
+# We have for example used Rlog, or variance stabilised transforms from DESeq or even other platforms such as Affymetrix microarray or nanostring data with success.
+# Note when projecting onto platforms other than bulk RNA-seq appropriate filtering strategies to remove invariant genes/probes may be necessary. 
 
-if(is.null(dim(logistic.g3g4.tpms))){
-  logistic.g3g4.tpms[2] / (logistic.g3g4.tpms[1] + logistic.g3g4.tpms[2]) -> logistic.g3g4.tpms.score
-  apply(logistic.g3g4.tpms, 1, function(x) {
-    x[2] / (x[1] + x[2])
-  }) ->  logistic.g3g4.tpms.score
-  message("is.null(dim(logistic.g3g4.tpms))")
-  scaling.function3(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score
-}else{
-  apply(logistic.g3g4.tpms, 1, function(x) {
-    x[2] / (x[1] + x[2])
-  }) -> logistic.g3g4.tpms.score
+# Project NMF model onto sequencing data  
+
+tpms.H <- project.NMF(input.array = as.matrix(tpms.mat), nmf.result = nmf.res) 
+# Apply project.NMF function to input dataset.
   
-  mean(logistic.g3g4.tpms.score) -> mean.logistic.g3g4.tpms.score
-  message(mean.logistic.g3g4.tpms.score)
-  sd(logistic.g3g4.tpms.score) -> sd.logistic.g3g4.tpms.score
-  message(sd.logistic.g3g4.tpms.score)
-  
-  if (outlier == 0){
-    upper.limit <- 1
-    lower.limit <- 0
-  }
-  else{
-    upper.limit <-
-      ((outlier) * sd.logistic.g3g4.tpms.score) +  mean.logistic.g3g4.tpms.score
-    lower.limit <-
-      mean.logistic.g3g4.tpms.score - ((outlier) * sd.logistic.g3g4.tpms.score)
-  }
-  
-  outlier.idx <-
-    which(logistic.g3g4.tpms.score > upper.limit |
-            logistic.g3g4.tpms.score < lower.limit)
-  
-  
-  if (length(outlier.idx) != 0 & ScalingChoice == "yours") {
-    apply(logistic.g3g4.tpms, 1, function(x) {
-      x[2] / (x[1] + x[2])
-    }) ->  logistic.g3g4.tpms.score
-    
-    removed <- logistic.g3g4.tpms.score[-outlier.idx]
-    
-    # scaling.function(logistic.g3g4.tpms.score
-    #                  [-outlier.idx]) -> logistic.g3g4.tpms.score
-    scaling.function(removed) -> logistic.g3g4.tpms.score
-    
-  }else if (length(outlier.idx) == 0 & ScalingChoice == "yours") {
-    apply(logistic.g3g4.tpms, 1, function(x) {
-      x[2] / (x[1] + x[2])
-    }) ->  logistic.g3g4.tpms.score
-    
-    scaling.function(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score
-    
-  } else{
-    apply(logistic.g3g4.tpms, 1, function(x) {
-      x[2] / (x[1] + x[2])
-    }) ->  logistic.g3g4.tpms.score
-    scaling.function3(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score
+# Extract Group 3 and Group 4 metagenes from data and transpose matrix. 
 
-  }
-}
+g3g4.tpms <- t(tpms.H[c(3,1),])  
+# Rows 3 and 1 in tpms.H correspond to the metagenes for Groups 4 and 3 respectively. 
 
-round(logistic.g3g4.tpms.score, digits = 3) -> logistic.g3g4.tpms.score
+# Apply logistic transformation to metagenes. 
 
-## This is your Group 3/4 Values
-data.frame('Group.3.4.Score' = logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score.df
+logistic.g3g4.tpms <- apply(g3g4.tpms,2,function(x){(1 / (1 + exp(-x)))}) 
+# Apply a logistic transformation  
 
-### G3/4 Graph selecting the first sample to highlight
-generate_figure_highlight_g3g4Expression(logistic.g3g4.tpms.score
+logistic.g3g4.tpms.score <- apply(logistic.g3g4.tpms,1,function(x){x[2]/(x[1]+x[2])}) 
+# Calculate a ratio between logistically transformed Group3 and Group4 metagene  
+
+# Scale values between 0 and 1. 
+
+scaling.function <- function(x){(x-min(x)) / (max(x)-min(x))} 
+# Create a function to scale values between 0 and 1 
+
+logistic.g3g4.tpms.continuum.score <- scaling.function(logistic.g3g4.tpms.score) 
+# Apply the function to the unscaled g3g4 scores  
+
+# CRITICAL: If you are using a small dataset or one that does not represent the full spectrum of Group3/Group4 
+# medulloblastomas you may want to omit this step and present unscaled G3/G4 ratios in which case the following command should be used. 
+
+# Alternatively, you may wish to append to the precalculated G3/G4 ratios from Williamson et al 
+# and then scale together with your new samples in which case the following alternative command should be used:  
+
+scaling.function1 <- function(x){(x - 0.3953062) / (0.5964371 - 0.3953062)} 
+# Create a function to scale values between 0 and 1 using Williamson et al. data) 
+
+logistic.g3g4.tpms.continuum.score <- scaling.function1(logistic.g3g4.tpms.score) 
+# Apply scaling 
+
+# Note that theoretically this could lead to some sample returning values under 0 or over 1.
+# The user would need to take a considered view on such samples. They could simply be producing
+# values close to 1 or 0 but otherwise consistent with samples at the extreme limits of the G3/G4 continuum,
+# in which case manually assigning them the maximum 1 or minimum 0 value may be a valid approach.
+# Should they massively exceed previous limits they may simply be outliers or technical artefacts 
+# that would be best noted but excluded from further analysis. 
+
+# Present output as data.frame for export. 
+
+logistic.g3g4.tpms.continuum.score <- as.data.frame(logistic.g3g4.tpms.continuum.score) 
+
+colnames(logistic.g3g4.tpms.continuum.score) <- 'Continuum Score' 
+# Renaming for easier interpretation 
+
+write.csv(logistic.g3g4.tpms.continuum.score, file = '/your/directory/my_continuum_scores.csv ', row.names = TRUE) 
+#Export as .csv table 
+
+# Expected outcome: A data.frame object where rows correspond to sample ID and column corresponds to each samples respective continuum score value.
+  
+source("/your/directory/Group3-4App/AppSourceFunctions1.13.R")
+
+# Example graphs displaying the first 10 samples, graphs can get cluttered if too many samples are displayed
+# currently displays samples 1-10 and highlights sample 1.
+samples.to.display <- c(1:10) #change this to display different samples, currently 1-10.
+
+generate_figure_highlight_g3g4Expression(logistic.g3g4.tpms.continuum.score[samples.to.display,1]
                                          , 1)
 
-## Survival plot selecting the first sample to highlight
-survivalcurveplot(
-  logistic.g3g4.tpms.score
-  ,1)
+survivalcurveplot(logistic.g3g4.tpms.continuum.score[samples.to.display,1]
+                  ,1)
 
-## Age Survival Plot selecting the first sample to highlight
-SurvivalAgePlot(logistic.g3g4.tpms.score,
-                1)
+SurvivalAgePlot(logistic.g3g4.tpms.continuum.score[samples.to.display,1],
+                1)  
                 
 ```
-</details>
 
-# Example script to run
- <details>
-  <summary>Example Script</summary>
-
-```
-
-### Set working directory to wherever "source_functions.R" is
-setwd("~/Group3-4App")
-source("./AppSourceFunctions1.11.R")
-
-#####################################
-############ METHYLATION ############
-#####################################
-
-# Obtain MValues (these have been obtained from idat files, for full workflow read above)
-M.values <- read.delim("~/Group3-4App/StarProtocols_Guide/data/mvals.mat.txt")
-
-if(ncol(M.values)==1){
-  ### for single sample
-  t(data.frame(t(M.values)[,predictors(g3.g4.cont.rfe)])) -> input.df
-  colnames(M.values) -> rownames(input.df)
-}else{
-  t(M.values)[,predictors(g3.g4.cont.rfe)] -> input.df
-}
-
-### Round results to 3 figures
-metagene <- round(predict(g3.g4.cont.rfe, input.df), digits = 3)
-metagene.df <- data.frame('Group.3.4.Score' = metagene)
-
-
-### This is your Group3/4 Scores
-metagene.df
-
-### Select Risk values column
-# figure.input <- test.res$Risk_Value
-figure.input <- metagene.df$Group.3.4.Score
-names(figure.input) <- rownames(metagene.df)
-print(figure.input)
-
-
-### Name the rows
-names(figure.input) <- rownames(metagene.df)
-print(figure.input)
-
-### Generate Group3/4 score graph selecting the first sample to highlight
-generate_figure_highlight_g3g4(figure.input,
-                              1)
-### Generate Survival Plot selecting the first sample to highlight
-survivalcurveplot(
-  figure.input
-  ,1)
-
-### Generate Age Survival plot selecting the first sample to highlight
-SurvivalAgePlot(figure.input,
-                1)
-
-
-####################################
-############ EXPRESSION ############
-####################################
-
-## Load in your samples (currently is an example file available from the GitHub repository, if you cloned the GitHub you will already have this)
-in.files <- "./AppExtraFiles/Inputs/subsetTpms.mat10.rds"
-
-input.file <- in.files
-if (file_ext(input.file) == "rds") {
-  in.files <- readRDS(file = input.file)
-} else if (file_ext(input.file) == "csv") {
-  in.files <- read.csv(file = input.file, row.names = 1)
-} else if (file_ext(input.file) == "txt") {
-  in.files <- read.delim(file = input.file)
-} else {
-  message("file not right format!")
-}
-
-nmb.mat <- nmb.mat.prepped
-
-# ## interset common genes / probes
-tpms.mat <- match.select(nmb.mat, in.files)
-
-## project using pseudo-inverse & post-projection normalise
-# project back onto the same dataset
-rnaseq.H <- project.NMF(input.array = nmb.mat,
-                        nmf.result = nmf.res)
-
-tpms.matrix <- as.matrix(tpms.mat)
-if (ncol(tpms.matrix) == 1) {
-  colnames(in.files) -> colnames(tpms.matrix)
-}
-
-# project onto fresh dataset
-tpms.H <- project.NMF(input.array = tpms.matrix,
-                      nmf.result = nmf.res)
-
-### define new g3g4 score for projection back onto the original data
-t(rnaseq.H[c(3, 1), ]) -> g3g4.rnaseq
-
-apply(g3g4.rnaseq, 2, function(x) {
-  (1 / (1 + exp(-x)))
-}) -> logistic.g3g4.rnaseq
-
-apply(logistic.g3g4.rnaseq, 1, function(x) {
-  x[2] / (x[1] + x[2])
-}) -> logistic.g3g4.rnaseq.score
-
-## Scale to Williamson et al. dataset
-scaling.function3(logistic.g3g4.rnaseq.score) -> logistic.g3g4.rnaseq.score
-ScalingChoice <- "ours"
-
-## Scale to uploaded dataset 
-#scaling.function(logistic.g3g4.rnaseq.score) -> logistic.g3g4.rnaseq.score
-#ScalingChoice <- "yours"
-
-## Outlier removal
-outlier <- 1
-
-
-t(tpms.H[c(3,1),]) -> g3g4.tpms
-
-apply(g3g4.tpms, 2, function(x) {
-  (1 / (1 + exp(-x)))
-}) -> logistic.g3g4.tpms
-
-if(is.null(dim(logistic.g3g4.tpms))){
-  logistic.g3g4.tpms[2] / (logistic.g3g4.tpms[1] + logistic.g3g4.tpms[2]) -> logistic.g3g4.tpms.score
-  apply(logistic.g3g4.tpms, 1, function(x) {
-    x[2] / (x[1] + x[2])
-  }) ->  logistic.g3g4.tpms.score
-  message("is.null(dim(logistic.g3g4.tpms))")
-  scaling.function3(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score
-}else{
-  apply(logistic.g3g4.tpms, 1, function(x) {
-    x[2] / (x[1] + x[2])
-  }) -> logistic.g3g4.tpms.score
-  
-  mean(logistic.g3g4.tpms.score) -> mean.logistic.g3g4.tpms.score
-  message(mean.logistic.g3g4.tpms.score)
-  sd(logistic.g3g4.tpms.score) -> sd.logistic.g3g4.tpms.score
-  message(sd.logistic.g3g4.tpms.score)
-  
-  if (outlier == 0){
-    upper.limit <- 1
-    lower.limit <- 0
-  }
-  else{
-    upper.limit <-
-      ((outlier) * sd.logistic.g3g4.tpms.score) +  mean.logistic.g3g4.tpms.score
-    lower.limit <-
-      mean.logistic.g3g4.tpms.score - ((outlier) * sd.logistic.g3g4.tpms.score)
-  }
-  
-  outlier.idx <-
-    which(logistic.g3g4.tpms.score > upper.limit |
-            logistic.g3g4.tpms.score < lower.limit)
-  
-  
-  if (length(outlier.idx) != 0 & ScalingChoice == "yours") {
-    apply(logistic.g3g4.tpms, 1, function(x) {
-      x[2] / (x[1] + x[2])
-    }) ->  logistic.g3g4.tpms.score
-    
-    removed <- logistic.g3g4.tpms.score[-outlier.idx]
-    
-    # scaling.function(logistic.g3g4.tpms.score
-    #                  [-outlier.idx]) -> logistic.g3g4.tpms.score
-    scaling.function(removed) -> logistic.g3g4.tpms.score
-    
-  }else if (length(outlier.idx) == 0 & ScalingChoice == "yours") {
-    apply(logistic.g3g4.tpms, 1, function(x) {
-      x[2] / (x[1] + x[2])
-    }) ->  logistic.g3g4.tpms.score
-    
-    scaling.function(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score
-    
-  } else{
-    apply(logistic.g3g4.tpms, 1, function(x) {
-      x[2] / (x[1] + x[2])
-    }) ->  logistic.g3g4.tpms.score
-    scaling.function3(logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score
-
-  }
-}
-
-round(logistic.g3g4.tpms.score, digits = 3) -> logistic.g3g4.tpms.score
-
-## This is your Group 3/4 Values
-data.frame('Group.3.4.Score' = logistic.g3g4.tpms.score) -> logistic.g3g4.tpms.score.df
-
-### G3/4 Graph selecting the first sample to highlight
-generate_figure_highlight_g3g4Expression(logistic.g3g4.tpms.score
-                                         , 1)
-
-## Survival plot selecting the first sample to highlight
-survivalcurveplot(
-  logistic.g3g4.tpms.score
-  ,1)
-
-## Age Survival Plot selecting the first sample to highlight
-SurvivalAgePlot(logistic.g3g4.tpms.score,
-                1)
-
-
-```
  </details>
  
 ## Example Script Results
