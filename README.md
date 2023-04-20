@@ -303,12 +303,15 @@ source("/your/directory/Group3-4App/AppSourceFunctions1.13.R")
 # currently displays samples 1-10 and highlights sample 1.
 samples.to.display <- c(1:10) #change this to display different samples, currently 1-10.
 
+### Generate Group3/4 score graph selecting the first sample to highlight
 generate_figure_highlight_g3g4Expression(logistic.g3g4.tpms.continuum.score[samples.to.display,1]
                                          , 1)
 
+### Generate Survival Plot selecting the first sample to highlight
 survivalcurveplot(logistic.g3g4.tpms.continuum.score[samples.to.display,1]
                   ,1)
 
+### Generate Survival Plot selecting the first sample to highlight
 SurvivalAgePlot(logistic.g3g4.tpms.continuum.score[samples.to.display,1],
                 1)  
                 
