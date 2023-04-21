@@ -327,17 +327,18 @@ SurvivalAgePlot(logistic.g3g4.tpms.continuum.score[samples.to.display,1],
  For methylation the expected results are:  
  
  ```
-        predict(g3.g4.cont.rfe, t(mvals.mat))
-NMB_109                            0.07934780
-NMB_110                            0.17779087
-NMB_111                            0.31949452
-NMB_118                            0.41626223
-NMB_119                            0.15780596
-NMB_125                            0.05701327
-NMB_130                            0.09525883
-NMB_132                            0.29072448
-NMB_134                            0.20310554
-NMB_136                            0.37450195
+> Pred.cont.rand.for
+         Continuum Score
+Sample1       0.07934780
+Sample2       0.17779087
+Sample3       0.31949452
+Sample4       0.41626223
+Sample5       0.15780596
+Sample6       0.05701327
+Sample7       0.09525883
+Sample8       0.29072448
+Sample9       0.20310554
+Sample10      0.37450195
 
 ```
   
