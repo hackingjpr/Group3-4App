@@ -715,7 +715,7 @@ generate_figure_highlight_g3g4Expression <-
         data = df.lines.ver
         
       ) +
-      xlab("") +
+      xlab("Cumulative Frequency") +
       ylab("Group 3/4 Score")
     #geom_text_repel(aes(x = x+10, y = y+0.1, label = labels), direction = "y", data = df.lines.hor)
     # geom_text(aes(
