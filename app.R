@@ -50,7 +50,7 @@ ui <- shiny::fluidPage(
         condition = "input.scaling == 'yours'",
         sliderInput(
           "outlier",
-          "OUTLIER SELECTION WHAT SHOULD I CALL THIS??",
+          "Remove samples more than x standard deviations from the mean, select x:",
           min = 1,
           max = 4,
           value = 1,
@@ -187,7 +187,7 @@ ui <- shiny::fluidPage(
               h3("Patient's Survival Percentile:"),
               textOutput("survivalPercentage"),
               
-              h4("Disclaimer : This app is designed exclusively for research purposes and is strictly not for diagnostic use.")
+              h4("Disclaimer : This app is designed exclusively for research purposes and is strictly not for diagnostic or clinical use.")
             )
           )),
           (fluidRow(
@@ -253,7 +253,7 @@ ui <- shiny::fluidPage(
               textOutput("survivalExpressionPercentage"),
               
               tags$b(
-                "Disclaimer : This app is designed exclusively for research purposes and is strictly not for diagnostic use.")
+                "Disclaimer : This app is designed exclusively for research purposes and is strictly not for diagnostic or clinical use.")
             )
           )),
           (fluidRow(
