@@ -148,8 +148,6 @@ library(caret)
 library(randomForest) 
 # This loads each package into your working environment 
 
-# CRITICAL: You MUST update ‘/your/directory/’ to the location which you cloned the GitHub repository in step 1 of Continuum score assignment (RNA-Sequencing). 
-
 # Load in the prediction object 
 
 load(file = "/your/directory/Group3-4App/StarProtocols_Guide/data/g3.g4.cont.rfe.Rdata") 
@@ -158,13 +156,6 @@ load(file = "/your/directory/Group3-4App/StarProtocols_Guide/data/g3.g4.cont.rfe
 # Load in example methylation dataset. 
 
 mvals.mat <- read.delim("/your/directory/Group3-4App/StarProtocols_Guide/data/mvals.mat.txt") 
-
-# CRITICAL: The random forest model in this protocol requires that test data be provided as a matrix of M-values (logit-transformed beta values),
-# where columns correspond to sample ID and rows correspond to probes. If your data is a matrix of beta values (object below named as “your.betas”), 
-# you can easily convert these to M-values using the following: 
-
-#mvals.mat <- log2(your.betas/(1-your.betas)) 
-# logit-transformation 
 
 # Subset M-Value matrix to probes used as predictors in model 
 
@@ -216,8 +207,6 @@ library(MASS)
 
 # Load required data objects. 
 
-# CRITICAL: You MUST update ‘/your/directory/’ to the location which you cloned the GitHub repository in step 1. 
-
 nmf.res <- readRDS(file = "/your/directory/Group3-4App/StarProtocols_Guide/data/nmf.res.rds") 
 # This loads in the precalculated NMF model. 
 
@@ -229,16 +218,6 @@ source(file = "/your/directory/Group3-4App/StarProtocols_Guide/R/Project_NMF.R")
 
 # Load sample data as a matrix object. 
 tpms.mat <- read.delim("/your/directory/Group3-4App/StarProtocols_Guide/data/tpms.mat.txt") 
-
-# CRITICAL: If you wish to use your own RNA-sequencing sample data, you must ensure that it follows
-# the same format as tpms.mat. This object is a matrix, where columns correspond to samples and rows correspond to genes,
-# with expression counts presented in the transcripts per million (TPM) format or equivalent. 
-# All genes (rows) must use HUGO gene nomenclature i.e., gene symbols.
-# If your input dataset is not annotated correctly, please see Problem 1 in the Troubleshooting section.
-# Note that a column-rank normalization procedure is employed, this coupled with the NMF projection and other
-# normalisation procedures renders the results somewhat resistant to noise and compatible with representations of expression other than TPM.
-# We have for example used Rlog, or variance stabilised transforms from DESeq or even other platforms such as Affymetrix microarray or nanostring data with success.
-# Note when projecting onto platforms other than bulk RNA-seq appropriate filtering strategies to remove invariant genes/probes may be necessary. 
 
 # Project NMF model onto sequencing data  
 
@@ -277,13 +256,6 @@ scaling.function1 <- function(x){(x - 0.3953062) / (0.5964371 - 0.3953062)}
 
 logistic.g3g4.tpms.continuum.score <- scaling.function1(logistic.g3g4.tpms.score) 
 # Apply scaling 
-
-# Note that theoretically this could lead to some sample returning values under 0 or over 1.
-# The user would need to take a considered view on such samples. They could simply be producing
-# values close to 1 or 0 but otherwise consistent with samples at the extreme limits of the G3/G4 continuum,
-# in which case manually assigning them the maximum 1 or minimum 0 value may be a valid approach.
-# Should they massively exceed previous limits they may simply be outliers or technical artefacts 
-# that would be best noted but excluded from further analysis. 
 
 # Present output as data.frame for export. 
 
