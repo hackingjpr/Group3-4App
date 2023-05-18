@@ -237,22 +237,19 @@ logistic.g3g4.tpms <- apply(g3g4.tpms,2,function(x){(1 / (1 + exp(-x)))})
 logistic.g3g4.tpms.score <- apply(logistic.g3g4.tpms,1,function(x){x[2]/(x[1]+x[2])}) 
 # Calculate a ratio between logistically transformed Group3 and Group4 metagene  
 
-# Scale values between 0 and 1. 
 
+# If you are using a small dataset you may want to omit this step and present unscaled G3/G4 ratios in which case the following command should be used. 
+# Scale values between 0 and 1. 
 scaling.function <- function(x){(x-min(x)) / (max(x)-min(x))} 
 # Create a function to scale values between 0 and 1 
 
 logistic.g3g4.tpms.continuum.score <- scaling.function(logistic.g3g4.tpms.score) 
-# Apply the function to the unscaled g3g4 scores  
-
-# If you are using a small dataset or one that does not represent the full spectrum of Group3/Group4 
-# medulloblastomas you may want to omit this step and present unscaled G3/G4 ratios in which case the following command should be used. 
 
 # Alternatively, you may wish to append to the precalculated G3/G4 ratios from Williamson et al 
-# and then scale together with your new samples in which case the following alternative command should be used:  
+# and then scale together with your new samples. If so the following alternative command should be used:  
 
 scaling.function1 <- function(x){(x - 0.3953062) / (0.5964371 - 0.3953062)} 
-# Create a function to scale values between 0 and 1 using Williamson et al. data) 
+# Create a function to scale values between 0 and 1 using Williamson et al. data 
 
 logistic.g3g4.tpms.continuum.score <- scaling.function1(logistic.g3g4.tpms.score) 
 # Apply scaling 
