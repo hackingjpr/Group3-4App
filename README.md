@@ -245,7 +245,7 @@ scaling.function <- function(x){(x-min(x)) / (max(x)-min(x))}
 logistic.g3g4.tpms.continuum.score <- scaling.function(logistic.g3g4.tpms.score) 
 # Apply the function to the unscaled g3g4 scores  
 
-# CRITICAL: If you are using a small dataset or one that does not represent the full spectrum of Group3/Group4 
+# If you are using a small dataset or one that does not represent the full spectrum of Group3/Group4 
 # medulloblastomas you may want to omit this step and present unscaled G3/G4 ratios in which case the following command should be used. 
 
 # Alternatively, you may wish to append to the precalculated G3/G4 ratios from Williamson et al 
