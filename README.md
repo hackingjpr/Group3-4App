@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/517709446.svg)](https://zenodo.org/badge/latestdoi/517709446)
 # Deriving a continuum score for group 3 and 4 medulloblastoma tumour samples analysed via RNA-sequencing or DNA methylation microarray
 
 
@@ -11,6 +12,7 @@
 - [Run script without using Shiny App (with example data)](#run-script-without-using-shiny-app-with-example-data)
 - [System Requirements](#system-requirements)
 - [Troubleshooting](#troubleshooting)
+
 
 # Overview
 This script "app.R" encodes a shiny app that, upon uploading idat files, will give a group 3/4 score for patient samples.   
