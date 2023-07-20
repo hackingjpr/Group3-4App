@@ -370,7 +370,8 @@ If running Methylation idat files then make sure you have uploaded both red and 
 ## App won't open after closing itself due to an error
 If the app closes itself down then you may need to press stop. The button for this is a red hexagon that can be found in the top right corner of the box in the lower left quadrant of the RStudio screen.
 
-
+# Acknowledgments 
+This work was supported by LoveOliver and Cancer Research UK.
 
 
 # *Disclaimer: This app is designed exclusively for research purposes and strictly not for diagnostic or clinical use.*
